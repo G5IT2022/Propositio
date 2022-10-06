@@ -1,0 +1,10 @@
+﻿@using bacit_dotnet.MVC.Entities;
+@using bacit_dotnet.MVC.Models;
+@model bacit_dotnet.MVC.Models.RoleViewModel
+
+<h1>Oversikt over roller</h1>
+
+@foreach(RoleEntity role in Model.roles){
+    <h2>@role.role_id</h2>
+    <h2>@role.role_name</h2>
+}
