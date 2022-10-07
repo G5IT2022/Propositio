@@ -5,7 +5,7 @@
         public int comment_id { get; set; }
         public int emp_id { get; set; }
         public int suggestion_id { get; set; }
-        public string discription { get; set; }
+        public string description { get; set; }
         public DateTime timeStamp { get; set; }
         public List<CommentEntity> comments { get; set; }
         public List<SuggestionEntity> suggestions { get; set; }
