@@ -2,28 +2,28 @@
 using bacit_dotnet.MVC.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MySqlConnector;
 
-namespace bacit_dotnet.MVC.Repositories
+namespace bacit_dotnet.MVC.Repositories.Category
 {
-    public class DapperRoleRepository : IRoleRepository
+    public class DapperCategoryRepository : ICategoryRepository
     {
         private readonly ISqlConnector sqlConnector;
 
-        public DapperRoleRepository(ISqlConnector sqlConnector)
+        public DapperCategoryRepository(ISqlConnector sqlConnector)
         {
             this.sqlConnector = sqlConnector;
         }
 
-        public List<RoleEntity> GetAllRoles()
+        public List<CategoryEntity> getAll()
         {
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                var roles = connection.Query<RoleEntity>("SELECT * FROM Role;");
-                return roles.ToList();
+                var category = connection.Query<CategoryEntity>("SELECT * FROM Category");
+                return category.ToList();
             }
-
         }
+
     }
 }
+

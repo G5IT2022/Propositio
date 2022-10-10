@@ -1,6 +1,6 @@
 ﻿using bacit_dotnet.MVC.Entities;
 
-namespace bacit_dotnet.MVC.Repositories
+namespace bacit_dotnet.MVC.Repositories.Suggestion
 {
     public interface ISuggestionRepository
     {

@@ -4,7 +4,7 @@ using Dapper;
 using Dapper.Contrib.Extensions;
 using MySqlConnector;
 
-namespace bacit_dotnet.MVC.Repositories
+namespace bacit_dotnet.MVC.Repositories.Suggestion
 {
     public class DapperSuggestionRepository : ISuggestionRepository
     {
@@ -17,9 +17,10 @@ namespace bacit_dotnet.MVC.Repositories
 
         public List<SuggestionEntity> getAll()
         {
-            using(var connection = sqlConnector.GetDbConnection() as MySqlConnection) { 
-               var suggestions = connection.Query<SuggestionEntity>("SELECT * FROM Suggestion;");
-               return suggestions.ToList();
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var suggestions = connection.Query<SuggestionEntity>("SELECT * FROM Suggestion;");
+                return suggestions.ToList();
             }
         }
     }
