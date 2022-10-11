@@ -9,6 +9,7 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
         SuggestionEntity getById(int id);
         List<SuggestionEntity> getByStatus(STATUS status);
         void Add(SuggestionEntity entity);
+        public int getLatestSuggestionID();
 
     }
 }

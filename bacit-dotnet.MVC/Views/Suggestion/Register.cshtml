@@ -4,6 +4,7 @@
 
 <form asp-action="Create" asp-controller="suggestion" method="post">
     <!--Tittel-->
+    <!--Tittel-->
     <div class="form-group">
         <label for="title">Tittel</label>
         <input name="title" type="text" class="form-control" id="title" aria-describedby="emailHelp" placeholder="Skriv inn en tittel" value="@Model.title">
@@ -13,18 +14,29 @@
         <label for="description">Beskrivelse av forbedringsforslaget</label>
         <input name="description" type="text" class="form-control" id="description" aria-describedby="emailHelp" placeholder="Skriv inn ditt forbedringsforslag" value="@Model.description">
     </div>
-    <!--Kategori-->
-    <div class="form-group">
-       @foreach(CategoryEntity category in Model.categories){
-           <p>@category.category_name</p>
-       }
-    </div>
-    <!--Is Just Do It-->
+    <!--Is Just Do It?-->
     <div class="form-check">
-        <input name = "isJustDoIt"type="checkbox" class="form-check-input" id="justDoIt">
-        <label class="form-check-label" for="justDoIt">Is Just Do It?</label>
+        @Html.CheckBoxFor(m => m.isJustDoIt, new{@class="form-check-input"})
+        @Html.LabelFor(m => m.isJustDoIt, new{@class="form-check-label"})
     </div>
+    <h3>Velg Kategorier: </h3>
+    <!--Kategorier-->
+        @foreach(CategoryEntity category in Model.categories){
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="@category.category_id" id="flexCheckDefault" name="@category.category_name">
+            <label class="form-check-label" for="flexCheckDefault">
+                @category.category_name
+            </label>
+        </div>
+        }
+    <div class="form-group">
     <!--Vedlegg-->
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Default file input example</label>
+            <input class="form-control" type="file" id="formFile">
+        </div>
+
     <button type="submit" class="btn btn-primary">Lagre</button>
     <button type="submit" class="btn btn-primary">Avbryt</button>
+    </div>
 </form>

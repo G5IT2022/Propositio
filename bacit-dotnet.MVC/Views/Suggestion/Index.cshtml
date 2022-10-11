@@ -22,12 +22,24 @@
                 <div class="col-sm">
                     @sugg.status
                     <div class="suggdiv @sugg.status"></div>
+                    @if(sugg.isJustDoIt){
+                        <div>
+                            DETTE ER JUST DO IT ALTSÅ!
+                        </div>
+                    }
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <p>@sugg.title</p>
                     <p>@sugg.description</p>
+                </div>
+            </div>
+            <div class="row test">
+                <div class="col">
+                 @foreach(var category in sugg.categories){
+                     @(category.category_name += " ");
+                 }
                 </div>
             </div>
         </div>

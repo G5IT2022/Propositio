@@ -30,8 +30,15 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
                    poster_emp_id = entity.poster_emp_id,
                    timestamp_id =  entity.timestamp_id
                 });
-                
-               // connection.Insert<SuggestionEntity>(entity);
+            }
+        }
+
+        public int getLatestSuggestionID()
+        {
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var suggestion = connection.QueryFirst<SuggestionEntity>("SELECT * FROM Suggestion ORDER BY suggestion_id DESC LIMIT 1");
+                return suggestion.suggestion_id;
             }
         }
 
