@@ -23,7 +23,6 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
                 return suggestions.ToList();
             }
         }
-
         public List<SuggestionEntity> getByEmployeeID(int id)
         {
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
@@ -49,5 +48,6 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
                 return suggestions.ToList();
             }
         }
+
     }
 }
