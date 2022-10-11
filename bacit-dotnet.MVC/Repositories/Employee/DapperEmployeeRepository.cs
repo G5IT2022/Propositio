@@ -4,7 +4,7 @@ using Dapper;
 using Dapper.Contrib.Extensions;
 using MySqlConnector;
 
-namespace bacit_dotnet.MVC.Repositories
+namespace bacit_dotnet.MVC.Repositories.Employee
 {
     public class DapperEmployeeRepository : IEmployeeRepository
     {

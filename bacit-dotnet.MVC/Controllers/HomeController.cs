@@ -1,8 +1,8 @@
 ﻿using bacit_dotnet.MVC.DataAccess;
-using bacit_dotnet.MVC.Repositories;
 using bacit_dotnet.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using bacit_dotnet.MVC.Repositories.Employee;
 
 namespace bacit_dotnet.MVC.Controllers
 {

@@ -1,6 +1,7 @@
 
 using bacit_dotnet.MVC.DataAccess;
-using bacit_dotnet.MVC.Repositories;
+using bacit_dotnet.MVC.Repositories.Employee;
+using bacit_dotnet.MVC.Repositories.Suggestion;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Configuration;
