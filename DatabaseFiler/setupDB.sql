@@ -1,6 +1,7 @@
 DROP DATABASE IF EXISTS propositio;
 CREATE DATABASE propositio;
 USE propositio;
+alter database propositio charset = 'utf8';
 
 
 DROP TABLE IF EXISTS Employee, Team, TeamList, Role, SuggestionComment, Suggestion, SuggestionTimestamp, CategoryList, Category;
@@ -46,7 +47,7 @@ CREATE TABLE Suggestion(
 suggestion_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
 title varchar(100) NOT NULL, 
 description text NOT NULL, 
-status enum("Plan", "Do", "Study", "Act", "Finished") NOT NULL,
+status enum("PLAN", "DO", "STUDY", "ACT", "FINISHED") NOT NULL,
 isJustDoIt BOOLEAN NOT NULL,
 ownership_emp_id int NOT NULL, 
 poster_emp_id int NOT NULL, 

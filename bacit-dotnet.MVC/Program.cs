@@ -1,6 +1,9 @@
 
 using bacit_dotnet.MVC.DataAccess;
+using bacit_dotnet.MVC.Repositories.Category;
+using bacit_dotnet.MVC.Repositories.Comment;
 using bacit_dotnet.MVC.Repositories.Employee;
+using bacit_dotnet.MVC.Repositories.Role;
 using bacit_dotnet.MVC.Repositories.Suggestion;
 using bacit_dotnet.MVC.Repositories.Team;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +25,12 @@ public class Program
             options.UseMySql(builder.Configuration.GetConnectionString("MariaDb"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MariaDb")));
         });
         */
+        builder.Services.AddSingleton<ICategoryRepository, DapperCategoryRepository>();
+        builder.Services.AddSingleton<ICommentRepository, DapperCommentRepository>();
         builder.Services.AddSingleton<IEmployeeRepository, DapperEmployeeRepository>();
+        builder.Services.AddSingleton<IRoleRepository, DapperRoleRepository>();
         builder.Services.AddSingleton<ISuggestionRepository, DapperSuggestionRepository>();
         builder.Services.AddSingleton<ITeamRepository, DapperTeamRepository>();
-      
 
         var app = builder.Build();
          

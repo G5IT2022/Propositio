@@ -15,6 +15,26 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
             this.sqlConnector = sqlConnector;
         }
 
+        public void Add(SuggestionEntity entity)
+        {
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                string sql = @"INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES (@title, @description, 'PLAN', @isJustDoIt, @ownership_emp_id, @poster_emp_id, @timestamp_id)";
+                connection.Execute(sql, new
+                {
+                   title = entity.title,
+                   description = entity.description,
+                   status =  entity.status,
+                   isJustDoIt =  entity.isJustDoIt,
+                   ownership_emp_id =  entity.ownership_emp_id,
+                   poster_emp_id = entity.poster_emp_id,
+                   timestamp_id =  entity.timestamp_id
+                });
+                
+               // connection.Insert<SuggestionEntity>(entity);
+            }
+        }
+
         public List<SuggestionEntity> getAll()
         {
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
