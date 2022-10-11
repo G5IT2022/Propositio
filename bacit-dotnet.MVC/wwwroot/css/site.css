@@ -16,3 +16,30 @@ html {
 body {
   margin-bottom: 60px;
 }
+.sugg-container{
+   
+}
+.suggdiv{
+    height: 30px; 
+    width: 30px;
+    margin-top: 1px;
+    border-radius: 100px;
+    display: inline-block;
+}
+.sugg-info {
+    background-color: #AE8A63;
+    color: #FFF;
+    font-weight: bold;
+}
+.PLAN {
+    background-color: #2D722C;
+}
+.DO {
+    background-color: #AFEC2E;
+}
+.STUDY {
+    background-color: #F9E076;
+}
+.ACT {
+    background-color: #7E7BFF;
+}

@@ -12,7 +12,11 @@
         public int ownership_emp_id { get; set; }
         public int poster_emp_id   { get; set; }
         public int timestamp_id { get; set; }
-
+      
+        public EmployeeEntity owner;
+        
+        public EmployeeEntity poster;
+        
         public List<CommentEntity> comments;
 
     }

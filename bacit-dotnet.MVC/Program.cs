@@ -2,6 +2,7 @@
 using bacit_dotnet.MVC.DataAccess;
 using bacit_dotnet.MVC.Repositories.Employee;
 using bacit_dotnet.MVC.Repositories.Suggestion;
+using bacit_dotnet.MVC.Repositories.Team;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Configuration;
@@ -23,6 +24,7 @@ public class Program
         */
         builder.Services.AddSingleton<IEmployeeRepository, DapperEmployeeRepository>();
         builder.Services.AddSingleton<ISuggestionRepository, DapperSuggestionRepository>();
+        builder.Services.AddSingleton<ITeamRepository, DapperTeamRepository>();
       
 
         var app = builder.Build();
