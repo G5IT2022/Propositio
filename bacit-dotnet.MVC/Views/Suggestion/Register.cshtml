@@ -1,0 +1,30 @@
+﻿@using bacit_dotnet.MVC.Models
+@using bacit_dotnet.MVC.Entities
+@model SuggestionRegisterModel
+
+<form asp-action="Create" asp-controller="suggestion" method="post">
+    <!--Tittel-->
+    <div class="form-group">
+        <label for="title">Tittel</label>
+        <input name="title" type="text" class="form-control" id="title" aria-describedby="emailHelp" placeholder="Skriv inn en tittel" value="@Model.title">
+    </div>
+    <!--Beskrivelse-->
+    <div class="form-group">
+        <label for="description">Beskrivelse av forbedringsforslaget</label>
+        <input name="description" type="text" class="form-control" id="description" aria-describedby="emailHelp" placeholder="Skriv inn ditt forbedringsforslag" value="@Model.description">
+    </div>
+    <!--Kategori-->
+    <div class="form-group">
+       @foreach(CategoryEntity category in Model.categories){
+           <p>@category.category_name</p>
+       }
+    </div>
+    <!--Is Just Do It-->
+    <div class="form-check">
+        <input name = "isJustDoIt"type="checkbox" class="form-check-input" id="justDoIt">
+        <label class="form-check-label" for="justDoIt">Is Just Do It?</label>
+    </div>
+    <!--Vedlegg-->
+    <button type="submit" class="btn btn-primary">Lagre</button>
+    <button type="submit" class="btn btn-primary">Avbryt</button>
+</form>

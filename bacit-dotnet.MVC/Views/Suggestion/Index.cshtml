@@ -1,11 +1,35 @@
 ﻿@using bacit_dotnet.MVC.Entities
 @using bacit_dotnet.MVC.Models;
-@model bacit_dotnet.MVC.Models.SuggestionViewModel
-<h1>HEI OG VELKOMMEN TIL VÅRT GRUPPEPROSJEKT I IS-202</h1>
+@model bacit_dotnet.MVC.Models.EmployeeViewModel
+<h1>Alle Forslag</h1>
 
-@foreach (SuggestionEntity suggestion in Model.suggestions)
+@foreach (EmployeeEntity emp in Model.employees)
 {
-    <h1>@suggestion.title</h1>
-    <h2>@suggestion.description</h2>
-    <h2>@suggestion.status</h2>    
+    @foreach (SuggestionEntity sugg in emp.suggestions)
+    {
+        <div class="container sugg-container">
+            <div class="row sugg-info">
+                <div class="col-sm">
+                    <p>@emp.name</p>
+                </div>
+                <div class="col-sm">
+                    @foreach (var team in emp.teams)
+                    {
+                        @(team.team_name += " ")
+                        ;
+                    }
+                </div>
+                <div class="col-sm">
+                    @sugg.status
+                    <div class="suggdiv @sugg.status"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p>@sugg.title</p>
+                    <p>@sugg.description</p>
+                </div>
+            </div>
+        </div>
+    }
 }

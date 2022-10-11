@@ -1,7 +1,11 @@
-﻿namespace bacit_dotnet.MVC.Entities
+﻿using Dapper.Contrib.Extensions;
+
+namespace bacit_dotnet.MVC.Entities
 {
 
     public enum STATUS { PLAN, DO, STUDY, ACT, FINISHED}
+
+    [Table ("Suggestion")]
    public class SuggestionEntity
     {
         public int  suggestion_id { get; set; }
@@ -18,6 +22,7 @@
         public EmployeeEntity poster;
         
         public List<CommentEntity> comments;
+        public List<CategoryEntity> categories;
 
     }
 }
