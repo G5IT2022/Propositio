@@ -1,5 +1,5 @@
 ﻿using bacit_dotnet.MVC.Models;
-using bacit_dotnet.MVC.Repositories;
+using bacit_dotnet.MVC.Repositories.Category;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bacit_dotnet.MVC.Controllers

@@ -6,6 +6,8 @@
         public string name { get; set; }
         public string password { get; set;}
         public int role_id { get; set; }
+        public List<TeamEntity> teams { get; set; }
+        public List<SuggestionEntity> suggestions { get; set; }
 
     }
 }
