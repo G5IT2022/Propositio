@@ -20,12 +20,12 @@
                     }
                 </div>
                 <div class="col-sm">
+                    @if(!sugg.isJustDoIt){
+
                     @sugg.status
                     <div class="suggdiv @sugg.status"></div>
-                    @if(sugg.isJustDoIt){
-                        <div>
-                            DETTE ER JUST DO IT ALTSÅ!
-                        </div>
+                    }else{
+                        <div class="suggdiv JustDoIt">JDI!</div>
                     }
                 </div>
             </div>

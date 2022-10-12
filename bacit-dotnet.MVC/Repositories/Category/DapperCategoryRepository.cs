@@ -23,18 +23,6 @@ namespace bacit_dotnet.MVC.Repositories.Category
                 return category.ToList();
             }
         }
-        public void addCategories(List<CategoryEntity> categories, int suggid)
-        {
-            var query = @"INSERT INTO SuggestionCategory(suggestion_id, category_id) VALUES(@suggid, @categoryid)";
-            foreach (CategoryEntity category in categories)
-            {
-                using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
-                {
-                    connection.Execute(query, new { suggid = suggid, categoryid = category.category_id });
-                }
-            }
-        }
-
         public List<CategoryEntity> getCategoriesForSuggestion(int id)
         {
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
