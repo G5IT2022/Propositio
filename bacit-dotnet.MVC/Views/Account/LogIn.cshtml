@@ -1,0 +1,41 @@
+﻿<html>
+@using bacit_dotnet.MVC.Models
+@using bacit_dotnet.MVC.Entities
+@model AccountViewModel
+@{
+    Layout = "";
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Propositio</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/bacit_dotnet.MVC.styles.css" asp-append-version="true" />
+    <style>
+        body{
+            margin-left: 20%;
+        }
+    </style>
+</head>
+<body>
+    <img src="" alt="bilde" />
+    <h1>Logg inn</h1>
+
+    <form asp-controller="Account" asp-action="Verify">
+        <!--Navn-->
+        <div class="form-group">
+            <label for="name">Navn</label>
+            <input name="name" type="text" class="form-control" id="name" placeholder="Skriv inn navn">
+        </div><br />
+        <!--Passord-->
+        <div class="form-group">
+            <label for="password">Passord</label>
+            <input name="password" type="text" class="form-control" id="password" placeholder="Skriv inn passord">
+        </div><br />
+        <!--Knapper-->
+        <button type="submit" class="btn btn-primary">Logg inn</button>
+        <button type="submit" class="btn btn-primary">Glemt passord</button>
+    </form>
+</body>
+</html>
