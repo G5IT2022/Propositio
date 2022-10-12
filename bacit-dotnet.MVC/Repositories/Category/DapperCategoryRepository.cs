@@ -23,7 +23,19 @@ namespace bacit_dotnet.MVC.Repositories.Category
                 return category.ToList();
             }
         }
+        public List<CategoryEntity> getCategoriesForSuggestion(int id)
+        {
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var query = @"SELECT c.category_name FROM Category as c INNER JOIN
+                SuggestionCategory as sc on c.category_id = sc.category_id INNER JOIN Suggestion as s on s.suggestion_id = sc.suggestion_id WHERE s.suggestion_id = @suggid";
+                var categories = connection.Query<CategoryEntity>(query, new { suggid = id });
+
+                return categories.ToList();
+            }
+
+        }
+    }
 
     }
-}
 

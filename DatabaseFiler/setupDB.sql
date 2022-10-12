@@ -45,8 +45,8 @@ lastUpdatedTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 
 CREATE TABLE Suggestion(
 suggestion_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
-title varchar(100) NOT NULL, 
-description text NOT NULL, 
+title nvarchar(100) NOT NULL, 
+description nvarchar(6000) NOT NULL, 
 status enum("PLAN", "DO", "STUDY", "ACT", "FINISHED") NOT NULL,
 isJustDoIt BOOLEAN NOT NULL,
 ownership_emp_id int NOT NULL, 

@@ -33,6 +33,10 @@ namespace bacit_dotnet.MVC.Controllers
             {
                 emp.suggestions = suggestionRepository.getByEmployeeID(emp.emp_id);
                 emp.teams = teamRepository.Get(emp.emp_id);
+                foreach(SuggestionEntity suggestion in emp.suggestions)
+                {
+                    suggestion.categories = categoryRepository.getCategoriesForSuggestion(suggestion.suggestion_id);
+                }
             }
             return View(model);
         }
@@ -44,21 +48,40 @@ namespace bacit_dotnet.MVC.Controllers
             return View(suggestionRegisterModel);
         }
         [HttpPost]
-        public IActionResult Create(SuggestionRegisterModel model)
+        public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection)
         {
             SuggestionEntity suggestion = new SuggestionEntity
             {
+                suggestion_id = suggestionRepository.getNewSuggestionID(),
                 title = model.title,
                 description = model.description,
                 status = STATUS.PLAN,
+                categories = parseCategories(collection),
                 isJustDoIt = model.isJustDoIt,
-                categories = new List<CategoryEntity>(),
                 ownership_emp_id = 1, 
                 poster_emp_id = 1,
                 timestamp_id = 1
             };
             suggestionRepository.Add(suggestion);
-            return View("Index");
+            return RedirectToAction("Index");
+        }
+
+        private List<CategoryEntity> parseCategories(IFormCollection collection)
+        {
+            List<CategoryEntity> availableCategories = categoryRepository.getAll();
+            List <CategoryEntity > categories = new List<CategoryEntity>();
+            foreach (var item in collection.Keys)
+            {
+                foreach(var category in availableCategories)
+                {
+                    if (category.category_name.Equals(item))
+                    {
+                        categories.Add(category);
+                    }
+                }
+            }
+            return categories;
         }
     }
+
 }

@@ -3,6 +3,8 @@ using bacit_dotnet.MVC.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using MySqlConnector;
+using static Dapper.SqlMapper;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace bacit_dotnet.MVC.Repositories.Suggestion
 {
@@ -15,23 +17,29 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
             this.sqlConnector = sqlConnector;
         }
 
-        public void Add(SuggestionEntity entity)
+        public void Add(SuggestionEntity suggestion)
+        {
+            string suggestionQuery = @"INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id)
+                VALUES (@title, @description, 'PLAN', @isJustDoIt, @ownership_emp_id, @poster_emp_id, @timestamp_id)";
+            string cateogiresQuery = @"INSERT INTO SuggestionCategory(suggestion_id, category_id) VALUES (@suggid, @categoryid)";
+
+
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                connection.Execute(suggestionQuery, new { title = suggestion.title, description = suggestion.description, isJustDoIt = suggestion.isJustDoIt, ownership_emp_id = suggestion.ownership_emp_id, poster_emp_id = suggestion.poster_emp_id, timestamp_id = suggestion.timestamp_id });
+                foreach (CategoryEntity category in suggestion.categories)
+                { 
+                    connection.Execute(cateogiresQuery, new { suggid = suggestion.suggestion_id, categoryid = category.category_id});  
+                }
+            }
+        }
+
+        public int getNewSuggestionID()
         {
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                string sql = @"INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES (@title, @description, 'PLAN', @isJustDoIt, @ownership_emp_id, @poster_emp_id, @timestamp_id)";
-                connection.Execute(sql, new
-                {
-                   title = entity.title,
-                   description = entity.description,
-                   status =  entity.status,
-                   isJustDoIt =  entity.isJustDoIt,
-                   ownership_emp_id =  entity.ownership_emp_id,
-                   poster_emp_id = entity.poster_emp_id,
-                   timestamp_id =  entity.timestamp_id
-                });
-                
-               // connection.Insert<SuggestionEntity>(entity);
+                var count = connection.QueryFirst<int>("SELECT COUNT(*) FROM Suggestion");
+                return count + 1;
             }
         }
 

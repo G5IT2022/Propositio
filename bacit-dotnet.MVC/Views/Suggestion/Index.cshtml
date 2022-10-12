@@ -20,14 +20,26 @@
                     }
                 </div>
                 <div class="col-sm">
+                    @if(!sugg.isJustDoIt){
+
                     @sugg.status
                     <div class="suggdiv @sugg.status"></div>
+                    }else{
+                        <div class="suggdiv JustDoIt">JDI!</div>
+                    }
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <p>@sugg.title</p>
                     <p>@sugg.description</p>
+                </div>
+            </div>
+            <div class="row test">
+                <div class="col">
+                 @foreach(var category in sugg.categories){
+                     @(category.category_name += " ");
+                 }
                 </div>
             </div>
         </div>
