@@ -52,6 +52,7 @@ namespace bacit_dotnet.MVC.Controllers
         {
             SuggestionEntity suggestion = new SuggestionEntity
             {
+                suggestion_id = suggestionRepository.getNewSuggestionID(),
                 title = model.title,
                 description = model.description,
                 status = STATUS.PLAN,
@@ -62,8 +63,6 @@ namespace bacit_dotnet.MVC.Controllers
                 timestamp_id = 1
             };
             suggestionRepository.Add(suggestion);
-            int suggid = suggestionRepository.getLatestSuggestionID();
-            categoryRepository.addCategories(suggestion.categories, suggid);
             return RedirectToAction("Index");
         }
 
