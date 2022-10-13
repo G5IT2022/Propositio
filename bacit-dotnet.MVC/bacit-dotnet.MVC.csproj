@@ -24,7 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\" />
+    <None Include="wwwroot\img\logo.jpeg" />
+    <None Include="wwwroot\img\logo.png" />
   </ItemGroup>
 
 </Project>

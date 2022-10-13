@@ -15,6 +15,15 @@ namespace bacit_dotnet.MVC.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Verify()
+        {
+            /**
+             *  HER MÅ BRUKEREN VERIFISERES LOL
+             * **/
+            return RedirectToAction("Index", "Suggestion");
+        }
+
         
         public IActionResult ChangePassword()
         {

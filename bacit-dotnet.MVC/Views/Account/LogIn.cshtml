@@ -12,30 +12,45 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/bacit_dotnet.MVC.styles.css" asp-append-version="true" />
-    <style>
-        body{
-            margin-left: 20%;
-        }
-    </style>
 </head>
 <body>
-    <img src="" alt="bilde" />
-    <h1>Logg inn</h1>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="row h-25">
+                <div class="col-sm-12 my-auto">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5"></div>
+                <div class="col-2">
+                    <img src="/img/logo.jpeg" alt="bilde" height="100%" width="100%" />
+                </div>
+                <div class="col-5"></div>
+            </div>
+            <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <form asp-controller="account" asp-action="verify" method="post">
+                        <!--Navn-->
+                        <div class="form-group">
+                            <label for="emp_id">Ansattnr</label>
+                            <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Skriv inn ditt ansattnr">
+                        </div><br />
+                        <!--Passord-->
+                        <div class="form-group">
+                            <label for="password">Passord</label>
+                            <input name="password" type="password" class="form-control" id="password" placeholder="Skriv inn passord">
+                        </div><br />
+                        <!--Knapper-->
+                        <button type="submit" class="btn btn-success">Logg inn</button>
+                        <button class="btn btn-link" asp-controller="account" asp-action="changepassword">Glemt passord</button>
+                    </form>
+                </div>
+                <div class="col-4"></div>
 
-    <form asp-controller="Account" asp-action="Verify">
-        <!--Navn-->
-        <div class="form-group">
-            <label for="name">Navn</label>
-            <input name="name" type="text" class="form-control" id="name" placeholder="Skriv inn navn">
-        </div><br />
-        <!--Passord-->
-        <div class="form-group">
-            <label for="password">Passord</label>
-            <input name="password" type="password" class="form-control" id="password" placeholder="Skriv inn passord">
-        </div><br />
-        <!--Knapper-->
-        <button type="submit" class="btn btn-primary">Logg inn</button>
-        <button type="submit" class="btn btn-primary">Glemt passord</button>
-    </form>
+                    
+            </div>
+        </main>
+    </div>
 </body>
 </html>
