@@ -1,7 +1,7 @@
 DROP DATABASE IF EXISTS propositio;
 CREATE DATABASE propositio;
 USE propositio;
-alter database propositio charset = 'utf8';
+SET NAMES 'utf8' COLLATE 'utf8_danish_ci';
 
 
 DROP TABLE IF EXISTS Employee, Team, TeamList, Role, SuggestionComment, Suggestion, SuggestionTimestamp, CategoryList, Category;
@@ -14,15 +14,15 @@ role_name varchar(100) NOT NULL
 
 CREATE TABLE Employee(
 emp_id int NOT NULL PRIMARY KEY,
-name varchar(200) NOT NULL,
-password varchar(50) NOT NULL, 
+name nvarchar(200) NOT NULL,
+password nvarchar(50) NOT NULL, 
 role_id int NOT NULL,
 CONSTRAINT roleFK FOREIGN KEY (role_id) REFERENCES Role(role_id)
 );
 
 CREATE TABLE Team(
 team_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
-team_name varchar(100) NOT NULL
+team_name nvarchar(100) NOT NULL
 );
 
 CREATE TABLE TeamList(
@@ -61,7 +61,7 @@ CREATE TABLE SuggestionComment(
 comment_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
 emp_id int NOT NULL, 
 suggestion_id int NOT NULL, 
-description text NOT NULL, 
+description nvarchar(6000) NOT NULL, 
 createdTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 CONSTRAINT EmployeeCommentFK FOREIGN KEY (emp_id) REFERENCES Employee(emp_id),
 CONSTRAINT SuggestionFK FOREIGN KEY (suggestion_id) REFERENCES Suggestion(suggestion_id)
@@ -81,6 +81,8 @@ CONSTRAINT SuggestionCategoryFK FOREIGN KEY (suggestion_id) REFERENCES Suggestio
 CONSTRAINT CategoryFK FOREIGN KEY (category_id) REFERENCES Category(category_id),
 CONSTRAINT SuggestionCategoryPK PRIMARY KEY (suggestion_id, category_id)
 );
+
+ALTER TABLE Suggestion CONVERT TO CHARACTER SET utf8 COLLATE utf8_danish_ci;
 
 /*GENERER TEAMS*/
 
@@ -229,4 +231,5 @@ INSERT INTO SuggestionComment(emp_id, suggestion_id,description) VALUES (7,7, "D
 INSERT INTO SuggestionComment(emp_id, suggestion_id,description) VALUES (8,8, "PDF-en i forslaget burde ha samme format over alt.");
 INSERT INTO SuggestionComment(emp_id, suggestion_id,description) VALUES (9,9, "Dere burde få mer informasjon fra kundene!");
 INSERT INTO SuggestionComment(emp_id, suggestion_id,description) VALUES (10,10, "Sjekk dette. Link: https://test.com/%22");
+
 
