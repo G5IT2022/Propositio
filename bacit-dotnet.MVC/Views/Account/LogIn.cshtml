@@ -21,20 +21,20 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-5"></div>
-                <div class="col-2">
-                    <img src="/img/logo.jpeg" alt="bilde" height="100%" width="100%" />
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4 text-center">
+                    <img src="/img/logo.jpeg" alt="bilde" style="width: 185px" />
                 </div>
-                <div class="col-5"></div>
+                <div class="col-sm-4"></div>
             </div>
             <div class="row">
-                <div class="col-4"></div>
-                <div class="col-4">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4">
                     <form asp-controller="account" asp-action="verify" method="post">
                         <!--Navn-->
                         <div class="form-group">
                             <label for="emp_id">Ansattnr</label>
-                            <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Skriv inn ditt ansattnr">
+                            <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Skriv inn ditt ansattnummer">
                         </div><br />
                         <!--Passord-->
                         <div class="form-group">
@@ -42,13 +42,14 @@
                             <input name="password" type="password" class="form-control" id="password" placeholder="Skriv inn passord">
                         </div><br />
                         <!--Knapper-->
-                        <button type="submit" class="btn btn-success">Logg inn</button>
-                        <button class="btn btn-link" asp-controller="account" asp-action="changepassword">Glemt passord</button>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-outline-success px-4">Logg inn</button>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-link" asp-controller="account" asp-action="changepassword">Glemt passord</button>                            
+                        </div>                        
                     </form>
-                </div>
-                <div class="col-4"></div>
-
-                    
+                </div>                                
             </div>
         </main>
     </div>
