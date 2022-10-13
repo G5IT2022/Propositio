@@ -20,14 +20,10 @@ body {
    
 }
 .suggdiv{
-    height: 30px; 
-    width: 30px;
-    margin-top: 1px;
-    border-radius: 100px;
     display: inline-block;
 }
 .sugg-info {
-    background-color: #AE8A63;
+    background-color: #d2d1d1;
     color: #FFF;
     font-weight: bold;
 }
@@ -35,6 +31,7 @@ body {
     background-color: #2D722C;
 }
 .DO {
+
     background-color: #AFEC2E;
 }
 .STUDY {
@@ -43,6 +40,6 @@ body {
 .ACT {
     background-color: #7E7BFF;
 }
-.test{
-    background-color: orange;
+.JUSTDOIT{
+    background-color: red;
 }

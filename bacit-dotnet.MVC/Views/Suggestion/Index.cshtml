@@ -7,40 +7,43 @@
 {
     @foreach (SuggestionEntity sugg in emp.suggestions)
     {
+            @if(sugg.isJustDoIt){
+                sugg.status = STATUS.JUSTDOIT;
+            }
+        
         <div class="container sugg-container">
             <div class="row sugg-info">
-                <div class="col-sm">
-                    <p>@emp.name</p>
-                </div>
-                <div class="col-sm">
+                <div class="col-2 @sugg.status"></div>
+                <div class="col-4">@emp.name</div>
+                <div class="col-6">
                     @foreach (var team in emp.teams)
                     {
                         @(team.team_name += " ")
                         ;
                     }
                 </div>
-                <div class="col-sm">
-                    @if(!sugg.isJustDoIt){
-
-                    @sugg.status
-                    <div class="suggdiv @sugg.status"></div>
-                    }else{
-                        <div class="suggdiv JustDoIt">JDI!</div>
-                    }
-                </div>
+              
+             
+               
             </div>
             <div class="row">
-                <div class="col">
+                <div class="col-2 @sugg.status">
+                    @sugg.status
+                </div>
+                <div class="col-10">
                     <p>@sugg.title</p>
                     <p>@sugg.description</p>
                 </div>
+               
             </div>
             <div class="row test">
-                <div class="col">
+                <div class="col-2 @sugg.status"></div>
+                <div class="col-10">
                  @foreach(var category in sugg.categories){
                      @(category.category_name += " ");
                  }
                 </div>
+             
             </div>
         </div>
     }

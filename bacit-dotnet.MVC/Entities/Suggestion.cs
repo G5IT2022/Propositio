@@ -3,7 +3,7 @@
 namespace bacit_dotnet.MVC.Entities
 {
 
-    public enum STATUS { PLAN, DO, STUDY, ACT, FINISHED}
+    public enum STATUS { PLAN, DO, STUDY, ACT, FINISHED, JUSTDOIT}
 
     [Table ("Suggestion")]
    public class SuggestionEntity
