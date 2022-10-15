@@ -1,0 +1,12 @@
+﻿@using bacit_dotnet.MVC.Models;
+@model bacit_dotnet.MVC.Models.AdminNewUserModel;
+
+<form asp-action="NewUser" asp-controller="Admin" method="post">
+    @Html.LabelFor(m => m.emp_id);
+    @Html.TextBoxFor(m => m.emp_id);
+    @Html.LabelFor(m => m.name);
+    @Html.TextBoxFor(m => m.name);
+    @Html.LabelFor(m => m.password);
+    @Html.TextBoxFor(m => m.password);
+    <button type="submit">Save</button>
+</form>

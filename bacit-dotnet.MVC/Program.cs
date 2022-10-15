@@ -1,4 +1,5 @@
 
+using bacit_dotnet.MVC.Authentication;
 using bacit_dotnet.MVC.DataAccess;
 using bacit_dotnet.MVC.Repositories.Category;
 using bacit_dotnet.MVC.Repositories.Comment;
@@ -6,9 +7,13 @@ using bacit_dotnet.MVC.Repositories.Employee;
 using bacit_dotnet.MVC.Repositories.Role;
 using bacit_dotnet.MVC.Repositories.Suggestion;
 using bacit_dotnet.MVC.Repositories.Team;
+using bacit_dotnet.MVC.Repositories.Timestamp;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
+using System.Text;
 
 public class Program
 {
@@ -20,6 +25,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddTransient<ISqlConnector, SqlConnector>();
+        builder.Services.AddScoped<ITokenService, TokenService>();
         /*
         builder.Services.AddDbContext<DataContext>(options => {
             options.UseMySql(builder.Configuration.GetConnectionString("MariaDb"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MariaDb")));
@@ -31,6 +37,29 @@ public class Program
         builder.Services.AddSingleton<IRoleRepository, DapperRoleRepository>();
         builder.Services.AddSingleton<ISuggestionRepository, DapperSuggestionRepository>();
         builder.Services.AddSingleton<ITeamRepository, DapperTeamRepository>();
+        builder.Services.AddSingleton<ITimestampRepository, DapperTimestampRepository>();
+        builder.Services.AddSession();
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(o =>
+        {
+            o.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey
+                (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true
+            };
+        });
+        builder.Services.AddAuthorization();
 
         var app = builder.Build();
          
@@ -44,15 +73,25 @@ public class Program
 
         //app.UseHttpsRedirection();
         app.UseStaticFiles();
+        app.UseSession();
+        app.Use(async (context, next) =>
+        {
+            var token = context.Session.GetString("Token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                context.Request.Headers.Add("Authorization", "Bearer " + token);
+            }
+            await next();
+        });
 
         app.UseRouting();
-
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(name: "default", pattern: "{controller=account}/{action=login}/{id?}");
         app.MapControllers();   
 
 
-        app.Run();
+        app.Run("https://localhost:4000");
     }
 }

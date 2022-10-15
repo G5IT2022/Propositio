@@ -4,25 +4,33 @@ USE propositio;
 SET NAMES 'utf8' COLLATE 'utf8_danish_ci';
 
 
-DROP TABLE IF EXISTS Employee, Team, TeamList, Role, SuggestionComment, Suggestion, SuggestionTimestamp, CategoryList, Category;
+DROP TABLE IF EXISTS Employee, Team, TeamList, Role, SuggestionComment, Suggestion, SuggestionTimestamp, CategoryList, Category, AuthenticationRole, EmployeeAuthenticationRole;
 
 CREATE TABLE Role(
 role_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
 role_name varchar(100) NOT NULL
+);
+CREATE TABLE AuthorizationRole(
+authorization_role_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+authorization_role_name nvarchar(100) NOT NULL
 );
 
 
 CREATE TABLE Employee(
 emp_id int NOT NULL PRIMARY KEY,
 name nvarchar(200) NOT NULL,
-password nvarchar(50) NOT NULL, 
+passwordhash nvarchar(200) NOT NULL, 
+salt binary(64) NOT NULL,
 role_id int NOT NULL,
+authorization_role_id int NOT NULL, 
+CONSTRAINT authRoleFK FOREIGN KEY (authorization_role_id) REFERENCES AuthorizationRole(authorization_role_id),
 CONSTRAINT roleFK FOREIGN KEY (role_id) REFERENCES Role(role_id)
 );
 
 CREATE TABLE Team(
 team_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
-team_name nvarchar(100) NOT NULL
+team_name nvarchar(100) NOT NULL,
+team_lead_id int NOT NULL
 );
 
 CREATE TABLE TeamList(
@@ -33,15 +41,7 @@ CONSTRAINT TeamFK FOREIGN KEY (team_id) REFERENCES Team(team_id),
 CONSTRAINT TeamListPK PRIMARY KEY (emp_id, team_id)
 );
 
-CREATE TABLE SuggestionTimestamp(
-timestamp_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
-createdTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-planTimestamp datetime, 
-doTimestamp datetime, 
-studyTimestamp datetime, 
-actTimestamp datetime, 
-lastUpdatedTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+
 
 CREATE TABLE Suggestion(
 suggestion_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
@@ -50,11 +50,22 @@ description nvarchar(6000) NOT NULL,
 status enum("PLAN", "DO", "STUDY", "ACT", "FINISHED") NOT NULL,
 isJustDoIt BOOLEAN NOT NULL,
 ownership_emp_id int NOT NULL, 
-poster_emp_id int NOT NULL, 
-timestamp_id int NOT NULL, 
+author_emp_id int NOT NULL, 
 CONSTRAINT OwnershipFK FOREIGN KEY (ownership_emp_id) REFERENCES Employee(emp_id),
-CONSTRAINT PosterFK FOREIGN KEY (poster_emp_id) REFERENCES Employee(emp_id), 
-CONSTRAINT TimestampFK FOREIGN KEY (timestamp_id) REFERENCES SuggestionTimestamp(timestamp_id) 
+CONSTRAINT PosterFK FOREIGN KEY (author_emp_id) REFERENCES Employee(emp_id) 
+);
+
+CREATE TABLE SuggestionTimestamp(
+timestamp_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+suggestion_id int NOT NULL,
+createdTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+planTimestamp datetime, 
+doTimestamp datetime, 
+studyTimestamp datetime, 
+actTimestamp datetime, 
+lastUpdatedTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+dueByTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+CONSTRAINT SuggestionTimestampFK FOREIGN KEY (suggestion_id) REFERENCES Suggestion(suggestion_id)
 );
 
 CREATE TABLE SuggestionComment(
@@ -72,8 +83,6 @@ category_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
 category_name varchar(100) NOT NULL
 );
 
-
-
 CREATE TABLE SuggestionCategory(
 suggestion_id int NOT NULL, 
 category_id int NOT NULL,
@@ -82,20 +91,10 @@ CONSTRAINT CategoryFK FOREIGN KEY (category_id) REFERENCES Category(category_id)
 CONSTRAINT SuggestionCategoryPK PRIMARY KEY (suggestion_id, category_id)
 );
 
+
+
+
 ALTER TABLE Suggestion CONVERT TO CHARACTER SET utf8 COLLATE utf8_danish_ci;
-
-/*GENERER TEAMS*/
-
-INSERT INTO Team(team_name) VALUES ('Ledergruppe');
-INSERT INTO Team(team_name) VALUES ('Salg og marked');
-INSERT INTO Team(team_name) VALUES ('Produksjon');
-INSERT INTO Team(team_name) VALUES ('Teknisk');
-INSERT INTO Team(team_name) VALUES ('Logistikk');
-INSERT INTO Team(team_name) VALUES ('Kundeserivce');
-INSERT INTO Team(team_name) VALUES ('Klageavdeling');
-INSERT INTO Team(team_name) VALUES ('Heksejakt');
-INSERT INTO Team(team_name) VALUES ('Innleide Leiemordere');
-INSERT INTO Team(team_name) VALUES ('Tullekopper');
 
 
 /*GENERER ROLLER*/
@@ -111,29 +110,51 @@ INSERT INTO Role(role_name) VALUES('Malemester');
 INSERT INTO Role(role_name) VALUES('IT person');
 INSERT INTO Role(role_name) VALUES('Statistikkforer');
 
+/*GENERER ROLLER TIL AUTENTISERING*/
+INSERT INTO AuthorizationRole(authorization_role_name) VALUES ("User");
+INSERT INTO AuthorizationRole(authorization_role_name) VALUES ("Admin");
+INSERT INTO AuthorizationRole(authorization_role_name) VALUES ("TeamLead");
+
+
 
 /*GENERER ANSATTE*/
 
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES (1,"Arne Knutson", "password",1);
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES (2,"Carl Thorsen", "password1",2);
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES (3,"Bendik Borresen", "password2",3);
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES (4,"Sara Larsen", "password3",4);
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES(5,"Brage Martinson", "password4",5);
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES (6,"Jenny Smith", "password5",6);
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES (7,"Marie Hanson", "password6",7);
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES (8,"Nelle Hoftstadter", "password7",8);
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES (9,"Ole Willam Erikson", "password8",9);
-INSERT INTO Employee(emp_id, name, password,role_id) 
-VALUES (10,"Vanessa Merkel", "password9",10);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES (1,"Arne Knutson", "password", "hei",1, 1);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES (2,"Carl Thorsen", "password1", "hei",2, 2);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES (3,"Bendik Borresen", "password2", "hei",3, 1);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES (4,"Sara Larsen", "password3", "hei",4, 1);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES(5,"Brage Martinson", "password4", "hei",5, 1);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES (6,"Jenny Smith", "password5", "hei",6, 1);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES (7,"Marie Hanson", "password6", "hei",7, 1);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES (8,"Nelle Hoftstadter", "password7", "hei",8, 1);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES (9,"Ole Willam Erikson", "password8", "hei",9, 1);
+INSERT INTO Employee(emp_id, name, passwordhash, salt,role_id, authorization_role_id ) 
+VALUES (10,"Vanessa Merkel", "password9", "hei",10, 1);
+
+/*GENERER TEAMS*/
+
+INSERT INTO Team(team_name,team_lead_id) VALUES ('Ledergruppe',1);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Salg og marked',2);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Produksjon',3);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Teknisk',4);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Logistikk',1);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Kundeserivce',1);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Klageavdeling',1);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Heksejakt',1);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Innleide Leiemordere',1);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Tullekopper',1);
+
+
+
 
 /*GENERER TEAMLIST*/
 
@@ -169,38 +190,33 @@ INSERT INTO Category(category_name) VALUES ("Energi");
 INSERT INTO Category(category_name) VALUES ("Bærekraft");
 INSERT INTO Category(category_name) VALUES ("Industri 4.0");
 
-/*GENERER TIMESTAMPS*/
 
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
-INSERT INTO SuggestionTimestamp() VALUES();
 
 /*GENERER FORSLAG*/
 
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Egen stand", "Vi burde ha egen stand for destillert vann der truckene står for lading. Nå er det litt kaos med vannet og ofte finner vi det ikke når vi behøver det.", "Plan", False, 2, 2, 3);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Flytte installasjonsbordet", "Installasjonsbordet som står ved EL-skapet bør flyttes til den andre siden av EL-skapet. Det er vanskelig å få tilgang til EL-skapet sånn som bordet står nå.", "Plan", False, 3, 3, 4);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Flytte euro", "Europallene ble flyttet ut til høyre for inngangen til Hall A og ikke inne. De stod i veien.", "Act", True, 4, 4, 2); 
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Ingen røyking!", "Askebegeret må flyttes fra inngangen til Hall A til andre siden av parkeringsplassen under eiketreet. Ingen røyking på arbeidsplassen!", "Study", False, 5, 4, 5);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Heve/senke sengene", "Kan vi få mulighet til å heve å senke sengene? De sliter litt på kroppen når de ikke er grei høyde.", "Do", False, 8, 1, 7);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Vi vil ha kjøttbollene tilbake!", "Kan vi får tilbake kjøttbollene i kantina? Jeg er så lei av alt det vegandrittet. #reddkjøttbollene!", "Plan", False, 9, 9, 3);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Ny mekanisk rampe", "Ny mekanisk rampe til Hall B. Den som vi har nå har sluttet å fungere for lenge siden og vi har stadig problemer når biler kommer for å tømmes eller lastes. Last blir skadet og kan derfor ikke brukes! Koster vel mindre enn å fikse med tanke på hvor herpa den er.", "Study", False, 7, 1, 2);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Zoner i hall B", "Male eller teipe gulvet på nytt i Hall B så at zonene blir mer tydelige.",  "Act", False, 6, 6, 9);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Blomster i asfalten?", "Siden vi ikke gidder å asfaltere parkeringsplassen bak Hall B, kan vi da plante blomster i hullene i asfalten? Parkeringsplassen blir mer koselig da og hullene blir mer synlig så at vi ikke kjører ned i de.", "Plan", False, 9, 9, 4);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, poster_emp_id, timestamp_id) VALUES ("Vinsjer i taket", "Installere vinsjer i taket for å flytte på det vi jobber med enklere og raskere enn trallene vi bruker nå", "Act", True, 6, 2, 8);
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Egen stand", "Vi burde ha egen stand for destillert vann der truckene står for lading. Nå er det litt kaos med vannet og ofte finner vi det ikke når vi behøver det.", "Plan", False, 2, 2);
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Flytte installasjonsbordet", "Installasjonsbordet som står ved EL-skapet bør flyttes til den andre siden av EL-skapet. Det er vanskelig å få tilgang til EL-skapet sånn som bordet står nå.", "Plan", False, 3, 3);
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Flytte euro", "Europallene ble flyttet ut til høyre for inngangen til Hall A og ikke inne. De stod i veien.", "Act", True, 4, 4); 
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Ingen røyking!", "Askebegeret må flyttes fra inngangen til Hall A til andre siden av parkeringsplassen under eiketreet. Ingen røyking på arbeidsplassen!", "Study", False, 5, 4);
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Heve/senke sengene", "Kan vi få mulighet til å heve å senke sengene? De sliter litt på kroppen når de ikke er grei høyde.", "Do", False, 8, 1);
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Vi vil ha kjøttbollene tilbake!", "Kan vi får tilbake kjøttbollene i kantina? Jeg er så lei av alt det vegandrittet. #reddkjøttbollene!", "Plan", False, 9, 9);
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Ny mekanisk rampe", "Ny mekanisk rampe til Hall B. Den som vi har nå har sluttet å fungere for lenge siden og vi har stadig problemer når biler kommer for å tømmes eller lastes. Last blir skadet og kan derfor ikke brukes! Koster vel mindre enn å fikse med tanke på hvor herpa den er.", "Study", False, 7, 1);
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Zoner i hall B", "Male eller teipe gulvet på nytt i Hall B så at zonene blir mer tydelige.",  "Act", False, 6, 6);
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Blomster i asfalten?", "Siden vi ikke gidder å asfaltere parkeringsplassen bak Hall B, kan vi da plante blomster i hullene i asfalten? Parkeringsplassen blir mer koselig da og hullene blir mer synlig så at vi ikke kjører ned i de.", "Plan", False, 9, 9);
+INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Vinsjer i taket", "Installere vinsjer i taket for å flytte på det vi jobber med enklere og raskere enn trallene vi bruker nå", "Act", True, 6, 2);
 
+/*GENERER TIMESTAMPS*/
 
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(1);
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(2);
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(3);
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(4);
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(5);
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(6);
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(7);
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(8);
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(9);
+INSERT INTO SuggestionTimestamp(suggestion_id) VALUES(10);
 
 
 /*GENERER SUGGESTIONCATEGORY*/

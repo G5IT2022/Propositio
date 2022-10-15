@@ -20,5 +20,7 @@ namespace bacit_dotnet.MVC.Models
         public List<CategoryEntity> categories { get; set; }
         [DisplayName("Just Do It?")]
         public bool isJustDoIt { get; set; }
+      
+        public DateTime dueByTimestamp { get; set; }
     }
 }

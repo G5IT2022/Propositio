@@ -1,13 +1,18 @@
-﻿using bacit_dotnet.MVC.Entities;
+﻿using bacit_dotnet.MVC.Authentication;
+using bacit_dotnet.MVC.Entities;
 using bacit_dotnet.MVC.Models;
-using bacit_dotnet.MVC.Repositories.Category;
 using bacit_dotnet.MVC.Repositories.Employee;
 using bacit_dotnet.MVC.Repositories.Suggestion;
 using bacit_dotnet.MVC.Repositories.Team;
+using bacit_dotnet.MVC.Repositories.Category;
+using bacit_dotnet.MVC.Repositories.Timestamp;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bacit_dotnet.MVC.Controllers
 {
+   
+    [Authorize]
     public class SuggestionController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -15,64 +20,80 @@ namespace bacit_dotnet.MVC.Controllers
         private readonly ITeamRepository teamRepository;
         private readonly ISuggestionRepository suggestionRepository;
         private readonly ICategoryRepository categoryRepository;
-
-        public SuggestionController(ILogger<HomeController> logger, ISuggestionRepository suggestionRepository, ICategoryRepository categoryRepository, IEmployeeRepository employeeRepository, ITeamRepository teamRepository)
+        private readonly ITimestampRepository timestampRepository;
+        private readonly ITokenService tokenservice;
+        private readonly IConfiguration configuration;
+        public SuggestionController(ILogger<HomeController> logger, ISuggestionRepository suggestionRepository, ICategoryRepository categoryRepository,
+            IEmployeeRepository employeeRepository, ITeamRepository teamRepository, ITimestampRepository timestampRepository,
+            ITokenService tokenService, IConfiguration configuration)
         {
             _logger = logger;
             this.suggestionRepository = suggestionRepository;
             this.categoryRepository = categoryRepository;
             this.employeeRepository = employeeRepository;
             this.teamRepository = teamRepository;
+            this.tokenservice = tokenService;
+            this.timestampRepository = timestampRepository;
+            this.configuration = configuration;
         }
-
+        [Authorize]
         public IActionResult Index()
         {
-            EmployeeViewModel model = new EmployeeViewModel();
-            model.employees = employeeRepository.GetAll();
-            foreach (EmployeeEntity emp in model.employees)
-            {
-                emp.suggestions = suggestionRepository.getByEmployeeID(emp.emp_id);
-                emp.teams = teamRepository.Get(emp.emp_id);
-                foreach(SuggestionEntity suggestion in emp.suggestions)
+
+        
+                EmployeeViewModel model = new EmployeeViewModel();
+                model.employees = employeeRepository.GetAll();
+                foreach (EmployeeEntity emp in model.employees)
                 {
-                    suggestion.categories = categoryRepository.getCategoriesForSuggestion(suggestion.suggestion_id);
+                    emp.suggestions = suggestionRepository.GetByEmployeeID(emp.emp_id);
+                    emp.teams = teamRepository.Get(emp.emp_id);
+                    emp.authorizationRole = employeeRepository.GetEmployeeRoleName(emp.emp_id);
+                    foreach (SuggestionEntity suggestion in emp.suggestions)
+                    {
+                        suggestion.categories = categoryRepository.GetCategoriesForSuggestion(suggestion.suggestion_id);
+                        suggestion.timestamp = timestampRepository.Get(suggestion.suggestion_id);
+                    }
                 }
-            }
-            return View(model);
+                return View(model);
+            
         }
 
         public IActionResult Register()
         {
+
+
             SuggestionRegisterModel suggestionRegisterModel = new SuggestionRegisterModel();
-            suggestionRegisterModel.categories = categoryRepository.getAll();
+            suggestionRegisterModel.categories = categoryRepository.GetAll();
             return View(suggestionRegisterModel);
+
+
         }
         [HttpPost]
         public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection)
         {
             SuggestionEntity suggestion = new SuggestionEntity
             {
-                suggestion_id = suggestionRepository.getNewSuggestionID(),
+                suggestion_id = suggestionRepository.GetNewSuggestionID(),
                 title = model.title,
                 description = model.description,
                 status = STATUS.PLAN,
                 categories = parseCategories(collection),
                 isJustDoIt = model.isJustDoIt,
-                ownership_emp_id = 1, 
-                poster_emp_id = 1,
-                timestamp_id = 1
+                ownership_emp_id = Int32.Parse(User.Identity.Name),
+                author_emp_id = Int32.Parse(User.Identity.Name),
             };
-            suggestionRepository.Add(suggestion);
+            suggestionRepository.Create(suggestion);
+            timestampRepository.Create(suggestion.suggestion_id, model.dueByTimestamp);
             return RedirectToAction("Index");
         }
 
         private List<CategoryEntity> parseCategories(IFormCollection collection)
         {
-            List<CategoryEntity> availableCategories = categoryRepository.getAll();
-            List <CategoryEntity > categories = new List<CategoryEntity>();
+            List<CategoryEntity> availableCategories = categoryRepository.GetAll();
+            List<CategoryEntity> categories = new List<CategoryEntity>();
             foreach (var item in collection.Keys)
             {
-                foreach(var category in availableCategories)
+                foreach (var category in availableCategories)
                 {
                     if (category.category_name.Equals(item))
                     {
