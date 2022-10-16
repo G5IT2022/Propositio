@@ -16,12 +16,13 @@ namespace bacit_dotnet.MVC.Repositories.Employee
         {
             this.sqlConnector = sqlConnector;
         }
-        public void Create(EmployeeEntity emp)
+        public int Create(EmployeeEntity emp)
         {
             var query = @"INSERT INTO Employee(emp_id, name, passwordhash,salt, role_id, authorization_role_id) VALUES (@emp_id, @name, @passwordhash, @salt, @role_id, @authorization_role_id)";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                connection.Execute(query, new {emp_id = emp.emp_id, name = emp.name, passwordhash = emp.passwordhash, salt = emp.salt, role_id = emp.role_id, authorization_role_id = emp.authorization_role_id});
+                int result = connection.Execute(query, new {emp_id = emp.emp_id, name = emp.name, passwordhash = emp.passwordhash, salt = emp.salt, role_id = emp.role_id, authorization_role_id = emp.authorization_role_id});
+                return result;
             }
         }
         public EmployeeEntity DummyAuthenticate(int emp_id, string password)
@@ -76,6 +77,11 @@ namespace bacit_dotnet.MVC.Repositories.Employee
         public EmployeeEntity RealAuthenticate(int emp_id, string password)
         {
             throw new NotImplementedException();
+        }
+
+        public bool EmployeeExists(int emp_id)
+        {
+            return true;
         }
     }
 }

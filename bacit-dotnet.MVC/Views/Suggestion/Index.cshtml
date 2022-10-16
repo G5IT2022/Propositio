@@ -2,7 +2,6 @@
 @using bacit_dotnet.MVC.Models;
 @model bacit_dotnet.MVC.Models.EmployeeViewModel
 
-<h1>Hei &nbsp;@User.Identity.Name</h1>
 @foreach (EmployeeEntity emp in Model.employees)
 {
     @foreach (SuggestionEntity sugg in emp.suggestions)

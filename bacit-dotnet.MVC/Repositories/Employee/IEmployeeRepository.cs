@@ -4,8 +4,9 @@ namespace bacit_dotnet.MVC.Repositories.Employee
 {
     public interface IEmployeeRepository
     {
-        void Create(EmployeeEntity emp);
+        int Create(EmployeeEntity emp);
 
+        bool EmployeeExists(int emp_id);
         List<EmployeeEntity> GetAll();
         EmployeeEntity Get(int emp_id);
         int Update(EmployeeEntity emp);

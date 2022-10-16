@@ -33,7 +33,6 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpGet]
         public IActionResult LogIn(AccountViewModel model)
         {
-            //AccountViewModel model = new AccountViewModel();
             return View(model);
         }
 
@@ -42,26 +41,27 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpPost]
         public IActionResult Verify(AccountViewModel model)
         {
-            int emp_id = model.emp_id;
-            EmployeeEntity emp = employeeRepository.Get(emp_id);
+            EmployeeEntity emp = employeeRepository.Get(model.emp_id);
             if (emp == null)
             {
                 ViewBag.ErrorMessage = "Ansattnr eller passord er feil, vennligst prøv igjen.";
                 return View("LogIn", new AccountViewModel());
             }
-            if (emp_id <= 10)
+            if (model.emp_id <= 10)
             {
-                emp = employeeRepository.DummyAuthenticate(emp_id, model.password);
+                emp = employeeRepository.DummyAuthenticate(model.emp_id, model.password);
+
             }
             else
             {
                 byte[] password = PassHash.ComputeHMAC_SHA256(Encoding.UTF8.GetBytes(model.password), emp.salt);
                 string passwordstring = Convert.ToBase64String(password);
-                emp = employeeRepository.DummyAuthenticate(emp_id, passwordstring);
+                emp = employeeRepository.DummyAuthenticate(model.emp_id, passwordstring);
+                
             }
             if (emp == null)
             {
-                ViewBag.ErrorMessage = "Ansattnr eller passord er feil, vennligst prøv igjen.";
+                ViewBag.ErrorMessage = "Passordet er feil, vennligst prøv igjen.";
                 return View("LogIn", new AccountViewModel());
             }
 
@@ -78,6 +78,7 @@ namespace bacit_dotnet.MVC.Controllers
                 return View("LogIn", new AccountViewModel());
             }
         }
+        [AllowAnonymous]
         public IActionResult ChangePassword()
         {
             return View();

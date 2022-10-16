@@ -13,8 +13,9 @@ namespace bacit_dotnet.MVC.Authentication
         public string BuildToken(string key, string issuer, EmployeeEntity employee)
         {
             var claims = new[] {
-            new Claim(ClaimTypes.Name, employee.emp_id.ToString()),
+            new Claim(ClaimTypes.Name, employee.name),
             new Claim(ClaimTypes.Role, employee.authorizationRole),
+            new Claim(ClaimTypes.UserData, employee.emp_id.ToString()),
             new Claim(ClaimTypes.NameIdentifier,
             Guid.NewGuid().ToString())
         };

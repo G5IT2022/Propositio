@@ -26,11 +26,11 @@ public class Program
         builder.Services.AddControllersWithViews();
         builder.Services.AddTransient<ISqlConnector, SqlConnector>();
         builder.Services.AddScoped<ITokenService, TokenService>();
-        /*
+        
         builder.Services.AddDbContext<DataContext>(options => {
-            options.UseMySql(builder.Configuration.GetConnectionString("MariaDb"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MariaDb")));
+            options.UseMySql(builder.Configuration.GetConnectionString("propositio"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("propositio")));
         });
-        */
+        
         builder.Services.AddSingleton<ICategoryRepository, DapperCategoryRepository>();
         builder.Services.AddSingleton<ICommentRepository, DapperCommentRepository>();
         builder.Services.AddSingleton<IEmployeeRepository, DapperEmployeeRepository>();

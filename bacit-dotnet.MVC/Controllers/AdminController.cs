@@ -23,17 +23,20 @@ namespace bacit_dotnet.MVC.Controllers
 
         public IActionResult NewUser()
         {
+            ViewBag.Message = "Registrer ny ansatt";
             return View();
         }
         [HttpPost]
-        public IActionResult NewUser(AdminNewUserModel model)
+        [ValidateAntiForgeryToken]
+        public IActionResult NewUser(AdminNewUserModel model, IFormCollection coll)
         {
+            int result = 0;
             if (ModelState.IsValid)
             {
                 EmployeeEntity newEmp = new EmployeeEntity
                 {
                     emp_id = model.emp_id,
-                    name = model.name,
+                    name = model.first_name + " " + model.last_name,
                     salt = PassHash.GenerateSalt(),
                     passwordhash = model.password,
                     authorization_role_id = 1,
@@ -41,7 +44,15 @@ namespace bacit_dotnet.MVC.Controllers
                 };
                 var tmp = PassHash.ComputeHMAC_SHA256(Encoding.UTF8.GetBytes(newEmp.passwordhash), newEmp.salt);
                 newEmp.passwordhash = Convert.ToBase64String(tmp);
-                employeeRepository.Create(newEmp);
+                result = employeeRepository.Create(newEmp);
+            }
+            if(result != 1)
+            {
+                ViewBag.Created = "Noe gikk galt, prøv igjen.";
+            }
+            else
+            {
+                ViewBag.Created = $"Ansatt {model.first_name + " " + model.last_name} ble opprettet!";
             }
             return View("NewUser");
 

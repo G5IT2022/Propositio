@@ -8,6 +8,7 @@ using bacit_dotnet.MVC.Repositories.Category;
 using bacit_dotnet.MVC.Repositories.Timestamp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -39,15 +40,12 @@ namespace bacit_dotnet.MVC.Controllers
         [Authorize]
         public IActionResult Index()
         {
-
-        
                 EmployeeViewModel model = new EmployeeViewModel();
                 model.employees = employeeRepository.GetAll();
                 foreach (EmployeeEntity emp in model.employees)
                 {
                     emp.suggestions = suggestionRepository.GetByEmployeeID(emp.emp_id);
                     emp.teams = teamRepository.Get(emp.emp_id);
-                    emp.authorizationRole = employeeRepository.GetEmployeeRoleName(emp.emp_id);
                     foreach (SuggestionEntity suggestion in emp.suggestions)
                     {
                         suggestion.categories = categoryRepository.GetCategoriesForSuggestion(suggestion.suggestion_id);
@@ -79,8 +77,9 @@ namespace bacit_dotnet.MVC.Controllers
                 status = STATUS.PLAN,
                 categories = parseCategories(collection),
                 isJustDoIt = model.isJustDoIt,
-                ownership_emp_id = Int32.Parse(User.Identity.Name),
-                author_emp_id = Int32.Parse(User.Identity.Name),
+                ownership_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
+                author_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
+               // author_emp_id = Int32.Parse(User.Identity.Name),
             };
             suggestionRepository.Create(suggestion);
             timestampRepository.Create(suggestion.suggestion_id, model.dueByTimestamp);
