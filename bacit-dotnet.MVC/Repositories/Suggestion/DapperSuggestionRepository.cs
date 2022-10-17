@@ -19,14 +19,14 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
 
         public void Create(SuggestionEntity suggestion)
         {
-            string suggestionQuery = @"INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id)
-                VALUES (@title, @description, 'PLAN', @isJustDoIt, @ownership_emp_id, @poster_emp_id)";
+            string suggestionQuery = @"INSERT INTO Suggestion(title, description, status, ownership_emp_id, author_emp_id)
+                VALUES (@title, @description, 'PLAN', @ownership_emp_id, @poster_emp_id)";
             string cateogiresQuery = @"INSERT INTO SuggestionCategory(suggestion_id, category_id) VALUES (@suggid, @categoryid)";
 
 
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                connection.Execute(suggestionQuery, new { title = suggestion.title, description = suggestion.description, isJustDoIt = suggestion.isJustDoIt, ownership_emp_id = suggestion.ownership_emp_id, poster_emp_id = suggestion.author_emp_id });
+                connection.Execute(suggestionQuery, new { title = suggestion.title, description = suggestion.description, ownership_emp_id = suggestion.ownership_emp_id, poster_emp_id = suggestion.author_emp_id });
                 foreach (CategoryEntity category in suggestion.categories)
                 {
                     connection.Execute(cateogiresQuery, new { suggid = suggestion.suggestion_id, categoryid = category.category_id });

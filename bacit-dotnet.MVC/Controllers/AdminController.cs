@@ -16,6 +16,7 @@ namespace bacit_dotnet.MVC.Controllers
         {
             this.employeeRepository = employeeRepository;
         }
+
         public IActionResult Index()
         {
             return View();

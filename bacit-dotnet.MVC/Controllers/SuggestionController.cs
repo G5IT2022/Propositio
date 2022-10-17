@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace bacit_dotnet.MVC.Controllers
 {
-   
+
     [Authorize]
     public class SuggestionController : Controller
     {
@@ -40,31 +40,27 @@ namespace bacit_dotnet.MVC.Controllers
         [Authorize]
         public IActionResult Index()
         {
-                EmployeeViewModel model = new EmployeeViewModel();
-                model.employees = employeeRepository.GetAll();
-                foreach (EmployeeEntity emp in model.employees)
+            EmployeeViewModel model = new EmployeeViewModel();
+            model.employees = employeeRepository.GetAll();
+            foreach (EmployeeEntity emp in model.employees)
+            {
+                emp.suggestions = suggestionRepository.GetByEmployeeID(emp.emp_id);
+                emp.teams = teamRepository.Get(emp.emp_id);
+                foreach (SuggestionEntity suggestion in emp.suggestions)
                 {
-                    emp.suggestions = suggestionRepository.GetByEmployeeID(emp.emp_id);
-                    emp.teams = teamRepository.Get(emp.emp_id);
-                    foreach (SuggestionEntity suggestion in emp.suggestions)
-                    {
-                        suggestion.categories = categoryRepository.GetCategoriesForSuggestion(suggestion.suggestion_id);
-                        suggestion.timestamp = timestampRepository.Get(suggestion.suggestion_id);
-                    }
+                    suggestion.categories = categoryRepository.GetCategoriesForSuggestion(suggestion.suggestion_id);
+                    suggestion.timestamp = timestampRepository.Get(suggestion.suggestion_id);
                 }
-                return View(model);
-            
+            }
+            return View(model);
+
         }
 
         public IActionResult Register()
         {
-
-
             SuggestionRegisterModel suggestionRegisterModel = new SuggestionRegisterModel();
             suggestionRegisterModel.categories = categoryRepository.GetAll();
             return View(suggestionRegisterModel);
-
-
         }
         [HttpPost]
         public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection)
@@ -76,11 +72,17 @@ namespace bacit_dotnet.MVC.Controllers
                 description = model.description,
                 status = STATUS.PLAN,
                 categories = parseCategories(collection),
-                isJustDoIt = model.isJustDoIt,
                 ownership_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
-                author_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
-               // author_emp_id = Int32.Parse(User.Identity.Name),
+                author_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData))
             };
+            if (model.isJustDoIt == true)
+            {
+                suggestion.status = STATUS.JUSTDOIT;
+            }
+            else
+            {
+                suggestion.status = STATUS.PLAN;
+            }
             suggestionRepository.Create(suggestion);
             timestampRepository.Create(suggestion.suggestion_id, model.dueByTimestamp);
             return RedirectToAction("Index");

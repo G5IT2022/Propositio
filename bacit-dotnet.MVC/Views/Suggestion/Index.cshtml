@@ -8,11 +8,6 @@
     {
         if (emp.suggestions.Count > 0)
         {
-            @if (sugg.isJustDoIt)
-            {
-                sugg.status = STATUS.JUSTDOIT;
-            }
-
             <div class="container sugg-container">
                 <div class="row sugg-info">
                     <div class="col-2 @sugg.status"></div>

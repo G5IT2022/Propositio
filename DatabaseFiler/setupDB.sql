@@ -47,8 +47,7 @@ CREATE TABLE Suggestion(
 suggestion_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
 title nvarchar(100) NOT NULL, 
 description nvarchar(6000) NOT NULL, 
-status enum("PLAN", "DO", "STUDY", "ACT", "FINISHED") NOT NULL,
-isJustDoIt BOOLEAN NOT NULL,
+status enum("PLAN", "DO", "STUDY", "ACT", "FINISHED", "JUSTDOIT") NOT NULL,
 ownership_emp_id int NOT NULL, 
 author_emp_id int NOT NULL, 
 CONSTRAINT OwnershipFK FOREIGN KEY (ownership_emp_id) REFERENCES Employee(emp_id),
@@ -194,16 +193,16 @@ INSERT INTO Category(category_name) VALUES ("Industri 4.0");
 
 /*GENERER FORSLAG*/
 
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Egen stand", "Vi burde ha egen stand for destillert vann der truckene står for lading. Nå er det litt kaos med vannet og ofte finner vi det ikke når vi behøver det.", "Plan", False, 2, 2);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Flytte installasjonsbordet", "Installasjonsbordet som står ved EL-skapet bør flyttes til den andre siden av EL-skapet. Det er vanskelig å få tilgang til EL-skapet sånn som bordet står nå.", "Plan", False, 3, 3);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Flytte euro", "Europallene ble flyttet ut til høyre for inngangen til Hall A og ikke inne. De stod i veien.", "Act", True, 4, 4); 
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Ingen røyking!", "Askebegeret må flyttes fra inngangen til Hall A til andre siden av parkeringsplassen under eiketreet. Ingen røyking på arbeidsplassen!", "Study", False, 5, 4);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Heve/senke sengene", "Kan vi få mulighet til å heve å senke sengene? De sliter litt på kroppen når de ikke er grei høyde.", "Do", False, 8, 1);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Vi vil ha kjøttbollene tilbake!", "Kan vi får tilbake kjøttbollene i kantina? Jeg er så lei av alt det vegandrittet. #reddkjøttbollene!", "Plan", False, 9, 9);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Ny mekanisk rampe", "Ny mekanisk rampe til Hall B. Den som vi har nå har sluttet å fungere for lenge siden og vi har stadig problemer når biler kommer for å tømmes eller lastes. Last blir skadet og kan derfor ikke brukes! Koster vel mindre enn å fikse med tanke på hvor herpa den er.", "Study", False, 7, 1);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Zoner i hall B", "Male eller teipe gulvet på nytt i Hall B så at zonene blir mer tydelige.",  "Act", False, 6, 6);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Blomster i asfalten?", "Siden vi ikke gidder å asfaltere parkeringsplassen bak Hall B, kan vi da plante blomster i hullene i asfalten? Parkeringsplassen blir mer koselig da og hullene blir mer synlig så at vi ikke kjører ned i de.", "Plan", False, 9, 9);
-INSERT INTO Suggestion(title, description, status, isJustDoIt, ownership_emp_id, author_emp_id) VALUES ("Vinsjer i taket", "Installere vinsjer i taket for å flytte på det vi jobber med enklere og raskere enn trallene vi bruker nå", "Act", True, 6, 2);
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Egen stand", "Vi burde ha egen stand for destillert vann der truckene står for lading. Nå er det litt kaos med vannet og ofte finner vi det ikke når vi behøver det.", "JustDoIt",2, 2);
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Flytte installasjonsbordet", "Installasjonsbordet som står ved EL-skapet bør flyttes til den andre siden av EL-skapet. Det er vanskelig å få tilgang til EL-skapet sånn som bordet står nå.", "Plan", 3, 3);
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Flytte euro", "Europallene ble flyttet ut til høyre for inngangen til Hall A og ikke inne. De stod i veien.", "Act", 4, 4); 
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Ingen røyking!", "Askebegeret må flyttes fra inngangen til Hall A til andre siden av parkeringsplassen under eiketreet. Ingen røyking på arbeidsplassen!", "Study", 5, 4);
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Heve/senke sengene", "Kan vi få mulighet til å heve å senke sengene? De sliter litt på kroppen når de ikke er grei høyde.", "Do", 8, 1);
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Vi vil ha kjøttbollene tilbake!", "Kan vi får tilbake kjøttbollene i kantina? Jeg er så lei av alt det vegandrittet. #reddkjøttbollene!", "Plan", 9, 9);
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Ny mekanisk rampe", "Ny mekanisk rampe til Hall B. Den som vi har nå har sluttet å fungere for lenge siden og vi har stadig problemer når biler kommer for å tømmes eller lastes. Last blir skadet og kan derfor ikke brukes! Koster vel mindre enn å fikse med tanke på hvor herpa den er.", "Study", 7, 1);
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Zoner i hall B", "Male eller teipe gulvet på nytt i Hall B så at zonene blir mer tydelige.",  "Act", 6, 6);
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Blomster i asfalten?", "Siden vi ikke gidder å asfaltere parkeringsplassen bak Hall B, kan vi da plante blomster i hullene i asfalten? Parkeringsplassen blir mer koselig da og hullene blir mer synlig så at vi ikke kjører ned i de.", "Plan",9, 9);
+INSERT INTO Suggestion(title, description, status,ownership_emp_id, author_emp_id) VALUES ("Vinsjer i taket", "Installere vinsjer i taket for å flytte på det vi jobber med enklere og raskere enn trallene vi bruker nå", "Act",6, 2);
 
 /*GENERER TIMESTAMPS*/
 
