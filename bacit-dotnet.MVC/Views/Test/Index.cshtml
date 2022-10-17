@@ -1,0 +1,29 @@
+﻿@using bacit_dotnet.MVC.Entities
+@using bacit_dotnet.MVC.Models.Test
+@model bacit_dotnet.MVC.Models.Test.TestViewModel
+@Html.BeginForm("create", "test", "post"){
+@Html.LabelFor(m => m.category_id)
+@Html.TextAreaFor(m => m.category_id)
+@Html.LabelFor(m => m.category_name)
+@Html.TextAreaFor(m => m.category_name)
+<button type="submit" class="btn btn-primary">Lagre</button>
+    }
+@foreach (CategoryEntity category in Model.categories)
+{
+
+    <div class="row">
+        <div class="col-4">@category.category_id</div>
+        <div class="col-4">@category.category_name</div>
+        <form asp-controller="test" asp-action="edit" method="post">
+            <input type="hidden" value="@category.category_id">
+            <input type="hidden" value="@category.category_name">
+            <div class="col-2"><button type="submit">Edit</button></div>
+        </form>
+        <form asp-controller="test" asp-action="delete" method="post">
+            <input type="hidden" value="@category.category_id" name="@Model.category_id">
+            <input type="hidden" value="@category.category_name" name="@Model.category_name">
+            <div class="col-2"><button type="submit">Delete</button></div>
+        </form>
+    </div>
+
+}

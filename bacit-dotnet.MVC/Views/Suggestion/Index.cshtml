@@ -1,50 +1,55 @@
 ﻿@using bacit_dotnet.MVC.Entities
 @using bacit_dotnet.MVC.Models;
 @model bacit_dotnet.MVC.Models.EmployeeViewModel
-<h1>Alle Forslag</h1>
 
 @foreach (EmployeeEntity emp in Model.employees)
 {
     @foreach (SuggestionEntity sugg in emp.suggestions)
     {
-            @if(sugg.isJustDoIt){
-                sugg.status = STATUS.JUSTDOIT;
-            }
-        
-        <div class="container sugg-container">
-            <div class="row sugg-info">
-                <div class="col-2 @sugg.status"></div>
-                <div class="col-4">@emp.name</div>
-                <div class="col-6">
-                    @foreach (var team in emp.teams)
-                    {
-                        @(team.team_name += " ")
-                        ;
-                    }
+        if (emp.suggestions.Count > 0)
+        {
+            <div class="container sugg-container">
+                <div class="row sugg-info">
+                    <div class="col-2 @sugg.status"></div>
+                    <div class="col-2">@emp.name   @emp.authorizationRole</div>
+                    <div class="col-2">
+                        @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")
+                        <span class="due">@sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
+
+                    </div>
+                    <div class="col-6">
+                        @foreach (var team in emp.teams)
+                        {
+                            @(team.team_name += " ")
+                            ;
+                        }
+                    </div>
+
+
+
                 </div>
-              
-             
-               
+                <div class="row">
+                    <div class="col-2 @sugg.status">
+                        @sugg.status
+                    </div>
+                    <div class="col-10">
+                        <p>@sugg.title</p>
+                        <p>@sugg.description</p>
+                    </div>
+
+                </div>
+                <div class="row test">
+                    <div class="col-2 @sugg.status"></div>
+                    <div class="col-10">
+                        @foreach (var category in sugg.categories)
+                        {
+                            @(category.category_name += " ")
+                            ;
+                        }
+                    </div>
+
+                </div>
             </div>
-            <div class="row">
-                <div class="col-2 @sugg.status">
-                    @sugg.status
-                </div>
-                <div class="col-10">
-                    <p>@sugg.title</p>
-                    <p>@sugg.description</p>
-                </div>
-               
-            </div>
-            <div class="row test">
-                <div class="col-2 @sugg.status"></div>
-                <div class="col-10">
-                 @foreach(var category in sugg.categories){
-                     @(category.category_name += " ");
-                 }
-                </div>
-             
-            </div>
-        </div>
+        }
     }
 }

@@ -12,14 +12,10 @@ namespace bacit_dotnet.MVC.Entities
         public string title { get; set; }
         public string description { get; set; }
         public STATUS status { get; set; }
-        public bool isJustDoIt { get; set; }
         public int ownership_emp_id { get; set; }
-        public int poster_emp_id   { get; set; }
-        public int timestamp_id { get; set; }
+        public int author_emp_id   { get; set; }
+        public TimestampEntity timestamp { get; set; }
       
-        public EmployeeEntity owner;
-        
-        public EmployeeEntity poster;
         
         public List<CommentEntity> comments;
         public List<CategoryEntity> categories;

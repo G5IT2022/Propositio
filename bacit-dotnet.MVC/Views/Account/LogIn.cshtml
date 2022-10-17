@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 @using bacit_dotnet.MVC.Models
 @using bacit_dotnet.MVC.Entities
 @model AccountViewModel
@@ -28,18 +28,28 @@
                 <div class="col-sm-4"></div>
             </div>
             <div class="row">
+
+                <div class="col-4"></div>
+                <div class="col-4">
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <span class="red">@ViewBag.ErrorMessage</span>
+                    }
                 <div class="col-sm-4"></div>
                 <div class="col-sm-4">
+
                     <form asp-controller="account" asp-action="verify" method="post">
                         <!--Navn-->
                         <div class="form-group">
                             <label for="emp_id">Ansattnr</label>
+                            <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Skriv inn ditt ansattnr" value="@Model.emp_id"> 
                             <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Skriv inn ditt ansattnummer">
+
                         </div><br />
                         <!--Passord-->
                         <div class="form-group">
                             <label for="password">Passord</label>
-                            <input name="password" type="password" class="form-control" id="password" placeholder="Skriv inn passord">
+                            <input name="password" type="password" class="form-control" id="password" placeholder="Skriv inn passord" value="@Model.password">
                         </div><br />
                         <!--Knapper-->
                         <div class="text-center">
@@ -49,7 +59,22 @@
                             <button class="btn btn-link" asp-controller="account" asp-action="changepassword">Glemt passord</button>                            
                         </div>                        
                     </form>
+                    <form asp-controller="account" asp-action="verify" method="post"> 
+                        <input name="emp_id" value="1" hidden/>
+                        <input name="password" value="password" hidden/>
+                        <button type="submit">BrukerLogin Cheat</button>
+                    </form>
+                    <form asp-controller="account" asp-action="verify" method="post">
+                        
+                        <input name="emp_id" value="2" hidden="true"/>
+                        <input name="password" value="password1" hidden/>
+                        <button type="submit">Admin Cheat</button>
+                    </form>
+                </div>
+                <div class="col-4"></div>    
+
                 </div>                                
+
             </div>
         </main>
     </div>

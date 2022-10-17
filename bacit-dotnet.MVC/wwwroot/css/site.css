@@ -43,3 +43,13 @@ body {
 .JUSTDOIT{
     background-color: red;
 }
+.due{
+    color: #7E7BFF;
+}
+.red{
+    color: red;
+}
+.username{
+    font-weight: bold;
+
+}

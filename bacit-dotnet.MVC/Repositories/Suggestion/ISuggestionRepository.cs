@@ -4,12 +4,12 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
 {
     public interface ISuggestionRepository
     {
-        List<SuggestionEntity> getAll();
-        List<SuggestionEntity> getByEmployeeID(int id);
-        SuggestionEntity getById(int id);
-        List<SuggestionEntity> getByStatus(STATUS status);
-        void Add(SuggestionEntity entity);
-        public int getNewSuggestionID();
+        void Create(SuggestionEntity suggestion);
+        List<SuggestionEntity> GetAll();
+        List<SuggestionEntity> GetByEmployeeID(int author_emp_id);
+        SuggestionEntity GetById(int id);
+        List<SuggestionEntity> GetByStatus(STATUS status);
+        public int GetNewSuggestionID();
 
     }
 }

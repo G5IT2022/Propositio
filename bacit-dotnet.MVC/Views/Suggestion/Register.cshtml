@@ -4,39 +4,69 @@
 
 <form asp-action="Create" asp-controller="suggestion" method="post">
     <!--Tittel-->
-    <!--Tittel-->
-    <div class="form-group">
-        <label for="title">Tittel</label>
-        <input name="title" type="text" class="form-control" id="title" aria-describedby="emailHelp" placeholder="Skriv inn en tittel" value="@Model.title">
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="title">Tittel</label>
+                <input name="title" type="text" class="form-control" id="title" aria-describedby="emailHelp" placeholder="Skriv inn en tittel" value="@Model.title">
+            </div>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <!--Beskrivelse-->
+                <div class="form-group">
+                    <label for="description">Beskrivelse av forbedringsforslaget</label>
+                    <textarea name="description" class="form-control" id="description" aria-describedby="emailHelp" placeholder="Skriv inn ditt forbedringsforslag" value="@Model.description"></textarea>
+                </div>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
     </div>
-    <!--Beskrivelse-->
-    <div class="form-group">
-        <label for="description">Beskrivelse av forbedringsforslaget</label>
-        <input name="description" type="text" class="form-control" id="description" aria-describedby="emailHelp" placeholder="Skriv inn ditt forbedringsforslag" value="@Model.description">
-    </div>
-    <!--Is Just Do It?-->
-    <div class="form-check">
-        @Html.CheckBoxFor(m => m.isJustDoIt, new{@class="form-check-input"})
-        @Html.LabelFor(m => m.isJustDoIt, new{@class="form-check-label"})
+    <div class="row">
+        <div class="col-sm-6">
+            <label for="dueByTimestamp">Frist:</label>
+            <input type="date" class="form-control" id="dueByTimestamp" name="dueByTimestamp" value=" @Model.dueByTimestamp" />
+        </div>
+        <div class="col-sm-6">
+            <!--Is Just Do It?-->
+            <div class="form-check">
+                @Html.CheckBoxFor(m => m.isJustDoIt, new{@class="form-check-input"})
+                @Html.LabelFor(m => m.isJustDoIt, new{@class="form-check-label"})
+            </div>
+        </div>
     </div>
     <h3>Velg Kategorier: </h3>
     <!--Kategorier-->
-        @foreach(CategoryEntity category in Model.categories){
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="@category.category_id" id="flexCheckDefault" name="@category.category_name">
-            <label class="form-check-label" for="flexCheckDefault">
-                @category.category_name
-            </label>
-        </div>
+    <div class="row">
+        @foreach (CategoryEntity category in Model.categories)
+        {
+            <div class="col-sm-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="@category.category_id" id="flexCheckDefault" name="@category.category_name">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        @category.category_name
+                    </label>
+                </div>
+            </div>
         }
-    <div class="form-group">
-    <!--Vedlegg-->
-        <div class="mb-3">
+    </div>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
             <label for="formFile" class="form-label">Default file input example</label>
             <input class="form-control" type="file" id="formFile">
         </div>
-
-    <button type="submit" class="btn btn-primary">Lagre</button>
-    <button type="submit" class="btn btn-primary">Avbryt</button>
+        <div class="col-sm-4"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <button type="submit" class="btn btn-primary">Lagre</button>
+        </div>
+        <div class="col-sm-4">
+            <button class="btn btn-danger">Avbryt</button>
+        </div>
     </div>
 </form>
