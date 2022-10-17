@@ -19,16 +19,29 @@ body {
 .sugg-container{
    
 }
+.col-2{
+    height: 30px;
+}
+.suggtitle{
+    font-weight: bold;
+}
 .suggdiv{
     display: inline-block;
 }
 .sugg-info {
-    background-color: #d2d1d1;
+    background-color: dimgrey;
     color: #FFF;
     font-weight: bold;
+    line-height: 30px;
+}
+.PLAN, .DO, .STUDY, .ACT, .JUSTDOIT {
+    width: 15px;
+    height: 20px;
+    border-radius: 50%;
+    margin-top: 5px;
 }
 .PLAN {
-    background-color: #2D722C;
+    background-color: #A020F0;
 }
 .DO {
 
@@ -38,13 +51,19 @@ body {
     background-color: #F9E076;
 }
 .ACT {
-    background-color: #7E7BFF;
+    background-color: #2E2EFF;
 }
 .JUSTDOIT{
-    background-color: red;
+    background-color: #E30B5C;
+}
+.date{
+    margin: 0;
 }
 .due{
-    color: #7E7BFF;
+    color: darkred;
+}
+.made {
+    color: dimgrey;
 }
 .red{
     color: red;
@@ -52,4 +71,9 @@ body {
 .username{
     font-weight: bold;
 
+}
+.categories{
+    border-top: 1px solid gray;
+    color: dimgray;
+    line-height: 30px
 }

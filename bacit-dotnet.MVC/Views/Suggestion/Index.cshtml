@@ -1,6 +1,9 @@
 ﻿@using bacit_dotnet.MVC.Entities
 @using bacit_dotnet.MVC.Models;
 @model bacit_dotnet.MVC.Models.EmployeeViewModel
+<br />
+<h1>Alle Forslag</h1>
+<br />
 
 @foreach (EmployeeEntity emp in Model.employees)
 {
@@ -10,37 +13,35 @@
         {
             <div class="container sugg-container">
                 <div class="row sugg-info">
-                    <div class="col-2 @sugg.status"></div>
                     <div class="col-2">@emp.name   @emp.authorizationRole</div>
-                    <div class="col-2">
-                        @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")
-                        <span class="due">@sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
-
-                    </div>
                     <div class="col-6">
                         @foreach (var team in emp.teams)
                         {
                             @(team.team_name += " ")
                             ;
-                        }
+                        }   
                     </div>
+                    <div class="col-2 @sugg.status"></div>
+                    <div class="col-2">@sugg.status</div>
+
 
 
 
                 </div>
                 <div class="row">
-                    <div class="col-2 @sugg.status">
-                        @sugg.status
-                    </div>
-                    <div class="col-10">
-                        <p>@sugg.title</p>
+                    <div class="col-9">
+                        <p class="suggtitle">@sugg.title</p>
                         <p>@sugg.description</p>
+                    </div>
+                    <div class="col-2 date">
+                        <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
+                        <span class="due">Frist: @sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
+
                     </div>
 
                 </div>
                 <div class="row test">
-                    <div class="col-2 @sugg.status"></div>
-                    <div class="col-10">
+                    <div class="col-12 categories"> Kategorier: 
                         @foreach (var category in sugg.categories)
                         {
                             @(category.category_name += " ")
