@@ -9,6 +9,9 @@ using bacit_dotnet.MVC.Repositories.Timestamp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using bacit_dotnet.MVC.Models.Suggestion;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using bacit_dotnet.MVC.Repositories.Comment;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -22,10 +25,11 @@ namespace bacit_dotnet.MVC.Controllers
         private readonly ISuggestionRepository suggestionRepository;
         private readonly ICategoryRepository categoryRepository;
         private readonly ITimestampRepository timestampRepository;
+        private readonly ICommentRepository commentRepository;
         private readonly ITokenService tokenservice;
         private readonly IConfiguration configuration;
         public SuggestionController(ILogger<HomeController> logger, ISuggestionRepository suggestionRepository, ICategoryRepository categoryRepository,
-            IEmployeeRepository employeeRepository, ITeamRepository teamRepository, ITimestampRepository timestampRepository,
+            IEmployeeRepository employeeRepository, ITeamRepository teamRepository, ITimestampRepository timestampRepository, ICommentRepository commentRepository,
             ITokenService tokenService, IConfiguration configuration)
         {
             _logger = logger;
@@ -33,6 +37,7 @@ namespace bacit_dotnet.MVC.Controllers
             this.categoryRepository = categoryRepository;
             this.employeeRepository = employeeRepository;
             this.teamRepository = teamRepository;
+            this.commentRepository = commentRepository;
             this.tokenservice = tokenService;
             this.timestampRepository = timestampRepository;
             this.configuration = configuration;
@@ -103,6 +108,44 @@ namespace bacit_dotnet.MVC.Controllers
                 }
             }
             return categories;
+        }
+
+        public IActionResult Details(int id)
+        {   
+            SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
+            detailsModel.suggestion = suggestionRepository.GetById(id);            
+            detailsModel.employee = employeeRepository.Get(detailsModel.suggestion.author_emp_id);
+            detailsModel.employee.teams = teamRepository.Get(detailsModel.employee.emp_id);           
+            //Vi setter den categories listen med categoryRepository hvor det finnes query select *
+            //og metode Get som skal hente kategorier for et forslag fra suggestion_id 
+            detailsModel.suggestion.categories = categoryRepository.GetCategoriesForSuggestion(detailsModel.suggestion.suggestion_id);
+            detailsModel.suggestion.timestamp = timestampRepository.Get(detailsModel.suggestion.suggestion_id);
+            detailsModel.comment = commentRepository.Get(detailsModel.suggestion.suggestion_id);            
+            detailsModel.comment.timestamp = timestampRepository.Get(detailsModel.comment.comment_id);
+            //detailsModel.comment.employee = employeeRepository.Get(detailsModel.comment.comment_id);
+           
+
+
+            if (detailsModel.suggestion == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(detailsModel);
+        }
+
+        //Lage en ny kommentar
+        [HttpPost]
+        public IActionResult CreateComment(SuggestionDetailsModel model, IFormCollection collections)
+        {
+            CommentEntity comment = new CommentEntity
+            {
+                comment_id = commentRepository.GetNewCommentID(),
+                description = model.description,
+                emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData))
+            };
+            commentRepository.Create(comment);
+            timestampRepository.Create(comment.comment_id, model.dueByTimestamp);
+            return RedirectToAction("Details");
         }
     }
 

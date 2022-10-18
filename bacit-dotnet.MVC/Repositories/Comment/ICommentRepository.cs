@@ -14,6 +14,7 @@ namespace bacit_dotnet.MVC.Repositories.Comment
         /// Retrieves all the comments from the database as a list of comment entities
         /// </summary>
         /// <returns>A list of CommentEntity</returns>
+        public int GetNewCommentID();
         public List<CommentEntity> GetAll();
         /// <summary>
         /// Retrieves a single comment from the database with a matching comment_id
