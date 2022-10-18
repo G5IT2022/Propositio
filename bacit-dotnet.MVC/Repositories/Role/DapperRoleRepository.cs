@@ -24,7 +24,12 @@ namespace bacit_dotnet.MVC.Repositories.Role
       
         public RoleEntity Get(int role_id)
         {
-            throw new NotImplementedException();
+            var query = @"SELECT * FROM Role WHERE role_id = @emp_role_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var role = connection.QueryFirstOrDefault<RoleEntity>(query, new {emp_role_id = role_id});
+                return role;
+            }
         }
 
         public List<RoleEntity> GetAll()

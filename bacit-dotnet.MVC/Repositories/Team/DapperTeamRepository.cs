@@ -1,4 +1,4 @@
-﻿using bacit_dotnet.MVC.DataAccess;
+using bacit_dotnet.MVC.DataAccess;
 using bacit_dotnet.MVC.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -42,18 +42,27 @@ namespace bacit_dotnet.MVC.Repositories.Team
             }
         }
 
-        public List<EmployeeEntity> Get(string name)
+        public List<TeamEntity> GetAll()
         {
+            var query = @"SELECT * FROM Team";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                var query = @"SELECT name, role_id from Employee";
-                var employees = connection.Query<EmployeeEntity>(query);
-
-                return employees.ToList();
+                var teams = connection.Query<TeamEntity>(query);
+                return teams.ToList();
             }
         }
 
+        public List<EmployeeEntity> GetEmployeesForTeam(int team_id)
+        {
+            var query = @"SELECT e.emp_id, e.name, e.role_id FROM Employee as e INNER JOIN 
+            TeamList as tl ON e.emp_id = tl.emp_id INNER JOIN 
+            Team as t on t.team_id = tl.team_id WHERE t.team_id = @team_id";
 
-      
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var employees = connection.Query<EmployeeEntity>(query, new {team_id = team_id});
+                return employees.ToList();
+            }
+        }
     }
 }

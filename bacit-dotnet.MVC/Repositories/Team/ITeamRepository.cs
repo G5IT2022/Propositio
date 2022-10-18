@@ -1,4 +1,4 @@
-﻿using bacit_dotnet.MVC.Entities;
+using bacit_dotnet.MVC.Entities;
 
 namespace bacit_dotnet.MVC.Repositories.Team
 {
@@ -8,13 +8,7 @@ namespace bacit_dotnet.MVC.Repositories.Team
 
         //Henter en liste over alle teams for en ansatt
         List<TeamEntity> Get(int id);
-        //henter en listen over alle employees
-        List<EmployeeEntity> Get(string name);
-
-        List<EmployeeEntity> GetAll();
-
-       
+        List<EmployeeEntity> GetEmployeesForTeam(int team_id);
+        List<EmployeeEntity> GetAll();  
     }
-
-   
 }
