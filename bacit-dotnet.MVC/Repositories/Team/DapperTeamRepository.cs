@@ -31,10 +31,29 @@ namespace bacit_dotnet.MVC.Repositories.Team
 
 
         }
-
-        public List<TeamEntity> GetALl()
+        public List<TeamEntity> GetAll()
         {
-            throw new NotImplementedException();
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var query = @"SELECT team_id, team_name, team_lead_id FROM Team";
+                var teams = connection.Query<TeamEntity>(query);
+
+                return teams.ToList();
+            }
         }
+
+        public List<EmployeeEntity> Get(string name)
+        {
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var query = @"SELECT name, role_id from Employee";
+                var employees = connection.Query<EmployeeEntity>(query);
+
+                return employees.ToList();
+            }
+        }
+
+
+      
     }
 }

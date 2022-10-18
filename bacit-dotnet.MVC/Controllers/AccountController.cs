@@ -10,21 +10,24 @@ using Microsoft.AspNetCore.Components.Authorization;
 using bacit_dotnet.MVC.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
+using bacit_dotnet.MVC.Repositories.Team;
 
 namespace bacit_dotnet.MVC.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly ITeamRepository teamRepository;
         private readonly IEmployeeRepository employeeRepository;
         private readonly ITokenService tokenservice;
         private readonly IConfiguration configuration;
         private string generatedToken = null;
 
-        public AccountController(IEmployeeRepository employeeRepository, ITokenService tokenservice, IConfiguration configuration)
+        public AccountController(IEmployeeRepository employeeRepository, ITokenService tokenservice, IConfiguration configuration, ITeamRepository teamRepository)
         {
             this.employeeRepository = employeeRepository;
             this.tokenservice = tokenservice;
             this.configuration = configuration;
+            this.teamRepository = teamRepository;
 
         }
 
@@ -83,5 +86,14 @@ namespace bacit_dotnet.MVC.Controllers
         {
             return View();
         }
+
+        public IActionResult MyAccount()
+        {
+            MyAccountViewModel model = new MyAccountViewModel();
+            model.employees = employeeRepository.GetAll();
+            model.teams = teamRepository.GetAll();
+            return View(model);
+        }
+
     }
 }
