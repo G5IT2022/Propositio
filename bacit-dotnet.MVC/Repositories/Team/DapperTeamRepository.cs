@@ -1,4 +1,4 @@
-﻿using bacit_dotnet.MVC.DataAccess;
+using bacit_dotnet.MVC.DataAccess;
 using bacit_dotnet.MVC.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -30,6 +30,16 @@ namespace bacit_dotnet.MVC.Repositories.Team
 
 
 
+        }
+        public List<TeamEntity> GetAll()
+        {
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var query = @"SELECT team_id, team_name, team_lead_id FROM Team";
+                var teams = connection.Query<TeamEntity>(query);
+
+                return teams.ToList();
+            }
         }
 
         public List<TeamEntity> GetAll()
