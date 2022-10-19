@@ -42,15 +42,6 @@ namespace bacit_dotnet.MVC.Repositories.Team
             }
         }
 
-        public List<TeamEntity> GetAll()
-        {
-            var query = @"SELECT * FROM Team";
-            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
-            {
-                var teams = connection.Query<TeamEntity>(query);
-                return teams.ToList();
-            }
-        }
 
         public List<EmployeeEntity> GetEmployeesForTeam(int team_id)
         {

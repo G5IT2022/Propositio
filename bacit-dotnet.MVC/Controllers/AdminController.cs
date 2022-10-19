@@ -47,7 +47,7 @@ namespace bacit_dotnet.MVC.Controllers
          
             return View(aivm);
         }
-
+        [HttpGet]
         public IActionResult NewUser()
         {
             ViewBag.Message = "Registrer ny ansatt";
