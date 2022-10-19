@@ -120,7 +120,8 @@ namespace bacit_dotnet.MVC.Controllers
             //og metode Get som skal hente kategorier for et forslag fra suggestion_id 
             detailsModel.suggestion.categories = categoryRepository.GetCategoriesForSuggestion(detailsModel.suggestion.suggestion_id);
             detailsModel.suggestion.timestamp = timestampRepository.Get(detailsModel.suggestion.suggestion_id);
-            detailsModel.comment = commentRepository.Get(detailsModel.suggestion.suggestion_id);           
+            detailsModel.comment = commentRepository.Get(detailsModel.suggestion.suggestion_id);
+            detailsModel.comment.poster = employeeRepository.Get(detailsModel.comment.emp_id);
             
             //MÅ FIKSES
             detailsModel.comment.timestamp = DateTime.Now;

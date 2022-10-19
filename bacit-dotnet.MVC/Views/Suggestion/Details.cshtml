@@ -22,7 +22,7 @@
             <p class="mt-3 emp-name">@Model.employee.name</p>
             <p class="mt-3 text-center emp_team">@foreach(var team in Model.employee.teams)
                 {
-                    @(team.team_name +="");
+                    @(team.team_name +=" ");
                 }   
             Team
             </p>
@@ -37,7 +37,7 @@
                     <p class="mt-2 sugg-category">Kategorier:
                         @foreach (var category in Model.suggestion.categories)
                         {
-                            @(category.category_name += "")
+                            @(category.category_name += " ")
                             ;
                         }
                     </p>
@@ -76,6 +76,7 @@
                             </div>                           
                         </div>
                         <div class="col align-items-center mb-3">
+                            <p class="mb-0">@Model.comment.poster.name</p>
                             <p class="mb-0">@Model.comment.description</p>
                         </div>
 

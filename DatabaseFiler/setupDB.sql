@@ -98,16 +98,16 @@ ALTER TABLE Suggestion CONVERT TO CHARACTER SET utf8 COLLATE utf8_danish_ci;
 
 /*GENERER ROLLER*/
 
-INSERT INTO Role(role_name) VALUES('Dorsliper');
+INSERT INTO Role(role_name) VALUES('Dørsliper');
 INSERT INTO Role(role_name) VALUES('Hengselfester');
-INSERT INTO Role(role_name) VALUES('Handtakinspektor');
+INSERT INTO Role(role_name) VALUES('Håndtakinspektor');
 INSERT INTO Role(role_name) VALUES('Karmvurderer');
 INSERT INTO Role(role_name) VALUES('Maleindivid');
 INSERT INTO Role(role_name) VALUES('Vindu innlemmer');
 INSERT INTO Role(role_name) VALUES('Dordesigner');
 INSERT INTO Role(role_name) VALUES('Malemester');
 INSERT INTO Role(role_name) VALUES('IT person');
-INSERT INTO Role(role_name) VALUES('Statistikkforer');
+INSERT INTO Role(role_name) VALUES('Statistikkfører');
 
 /*GENERER ROLLER TIL AUTENTISERING*/
 INSERT INTO AuthorizationRole(authorization_role_name) VALUES ("User");
@@ -148,9 +148,9 @@ INSERT INTO Team(team_name, team_lead_id) VALUES ('Teknisk',4);
 INSERT INTO Team(team_name, team_lead_id) VALUES ('Logistikk',1);
 INSERT INTO Team(team_name, team_lead_id) VALUES ('Kundeserivce',1);
 INSERT INTO Team(team_name, team_lead_id) VALUES ('Klageavdeling',1);
-INSERT INTO Team(team_name, team_lead_id) VALUES ('Heksejakt',1);
-INSERT INTO Team(team_name, team_lead_id) VALUES ('Innleide Leiemordere',1);
-INSERT INTO Team(team_name, team_lead_id) VALUES ('Tullekopper',1);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Dørhåndtakavdeling',1);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Listavdeling',1);
+INSERT INTO Team(team_name, team_lead_id) VALUES ('Hengselavdeling',1);
 
 
 
