@@ -23,35 +23,36 @@
                     </div>
                     <div class="col-2 @sugg.status"></div>
                     <div class="col-2">@sugg.status</div>
-
-
-
-
                 </div>
+            
                 <div class="row">
-                    <div class="col-9">
+                    <div class="col-10">
                         <p class="suggtitle">@sugg.title</p>
                         <p>@sugg.description</p>
                     </div>
-                    <div class="col-2 date">
-                        <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
-                        <span class="due">Frist: @sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
-
-                    </div>
-
+                    <div class="col-2"></div>
                 </div>
+                <hr />
                 <div class="row test">
-                    <div class="col-12 categories"> Kategorier: 
+                    <div class="col-8 categories"> Kategorier: 
                         @foreach (var category in sugg.categories)
                         {
                             @(category.category_name += " ")
                             ;
                         }
+                        <br>
+                    <a asp-controller="Suggestion" asp-action="Details" asp-route-id = "@sugg.suggestion_id">Detailjer... (MIDLERTIDIG)</a>
+                    </div>
+                    <div class="col-4 date">
+                        <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
+                        <br>
+                        <span class="due">Frist: @sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
+
                     </div>
 
-                <a asp-controller="Suggestion" asp-action="Details" asp-route-id = "@sugg.suggestion_id">Detailjer... (MIDLERTIDIG)</a>
                 </div>
             </div>
+            <hr />
         }
     }
 }

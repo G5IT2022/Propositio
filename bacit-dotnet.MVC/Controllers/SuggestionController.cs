@@ -151,5 +151,4 @@ namespace bacit_dotnet.MVC.Controllers
             return RedirectToAction("Details");
         }
     }
-
 }
