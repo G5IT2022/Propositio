@@ -26,11 +26,20 @@ namespace bacit_dotnet.MVC.Repositories.Comment
             }
         }
 
-    
+        public int GetNewCommentID()
+        {
+            var query = @"SELECT COUNT(*) FROM SuggestionComment";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var count = connection.QueryFirst<int>(query);
+                return count + 1;
+            }
+        }
+
 
         public CommentEntity Get(int comment_id)
         {
-            var query = @"SELECT * FROM Comment WHERE comment_id = @comment_id";
+            var query = @"SELECT * FROM SuggestionComment WHERE comment_id = @comment_id";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 var category = connection.QueryFirstOrDefault<CommentEntity>(query, new { comment_id = comment_id });
@@ -50,7 +59,7 @@ namespace bacit_dotnet.MVC.Repositories.Comment
 
         public List<CommentEntity> GetCommentsForSuggestion(int suggestion_id)
         {
-            var query = @"SELECT * FROM Comment WHERE suggestion_id = @suggestion_id";
+            var query = @"SELECT * FROM SuggestionComment WHERE suggestion_id = @suggestion_id";
             using(var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 var comments = connection.Query<CommentEntity>(query, new {suggestion_id = suggestion_id});
@@ -64,7 +73,7 @@ namespace bacit_dotnet.MVC.Repositories.Comment
         }
         public int Delete(CommentEntity comment)
         {
-            var query = @"DELETE FROM Comment WHERE comment_id = @comment_id";
+            var query = @"DELETE FROM SuggestionComment WHERE comment_id = @comment_id";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 var affectedRows = connection.Execute(query, new { comment_id = comment.comment_id });
