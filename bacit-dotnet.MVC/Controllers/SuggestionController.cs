@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using bacit_dotnet.MVC.Models.Suggestion;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using bacit_dotnet.MVC.Repositories.Comment;
+
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -45,7 +45,7 @@ namespace bacit_dotnet.MVC.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            EmployeeViewModel model = new EmployeeViewModel();
+            EmployeeSuggestionViewModel model = new EmployeeSuggestionViewModel();
             model.employees = employeeRepository.GetAll();
             foreach (EmployeeEntity emp in model.employees)
             {

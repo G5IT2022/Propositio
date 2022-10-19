@@ -28,13 +28,12 @@
                 <div class="col-sm-4"></div>
             </div>
             <div class="row">
-
-                <div class="col-4"></div>
+                <div class="col-sm-4"></div>
                 <div class="col-4">
                     @if (ViewBag.ErrorMessage != null)
                     {
                         <span class="red">@ViewBag.ErrorMessage</span>
-                    }
+
                 <div class="col-sm-4"></div>
                 <div class="col col-lg-12">
 
@@ -75,11 +74,24 @@
                             <button type="submit">Admin Cheat</button>
                         </form>
                 </div>    
-
-                </div>                                
-
+=======
+                    <div class="col-sm-4"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4">
+                        <form asp-controller="account" asp-action="verify" method="post">
+                            <!--Navn-->
+                            <div class="form-group">
+                                <label for="emp_id">Ansattnr</label>
+                                <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Ansattnr" value="@Model.emp_id" />
+          </div><br />
+                          
+              
+                
+                    </div>
+                </div>
+                <div class="col-sm-4"></div>
             </div>
-        </main>
     </div>
 </body>
-</html>

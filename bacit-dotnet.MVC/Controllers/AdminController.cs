@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using bacit_dotnet.MVC.Models;
 using bacit_dotnet.MVC.Repositories.Employee;
 using bacit_dotnet.MVC.Entities;
 using bacit_dotnet.MVC.Authentication;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using bacit_dotnet.MVC.Models.AdminViewModels;
+using bacit_dotnet.MVC.Repositories.Team;
+using bacit_dotnet.MVC.Repositories.Role;
+using bacit_dotnet.MVC.Repositories.Category;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -12,14 +15,37 @@ namespace bacit_dotnet.MVC.Controllers
     public class AdminController : Controller
     {
         private readonly IEmployeeRepository employeeRepository;
-        public AdminController(IEmployeeRepository employeeRepository)
+        private readonly ITeamRepository teamRepository;
+        private readonly IRoleRepository roleRepository;
+        private readonly ICategoryRepository categoryRepository;
+        public AdminController(IEmployeeRepository employeeRepository, ITeamRepository teamRepository, IRoleRepository roleRepository, ICategoryRepository categoryRepository)
         {
             this.employeeRepository = employeeRepository;
+            this.teamRepository = teamRepository;
+            this.roleRepository = roleRepository;
+            this.categoryRepository = categoryRepository;
         }
 
         public IActionResult Index()
         {
-            return View();
+            AdminIndexViewModel aivm = new AdminIndexViewModel();
+            aivm.employees = new List<EmployeeEntity>();
+            aivm.teams = teamRepository.GetAll();
+            foreach(TeamEntity team in aivm.teams)
+            {
+                team.employees = teamRepository.GetEmployeesForTeam(team.team_id);
+                foreach(EmployeeEntity emp in team.employees)
+                {
+                    emp.role = roleRepository.Get(emp.role_id);
+                    emp.teams = teamRepository.Get(emp.emp_id);
+                    if (!aivm.employees.Contains(emp))
+                    {
+                    aivm.employees.Add(emp);
+                    }
+                }
+            }
+         
+            return View(aivm);
         }
 
         public IActionResult NewUser()

@@ -7,6 +7,7 @@ namespace bacit_dotnet.MVC.Entities
         public int emp_id { get; set; }
         public string name { get; set; }
         public int role_id { get; set; }
+        public RoleEntity role { get; set; }
         [JsonIgnore]
         public byte[] salt { get; set; }
 

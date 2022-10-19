@@ -1,0 +1,30 @@
+﻿@using bacit_dotnet.MVC.Models
+@using bacit_dotnet.MVC.Controllers
+@using bacit_dotnet.MVC.Entities
+@using bacit_dotnet.MVC.Repositories
+@model bacit_dotnet.MVC.Models.MyAccountViewModel
+<div class="Header">
+    <h1>Min side</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+               @foreach (var team in Model.teams)
+                {
+                    @(team.team_name += " ")
+                }
+
+            </div>
+            <div class="col-sm">
+               
+        @foreach (var emp in Model.employees)
+        {
+            @(emp.name += " ")
+            @(emp.role_id +=)
+
+        }
+
+
+            </div>
+          
+        </div>
+    </div>
