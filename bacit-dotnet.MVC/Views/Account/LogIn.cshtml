@@ -33,35 +33,32 @@
                     @if (ViewBag.ErrorMessage != null)
                     {
                         <span class="red">@ViewBag.ErrorMessage</span>
-
-                <div class="col-sm-4"></div>
-                <div class="col col-lg-12">
-
-                    <form asp-controller="account" asp-action="verify" method="post">
-                        <!--Navn-->
-                        <div class="form-group">
-                            <label for="emp_id">Ansattnummer</label>
-                            <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Ansattnr" value="@Model.emp_id" />
-
-                        </div><br />
-                        <!--Passord-->
-                        <div class="form-group">
-                            <label for="password">Passord</label>
-                            <input name="password" type="password" class="form-control" id="password" placeholder="Passord" value="@Model.password">
-                        </div><br />
-                        <!--Knapper-->
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-outline-success px-4">Logg inn</button>
-                        </div>
-                        <div class="text-center">
-                            <button class="btn btn-link" asp-controller="account" asp-action="changepassword">Glemt passord</button>                            
-                        </div>                        
-                    </form>
-                    
+                    }
+                    <div class="col-sm-4"></div>
                 </div>
-                <div class="col-sm"></div>
-                    <div class="col-sm"></div>
-                <div class="col-sm">
+                <div class="row">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4">
+                        <form asp-controller="account" asp-action="verify" method="post">
+                            <!--Navn-->
+                            <div class="form-group">
+                                <label for="emp_id">Ansattnr</label>
+                                <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Ansattnr" value="@Model.emp_id" />
+
+                            </div><br />
+                            <!--Passord-->
+                            <div class="form-group">
+                                <label for="password">Passord</label>
+                                <input name="password" type="password" class="form-control" id="password" placeholder="Passord" value="@Model.password">
+                            </div><br />
+                            <!--Knapper-->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-outline-success px-4">Logg inn</button>
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-link" asp-controller="account" asp-action="changepassword">Glemt passord</button>
+                            </div>
+                        </form>
                         <form asp-controller="account" asp-action="verify" method="post">
                             <input name="emp_id" value="1" hidden />
                             <input name="password" value="password" hidden />
@@ -73,22 +70,6 @@
                             <input name="password" value="password1" hidden />
                             <button type="submit">Admin Cheat</button>
                         </form>
-                </div>    
-=======
-                    <div class="col-sm-4"></div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4"></div>
-                    <div class="col-sm-4">
-                        <form asp-controller="account" asp-action="verify" method="post">
-                            <!--Navn-->
-                            <div class="form-group">
-                                <label for="emp_id">Ansattnr</label>
-                                <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Ansattnr" value="@Model.emp_id" />
-          </div><br />
-                          
-              
-                
                     </div>
                 </div>
                 <div class="col-sm-4"></div>

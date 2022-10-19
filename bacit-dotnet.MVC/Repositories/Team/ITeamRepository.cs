@@ -8,7 +8,6 @@ namespace bacit_dotnet.MVC.Repositories.Team
 
         //Henter en liste over alle teams for en ansatt
         List<TeamEntity> Get(int id);
-        List<EmployeeEntity> GetEmployeesForTeam(int team_id);
-        List<EmployeeEntity> GetAll();  
+        List<EmployeeEntity> GetEmployeesForTeam(int team_id); 
     }
 }
