@@ -8,6 +8,7 @@ using bacit_dotnet.MVC.Models.AdminViewModels;
 using bacit_dotnet.MVC.Repositories.Team;
 using bacit_dotnet.MVC.Repositories.Role;
 using bacit_dotnet.MVC.Repositories.Category;
+using bacit_dotnet.MVC.Models;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -84,5 +85,16 @@ namespace bacit_dotnet.MVC.Controllers
             return View("NewUser");
 
         }
+
+        [HttpGet]
+        public IActionResult EditTeam(int id)
+        {
+            AdminEditTeamModel aetm = new AdminEditTeamModel();
+            aetm.team = teamRepository.GetTeam(id);
+            aetm.team.employees = teamRepository.GetEmployeesForTeam(id);
+            return View(aetm);
+        }
     }
+
+
 }
