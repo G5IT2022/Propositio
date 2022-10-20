@@ -41,12 +41,18 @@
                             ;
                         }
                         <br>
-                    <a asp-controller="Suggestion" asp-action="Details" asp-route-id = "@sugg.suggestion_id">Detailjer... (MIDLERTIDIG)</a>
+                        <div class="date">
+                            <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
+                            <br>
+                            <span class="due">Frist: @sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
+                        </div>
                     </div>
-                    <div class="col-4 date">
-                        <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
+                    <br>
+                    <div class="col-4">
                         <br>
-                        <span class="due">Frist: @sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
+                        <a class="buttonDetails" asp-controller="Suggestion" asp-action="Details" asp-route-id="@sugg.suggestion_id">
+                            Se mer
+                        </a>
 
                     </div>
 

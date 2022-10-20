@@ -58,6 +58,8 @@ body {
 }
 .date{
     margin: 0;
+    font-size: 12px;
+    line-height: 20px;
 }
 .due{
     color: darkred;
@@ -86,4 +88,17 @@ body {
     color: #FFF;
     font-weight: bold;
     line-height: 15px;
+}
+.buttonDetails {
+    text-decoration: none;
+    width: 110px;
+    background-color: darkblue;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+}
+.buttonDetails:hover {
+    background-color: black;
+    color: white;
+    box-shadow: 8px 8px 4px lightgray;
 }
