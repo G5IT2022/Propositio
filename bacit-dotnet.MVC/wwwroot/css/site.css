@@ -87,3 +87,10 @@ body {
     font-weight: bold;
     line-height: 15px;
 }
+/*Comment*/
+.link-muted {
+    color: #808080
+}
+.link-muted:hover {
+    color: #1266f1;
+}

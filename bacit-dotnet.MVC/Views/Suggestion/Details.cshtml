@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/bacit_dotnet.MVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
 </head>
 <body>
     <div class="container details-container mt-5">
@@ -49,41 +51,61 @@
             </div>  
             <div class="row justify-content-between mt-2">
                 <div class="col">
-                    <div class="made">Opprettet: @Model.suggestion.timestamp.createdTimestamp.ToString("dd/M/yyyy")</div>
+                    <div class="made">Opprettet: @Model.suggestion.timestamp.createdTimestamp.ToString()</div>
                 </div>
                 <div class="col-4">
-                    <div class="due">Frist: @Model.suggestion.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</div>
+                    <div class="due">Frist: @Model.suggestion.timestamp.dueByTimestamp.ToString()</div>
                 </div>
             </div>
         </div>
-        <!--Kommentar-->
+        <!--List alle kommentarer-->
         <div class="row d-flex justify-content-sm-start mt-4">
             <div class="col-md-12 col-lg-12">
-                <div class="card bg-light mb-5">
+                <div class="card bg-light mb-3">
                     <div class="card-header text-black"><h5>Kommentarer</h5></div>
-                    <div class="card-body p-2">                        
-                        <div class="d-flex flex-start">
-                            <!--<h6 class="fw-bold mb-1">
-                                foreach (var employee in Model.comment.employees)
-                                {
-                                    (employee.name += "")
-                                }
-                            </h6>-->
+                    <div class="card-body p-2">  
+                        @foreach (CommentEntity comment in Model.suggestion.comments)
+                        {
+                            <div class="d-flex justify-content-between"> 
+                                <div class="d-flex flex-row align-items-center">
+                                    <h6 class="fw-bold mb-1">
+                                        @comment.poster.name
+                                    </h6>
+                                </div>
+                                <div class="d-flex flex-row align-items-center">
+                                    <a asp-action="Endre" asp-controller="suggestion" class="link-muted"><i class="fas fa-pencil-alt"></i></a>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <a asp-action="Slett" asp-controller="suggestion" class="link-muted"><i class="fas fa-trash-alt"></i></a>
+                                </div>                                
+                            </div>
+                           
                             <div class="d-flex align-items-center mb-3">
-                                <p class="mb-0">
-                                    @Model.comment.timestamp.ToString("dd/M/yyyy")
+                                <p class="mb-0" style="font-size:small">
+                                    <em>@comment.createdTimestamp.ToString()</em>
                                 </p>
-                            </div>                           
-                        </div>
-                        <div class="col align-items-center mb-3">
-                            <p class="mb-0">@Model.comment.poster.name</p>
-                            <p class="mb-0">@Model.comment.description</p>
-                        </div>
-
-                    </div>
-                </div>
+                            </div>
+                            <div class="col align-items-center mb-3">                               
+                                <p class="mb-0">@comment.description</p>
+                            </div>
+                            <hr />
+                        }                        
+                    </div>                    
+                </div>                 
             </div>
-
+           
+        <form asp-action="CreateComment" asp-controller="suggestion" method="post">
+            <input name="suggestion_id" value="@Model.suggestion.suggestion_id" hidden/>
+            <!--Lage en ny kommentar-->
+            <div class="form-group">
+                    <textarea name="description" class="form-control" id="description" placeholder="Skriv inn kommentar..." value="@Model.description"></textarea>
+            </div>
+            <div class="row d-flex justify-content-sm-end">
+                 <div class="mt-2 mb-5 text-right">
+                    <button class="btn btn-primary btn-sm shadow-none" type="submit">Post comment</button>
+                    <button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button>
+                </div>        
+            </div>
+        </form>
         </div>
     </div>
 </body>
