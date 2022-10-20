@@ -41,6 +41,16 @@ namespace bacit_dotnet.MVC.Repositories.Team
                 return teams.ToList();
             }
         }
+        public TeamEntity GetTeam(int id)
+        {
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var query = @"SELECT team_id, team_name, team_lead_id FROM Team WHERE team_id = @team_id";
+                var team = connection.QueryFirstOrDefault<TeamEntity>(query, new {team_id = id});
+
+                return team;
+            }
+        }
 
 
         public List<EmployeeEntity> GetEmployeesForTeam(int team_id)
