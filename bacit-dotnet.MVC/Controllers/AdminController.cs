@@ -9,6 +9,7 @@ using bacit_dotnet.MVC.Repositories.Team;
 using bacit_dotnet.MVC.Repositories.Role;
 using bacit_dotnet.MVC.Repositories.Category;
 using bacit_dotnet.MVC.Models;
+using bacit_dotnet.MVC.Models.Suggestion;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -94,6 +95,14 @@ namespace bacit_dotnet.MVC.Controllers
             aetm.team.employees = teamRepository.GetEmployeesForTeam(id);
             return View(aetm);
         }
+
+        [HttpPost]
+        public IActionResult CreateNewTeam()
+        {
+           
+            return View();
+        }
+           
     }
 
 

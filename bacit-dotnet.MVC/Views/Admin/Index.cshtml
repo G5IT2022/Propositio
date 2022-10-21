@@ -1,7 +1,8 @@
 ﻿@using bacit_dotnet.MVC.Entities
 @using bacit_dotnet.MVC.Models.AdminViewModels;
 @model bacit_dotnet.MVC.Models.AdminViewModels.AdminIndexViewModel;
-<a href="newUser">Ny Bruker</a>
+<a href="newUser">Ny Bruker</a> &nbsp;&nbsp;
+<a class="buttonDetails" asp-controller="Admin" asp-action="CreateNewTeam">Nytt Team</a>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employees" type="button" role="tab" aria-controls="home" aria-selected="true">Ansatte</button>

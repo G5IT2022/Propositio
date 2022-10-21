@@ -27,10 +27,19 @@ namespace bacit_dotnet.MVC.Repositories.Team
 
                 return teams.ToList();
             }
-
-
-
         }
+        /*
+        public int Create(TeamEntity team)
+        {
+            string teamquery = @"INSERT INTO Team (team_id, team_name) VALUES (@team_id, @team_name)";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                int result = connection.Execute(teamquery, new { team_id = team.team_id, team_name = team.team_name });
+                return result;
+            }
+        }*/
+
+        
         public List<TeamEntity> GetAll()
         {
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
