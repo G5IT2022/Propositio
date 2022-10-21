@@ -87,3 +87,13 @@ body {
     font-weight: bold;
     line-height: 15px;
 }
+
+
+/**Favoritter*/
+
+.Favorite{
+    background-color: gold;
+}
+.Unfavorite{
+    background-color: white;
+}

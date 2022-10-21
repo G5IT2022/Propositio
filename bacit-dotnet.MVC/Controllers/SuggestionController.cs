@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using bacit_dotnet.MVC.Models.Suggestion;
 using bacit_dotnet.MVC.Repositories.Comment;
-
+using System.Drawing.Text;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -41,10 +41,12 @@ namespace bacit_dotnet.MVC.Controllers
             this.tokenservice = tokenService;
             this.timestampRepository = timestampRepository;
             this.configuration = configuration;
+
         }
         [Authorize]
         public IActionResult Index()
         {
+
             EmployeeSuggestionViewModel model = new EmployeeSuggestionViewModel();
             model.employees = employeeRepository.GetAll();
             foreach (EmployeeEntity emp in model.employees)
@@ -55,8 +57,11 @@ namespace bacit_dotnet.MVC.Controllers
                 {
                     suggestion.categories = categoryRepository.GetCategoriesForSuggestion(suggestion.suggestion_id);
                     suggestion.timestamp = timestampRepository.Get(suggestion.suggestion_id);
+
+
                 }
             }
+
             return View(model);
 
         }
@@ -110,23 +115,25 @@ namespace bacit_dotnet.MVC.Controllers
             return categories;
         }
 
+
+
         public IActionResult Details(int id)
-        {   
+        {
             SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
-            detailsModel.suggestion = suggestionRepository.GetById(id);            
+            detailsModel.suggestion = suggestionRepository.GetById(id);
             detailsModel.employee = employeeRepository.Get(detailsModel.suggestion.author_emp_id);
-            detailsModel.employee.teams = teamRepository.Get(detailsModel.employee.emp_id);           
+            detailsModel.employee.teams = teamRepository.Get(detailsModel.employee.emp_id);
             //Vi setter den categories listen med categoryRepository hvor det finnes query select *
             //og metode Get som skal hente kategorier for et forslag fra suggestion_id 
             detailsModel.suggestion.categories = categoryRepository.GetCategoriesForSuggestion(detailsModel.suggestion.suggestion_id);
             detailsModel.suggestion.timestamp = timestampRepository.Get(detailsModel.suggestion.suggestion_id);
             detailsModel.comment = commentRepository.Get(detailsModel.suggestion.suggestion_id);
             detailsModel.comment.poster = employeeRepository.Get(detailsModel.comment.emp_id);
-            
+
             //MÅ FIKSES
             detailsModel.comment.timestamp = DateTime.Now;
             //detailsModel.comment.employee = employeeRepository.Get(detailsModel.comment.comment_id);
-           
+
 
 
             if (detailsModel.suggestion == null)
@@ -150,5 +157,13 @@ namespace bacit_dotnet.MVC.Controllers
             timestampRepository.Create(comment.comment_id, model.dueByTimestamp);
             return RedirectToAction("Details");
         }
+        //Favoritter
+        [HttpPost]
+        public void Favorite (int id) {
+            SuggestionEntity suggestion = suggestionRepository.GetById(id);
+            suggestion.favorite = !suggestion.favorite;
+            suggestionRepository.Favorite(id, suggestion.favorite);
+        }
     }
+
 }

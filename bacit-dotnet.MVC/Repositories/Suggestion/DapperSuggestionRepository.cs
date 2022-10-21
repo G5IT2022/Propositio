@@ -34,6 +34,16 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
             }
         }
 
+        public void Favorite(int id, bool update)
+        {
+            var updateQuery = @"UPDATE Suggestion SET favorite = @state WHERE suggestion_id = @suggestion_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                connection.Execute(updateQuery, new { state = update, suggestion_id = id });
+            }
+
+        }
+
         public int GetNewSuggestionID()
         {
             var query = @"SELECT COUNT(*) FROM Suggestion";

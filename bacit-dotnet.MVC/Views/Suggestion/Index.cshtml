@@ -19,12 +19,24 @@
                         {
                             @(team.team_name += " ")
                             ;
-                        }   
+                        }
                     </div>
+                   
                     <div class="col-2 @sugg.status"></div>
                     <div class="col-2">@sugg.status</div>
+                    <div class="col-1">
+                        @if(!sugg.favorite){
+                            <a onclick="Fav(@sugg.suggestion_id)">
+                            <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
+                        </a>
+                        }else{
+                        <a onclick="Fav(@sugg.suggestion_id)">
+                            <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
+                        </a>
+                        }
+                    </div>
                 </div>
-            
+
                 <div class="row">
                     <div class="col-10">
                         <p class="suggtitle">@sugg.title</p>
@@ -34,14 +46,15 @@
                 </div>
                 <hr />
                 <div class="row test">
-                    <div class="col-8 categories"> Kategorier: 
+                    <div class="col-8 categories">
+                        Kategorier:
                         @foreach (var category in sugg.categories)
                         {
                             @(category.category_name += " ")
                             ;
                         }
                         <br>
-                    <a asp-controller="Suggestion" asp-action="Details" asp-route-id = "@sugg.suggestion_id">Detailjer... (MIDLERTIDIG)</a>
+                        <a asp-controller="Suggestion" asp-action="Details" asp-route-id="@sugg.suggestion_id">Detailjer... (MIDLERTIDIG)</a>
                     </div>
                     <div class="col-4 date">
                         <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
@@ -49,10 +62,43 @@
                         <span class="due">Frist: @sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
 
                     </div>
-
                 </div>
             </div>
             <hr />
         }
     }
 }
+<script type="text/javascript">
+    function Fav(id) {
+
+        var url = '@Url.Action("Favorite", "Suggestion")';
+        var element = document.getElementById(id);
+        var fav = "https://localhost:4000/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg"
+        var unfav = "https://localhost:4000/img/bootstrap-icons-1.9.1/bookmark-star.svg"
+        var src = element.src;
+
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                id: id
+            },
+            success: function (data) {
+                if (data.length == 0) {
+                    // No errors
+                    // alert(src);
+                    console.log(src);
+                    if (src == unfav) {
+                        element.src = fav;
+                         //alert("Favoritt!");
+                    } else {
+                        element.src = unfav;
+                         //alert("Ufavoritt!");
+                    }
+                  
+                }
+            }
+        });
+    };
+</script>
