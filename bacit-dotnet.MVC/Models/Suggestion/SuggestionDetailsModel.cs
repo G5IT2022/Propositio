@@ -1,4 +1,5 @@
 ﻿using bacit_dotnet.MVC.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace bacit_dotnet.MVC.Models.Suggestion
 {
@@ -8,9 +9,12 @@ namespace bacit_dotnet.MVC.Models.Suggestion
         public EmployeeEntity employee { get; set; }        
         public CommentEntity comment { get; set; }
 
-        //Create new comment
+        //Lage ny kommentar
         public string description { get; set; }
-        public DateTime dueByTimestamp { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        public DateTime createdTimestamp { get; set; }
 
     }
 }

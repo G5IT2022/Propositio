@@ -16,13 +16,17 @@ namespace bacit_dotnet.MVC.Repositories.Comment
 
         }
 
+
         public int Create(CommentEntity comment)
         {
-            var query = @"INSERT INTO Comment(emp_id, suggestion_id, description) VALUES(@emp_id, @suggestion_id, @description)";
+            string commentquery = @"INSERT INTO SuggestionComment(emp_id, suggestion_id, description) 
+            VALUES(@emp_id, @suggestion_id, @description)";
+
+
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                var affectedRows = connection.Execute(query, new { emp_id = comment.emp_id, suggestion_id = comment.suggestion_id, description = comment.description });
-                return affectedRows;
+                int result = connection.Execute(commentquery, new { emp_id = comment.emp_id, suggestion_id = comment.suggestion_id, description = comment.description } ); 
+                return result;
             }
         }
 
@@ -80,5 +84,6 @@ namespace bacit_dotnet.MVC.Repositories.Comment
                 return affectedRows;
             }
         }
+                
     }
 }

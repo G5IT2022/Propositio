@@ -110,25 +110,30 @@ namespace bacit_dotnet.MVC.Controllers
             return categories;
         }
 
+        //Dette er en metode for å hente info til ett forslag (1) og alle kommentarer som tilhører til forslaget (2)
         public IActionResult Details(int id)
         {   
             SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
+            //Hente info til ett forslag
             detailsModel.suggestion = suggestionRepository.GetById(id);            
             detailsModel.employee = employeeRepository.Get(detailsModel.suggestion.author_emp_id);
-            detailsModel.employee.teams = teamRepository.Get(detailsModel.employee.emp_id);           
-            //Vi setter den categories listen med categoryRepository hvor det finnes query select *
-            //og metode Get som skal hente kategorier for et forslag fra suggestion_id 
+            detailsModel.employee.teams = teamRepository.Get(detailsModel.employee.emp_id);    
             detailsModel.suggestion.categories = categoryRepository.GetCategoriesForSuggestion(detailsModel.suggestion.suggestion_id);
             detailsModel.suggestion.timestamp = timestampRepository.Get(detailsModel.suggestion.suggestion_id);
+            
+
+            //Hente alle kommentarer som tilhører til forslaget fra databasen            
             detailsModel.comment = commentRepository.Get(detailsModel.suggestion.suggestion_id);
             detailsModel.comment.poster = employeeRepository.Get(detailsModel.comment.emp_id);
+            detailsModel.suggestion.comments = commentRepository.GetCommentsForSuggestion(detailsModel.suggestion.suggestion_id);
+            //Dette er en foreach loop som brukes for å hente dato og hvem som skriver kommentar for ett forslag
+            //List kommentar
+            foreach (CommentEntity comment in detailsModel.suggestion.comments)
+            {
+                comment.poster = employeeRepository.Get(comment.emp_id);
+                
+            }
             
-            //MÅ FIKSES
-            detailsModel.comment.timestamp = DateTime.Now;
-            //detailsModel.comment.employee = employeeRepository.Get(detailsModel.comment.comment_id);
-           
-
-
             if (detailsModel.suggestion == null)
             {
                 return RedirectToAction("Index");
@@ -144,11 +149,19 @@ namespace bacit_dotnet.MVC.Controllers
             {
                 comment_id = commentRepository.GetNewCommentID(),
                 description = model.description,
-                emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData))
+                suggestion_id = Int32.Parse(collections["suggestion_id"]),
+                emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
+                createdTimestamp = DateTime.Now,
+               
             };
-            commentRepository.Create(comment);
-            timestampRepository.Create(comment.comment_id, model.dueByTimestamp);
-            return RedirectToAction("Details");
-        }
+            int result = commentRepository.Create(comment);            
+           
+            if(result != 1)
+            {
+                //Noe har gått feil med å lage kommentaren         
+               
+            }
+            return RedirectToAction("Details", "Suggestion", new {id = comment.suggestion_id});
+        }       
     }
 }
