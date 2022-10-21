@@ -37,6 +37,7 @@
                     </div>
                 </div>
 
+                <!--Suggestion-info-->
                 <div class="row">
                     <div class="col-10">
                         <p class="suggtitle">@sugg.title</p>
@@ -45,6 +46,7 @@
                     <div class="col-2"></div>
                 </div>
                 <hr />
+                <!--Show categories for suggestion-->
                 <div class="row test">
                     <div class="col-8 categories">
                         Kategorier:
@@ -55,11 +57,19 @@
                         }
                         <br>
                         <a asp-controller="Suggestion" asp-action="Details" asp-route-id="@sugg.suggestion_id">Detailjer... (MIDLERTIDIG)</a>
+                        <div class="date">
+                            <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
+                            <br>
+                            <span class="due">Frist: @sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
+                        </div>
                     </div>
-                    <div class="col-4 date">
-                        <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
+                    <br>
+                    <!--Button for Suggestion Details-->
+                    <div class="col-4">
                         <br>
-                        <span class="due">Frist: @sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
+                        <a class="buttonDetails" asp-controller="Suggestion" asp-action="Details" asp-route-id="@sugg.suggestion_id">
+                            Vis mer
+                        </a>
 
                     </div>
                 </div>

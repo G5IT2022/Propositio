@@ -1,0 +1,52 @@
+﻿@using bacit_dotnet.MVC.Entities
+@using bacit_dotnet.MVC.Models.AdminViewModels
+@using bacit_dotnet.MVC.Models
+@using Microsoft.AspNetCore;
+@model AdminEditTeamModel;
+
+@using (Html.BeginForm())
+{
+
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <h4>Rediger et team</h4>
+        @if (ViewBag.Created != "")
+        {
+            @ViewBag.Created
+        }
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.team_navn, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.team_navn, new { @class = "form-control", @placeholder = Model.team.team_name })
+                @Html.ValidationMessageFor(model => model.team_navn, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+}
+
+
+@foreach (EmployeeEntity emp in Model.team.employees)
+{
+    <div class="row">
+        <div class="col-sm-2">
+            @emp.name
+        </div>
+        <div class="col-sm-2">
+            @emp.emp_id
+            <input type="checkbox" />
+        </div>
+    </div>
+
+}
+
+
+
+
+
+
+
+<button type="button" class="btn btn-outline-success">Lagre</button>
+
+<button type="button" class="btn btn-outline-danger">Avbryt</button>
