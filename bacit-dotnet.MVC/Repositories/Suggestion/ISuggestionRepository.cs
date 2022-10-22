@@ -5,6 +5,7 @@ namespace bacit_dotnet.MVC.Repositories.Suggestion
     public interface ISuggestionRepository
     {
         void Create(SuggestionEntity suggestion);
+        void Favorite(int id, bool update);
         List<SuggestionEntity> GetAll();
         List<SuggestionEntity> GetByEmployeeID(int author_emp_id);
         SuggestionEntity GetById(int id);

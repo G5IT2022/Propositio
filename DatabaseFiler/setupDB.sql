@@ -44,21 +44,15 @@ CREATE TABLE TeamList(
     CONSTRAINT TeamListPK PRIMARY KEY (emp_id, team_id)
 );
 CREATE TABLE Suggestion(
-    suggestion_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    title nvarchar(100) NOT NULL,
-    description nvarchar(6000) NOT NULL,
-    status enum(
-        "PLAN",
-        "DO",
-        "STUDY",
-        "ACT",
-        "FINISHED",
-        "JUSTDOIT"
-    ) NOT NULL,
-    ownership_emp_id int NOT NULL,
-    author_emp_id int NOT NULL,
-    CONSTRAINT OwnershipFK FOREIGN KEY (ownership_emp_id) REFERENCES Employee(emp_id),
-    CONSTRAINT PosterFK FOREIGN KEY (author_emp_id) REFERENCES Employee(emp_id)
+suggestion_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+title nvarchar(100) NOT NULL, 
+description nvarchar(6000) NOT NULL, 
+status enum("PLAN", "DO", "STUDY", "ACT", "FINISHED", "JUSTDOIT") NOT NULL,
+ownership_emp_id int NOT NULL,
+favorite boolean NOT NULL DEFAULT FALSE,
+author_emp_id int NOT NULL, 
+CONSTRAINT OwnershipFK FOREIGN KEY (ownership_emp_id) REFERENCES Employee(emp_id),
+CONSTRAINT PosterFK FOREIGN KEY (author_emp_id) REFERENCES Employee(emp_id) 
 );
 CREATE TABLE SuggestionTimestamp(
     timestamp_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -290,6 +284,7 @@ VALUES ("Bærekraft");
 INSERT INTO Category(category_name)
 VALUES ("Industri 4.0");
 /*GENERER FORSLAG*/
+
 INSERT INTO Suggestion(
         title,
         description,

@@ -111,3 +111,13 @@ body {
     background-color: black;
     color: white;
 }
+
+
+/**Favoritter*/
+
+.Favorite{
+    background-color: gold;
+}
+.Unfavorite{
+    background-color: white;
+}
