@@ -46,7 +46,7 @@ namespace bacit_dotnet.MVC.Controllers
         [Authorize]
         public IActionResult Index()
         {
-
+           Console.WriteLine(HttpContext.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1]);
             EmployeeSuggestionViewModel model = new EmployeeSuggestionViewModel();
             model.employees = employeeRepository.GetAll();
             foreach (EmployeeEntity emp in model.employees)
@@ -122,12 +122,12 @@ namespace bacit_dotnet.MVC.Controllers
             //Vi setter den categories listen med categoryRepository hvor det finnes query select *
             //og metode Get som skal hente kategorier for et forslag fra suggestion_id 
             //Hente info til ett forslag
-            detailsModel.suggestion = suggestionRepository.GetById(id);            
+            detailsModel.suggestion = suggestionRepository.GetById(id);
             detailsModel.employee = employeeRepository.Get(detailsModel.suggestion.author_emp_id);
-            detailsModel.employee.teams = teamRepository.Get(detailsModel.employee.emp_id);    
+            detailsModel.employee.teams = teamRepository.Get(detailsModel.employee.emp_id);
             detailsModel.suggestion.categories = categoryRepository.GetCategoriesForSuggestion(detailsModel.suggestion.suggestion_id);
             detailsModel.suggestion.timestamp = timestampRepository.Get(detailsModel.suggestion.suggestion_id);
-            
+
 
             //Hente alle kommentarer som tilhører til forslaget fra databasen            
             detailsModel.comment = commentRepository.Get(detailsModel.suggestion.suggestion_id);
@@ -139,7 +139,7 @@ namespace bacit_dotnet.MVC.Controllers
             foreach (CommentEntity comment in detailsModel.suggestion.comments)
             {
                 comment.poster = employeeRepository.Get(comment.emp_id);
-                
+
             }
             if (detailsModel.suggestion == null)
             {
@@ -159,26 +159,26 @@ namespace bacit_dotnet.MVC.Controllers
                 suggestion_id = Int32.Parse(collections["suggestion_id"]),
                 emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
                 createdTimestamp = DateTime.Now,
-               
+
             };
             commentRepository.Create(comment);
-            int result = commentRepository.Create(comment);            
-           
-            if(result != 1)
+            int result = commentRepository.Create(comment);
+
+            if (result != 1)
             {
                 //Noe har gått feil med å lage kommentaren         
-               
+
             }
-            return RedirectToAction("Details", "Suggestion", new {id = comment.suggestion_id});
+            return RedirectToAction("Details", "Suggestion", new { id = comment.suggestion_id });
         }
         //Favoritter
         [HttpPost]
-        public void Favorite (int id) {
+        public void Favorite(int id)
+        {
             SuggestionEntity suggestion = suggestionRepository.GetById(id);
             suggestion.favorite = !suggestion.favorite;
             suggestionRepository.Favorite(id, suggestion.favorite);
         }
-        }       
     }
-
 }
+

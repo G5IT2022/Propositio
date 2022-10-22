@@ -1,4 +1,5 @@
-﻿@using bacit_dotnet.MVC.Entities
+﻿@using System.Security.Claims
+@using bacit_dotnet.MVC.Entities
 @using bacit_dotnet.MVC.Models;
 @model bacit_dotnet.MVC.Models.EmployeeSuggestionViewModel
 <br />
@@ -21,20 +22,28 @@
                             ;
                         }
                     </div>
-                   
+
                     <div class="col-2 @sugg.status"></div>
                     <div class="col-2">@sugg.status</div>
-                    <div class="col-1">
-                        @if(!sugg.favorite){
-                            <a onclick="Fav(@sugg.suggestion_id)">
-                            <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
-                        </a>
-                        }else{
-                        <a onclick="Fav(@sugg.suggestion_id)">
-                            <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
-                        </a>
-                        }
-                    </div>
+                    <!--Sjekker om brukeren er en teamlead eller admin før den viser knappen for markering av forslag-->
+                    <!--Man må dele strengen og velge det andre elementet for å kun få "admin" eller "user" osv-->
+                    @if (@Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin") || @Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("TeamLead"))
+                    {
+                        <div class="col-1">
+                            @if (!sugg.favorite)
+                            {
+                                <a onclick="Fav(@sugg.suggestion_id)">
+                                    <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
+                                </a>
+                            }
+                            else
+                            {
+                                <a onclick="Fav(@sugg.suggestion_id)">
+                                    <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
+                                </a>
+                            }
+                        </div>
+                    }
                 </div>
 
                 <!--Suggestion-info-->
@@ -56,7 +65,6 @@
                             ;
                         }
                         <br>
-                        <a asp-controller="Suggestion" asp-action="Details" asp-route-id="@sugg.suggestion_id">Detailjer... (MIDLERTIDIG)</a>
                         <div class="date">
                             <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
                             <br>
@@ -101,12 +109,12 @@
                     console.log(src);
                     if (src == unfav) {
                         element.src = fav;
-                         //alert("Favoritt!");
+                        //alert("Favoritt!");
                     } else {
                         element.src = unfav;
-                         //alert("Ufavoritt!");
+                        //alert("Ufavoritt!");
                     }
-                  
+
                 }
             }
         });
