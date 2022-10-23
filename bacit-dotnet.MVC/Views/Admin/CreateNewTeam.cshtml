@@ -12,39 +12,50 @@
     <link rel="stylesheet" href="~/bacit_dotnet.MVC.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-¨<body>
-    <div class="containter newteam-container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="card shadow-1-strong" style="border-radius: 1rem;">
-                    <div class="card-body p-5 text-center">
-                        <h2>Nytt Team</h2>
-                        <div class="form-outline mb-4">
-                            <input type="teamnavn" id="teamnavn" class="form-control form-control-lg" />
-                            <label class="form-label" for="teamnavn">Team Navn</label>
-                        </div>
-                        <div class="form-outline mb-4">
-                            <input type="teamdescription" id="teamdescription" class="form-control form-control-lg" />
-                            <label class="form-label" for="teamdescription">Teambeskrivelse</label>
-                        </div>
-                        <button class="btn btn-primary btn-lg btn-block" type="submit">Legg til medlemmer</button>
-                    </div>                  
-
-                </div>
-
+<body>    
+    <div class="containter newteam-container mt-5">       
+       <div class="row">
+           <div class="col"></div>
+           <div class="col text-center">
+               <h3>Nytt Team</h3>
+           </div>
+            <div class="col"></div>
+       </div>
+       <div class="row mt-3">
+           <div class="col-sm-4"></div>
+           <div class="col-sm-4">
+               <div class="form-group">
+                    <input name="team_navn" type="text" class="form-control" id="team_navn" placeholder="Teamnavn">
+               </div><br/>
+                
+               <div class="form-group text-center">
+                    <a class="btn-link" asp-controller="Admin" asp-action="AddTeamMember">Legg til memlemmer</a>
+               </div>
+               
+           </div>
+       </div>
+        <form asp-action="CreateNewTeam" asp-controller="Admin" method="post">
+            
+            <div class="row text-center mt-4">
+                <div class="col"><b>Ansattnummer</b></div>
+                <div class="col"><b>Navn</b></div>
+                <div class="col"><b>Team</b></div>
+                <div class="col"><b>Rolle</b></div>
+            </div><hr/>       
+        <div class="row text-center mt-3">
+                
             </div>
-            <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Avbryt</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Lagre</button>
-                </li>
-            </ul>
-
+       
+        <div class="row">
+            <div class="col-xs-12 mt-5">
+                <div class="text-center mt-xxl-5">
+                    <button type="submit" class="btn btn-outline-danger px-4">Avbryt</button>
+                    &nbsp;&nbsp;
+                    <button type="submit" class="btn btn-outline-success px-4">Lagre</button>
+                </div>
+            </div>
         </div>
-
+        </form>        
     </div>
-
 </body>
 </html>
