@@ -115,7 +115,7 @@ namespace bacit_dotnet.MVC.Controllers
             return categories;
         }
 
-        //Dette er en metode for å hente info til ett forslag (1) og alle kommentarer som tilhører til forslaget (2)
+        //Dette er en metode for å hente info til ett forslag og alle kommentarer som tilhører til forslaget
         public IActionResult Details(int id)
         {
             SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();

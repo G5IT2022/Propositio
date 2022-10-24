@@ -9,6 +9,8 @@ using bacit_dotnet.MVC.Repositories.Team;
 using bacit_dotnet.MVC.Repositories.Role;
 using bacit_dotnet.MVC.Repositories.Category;
 using bacit_dotnet.MVC.Models;
+using bacit_dotnet.MVC.Models.Suggestion;
+using System.Security.Cryptography.X509Certificates;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -94,6 +96,37 @@ namespace bacit_dotnet.MVC.Controllers
             aetm.team.employees = teamRepository.GetEmployeesForTeam(id);
             return View(aetm);
         }
+
+        [HttpGet]
+        public IActionResult CreateNewTeam()
+        {
+            AdminNewTeamModel adminNewTeamModel = new AdminNewTeamModel();       
+            return View(adminNewTeamModel);
+        }      
+        
+
+        [HttpGet]
+        public IActionResult AddTeamMember()
+        {
+            TeamMemberModel memberModel = new TeamMemberModel();
+            memberModel.employees = new List<EmployeeEntity>();
+            memberModel.teams = teamRepository.GetAll();
+            foreach (TeamEntity team in memberModel.teams)
+            {
+                team.employees = teamRepository.GetEmployeesForTeam(team.team_id);
+                foreach (EmployeeEntity emp in team.employees)
+                {
+                    emp.role = roleRepository.Get(emp.role_id);
+                    emp.teams = teamRepository.Get(emp.emp_id);
+                    if (!memberModel.employees.Contains(emp))
+                    {
+                        memberModel.employees.Add(emp);
+                    }
+                }
+            }
+            return View(memberModel);     
+        }
+        
     }
 
 

@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 @using bacit_dotnet.MVC.Models
 @using bacit_dotnet.MVC.Entities
 @model bacit_dotnet.MVC.Models.Suggestion.SuggestionDetailsModel
@@ -61,11 +61,12 @@
                 <div class="col sugg-description">@Model.suggestion.description</div>
             </div>
             <div class="row justify-content-between mt-2">
-                <div class="col">
-                    <div class="made">Opprettet: @Model.suggestion.timestamp.createdTimestamp.ToString()</div>
-                </div>
                 <div class="col-4">
-                    <div class="due">Frist: @Model.suggestion.timestamp.dueByTimestamp.ToString()</div>
+                    <div class="made">Opprettet: @Model.suggestion.timestamp.createdTimestamp.ToString("dd/mm/yyyy")</div>
+                </div>
+               
+                <div class="col-4">
+                    <div class="due">Frist: @Model.suggestion.timestamp.dueByTimestamp.ToString("dd/mm/yyyy")</div>
                 </div>
             </div>
         </div>
@@ -109,14 +110,24 @@
                 <!--Lage en ny kommentar-->
                 <div class="form-group">
                     <textarea name="description" class="form-control" id="description" placeholder="Skriv inn kommentar..." value="@Model.description"></textarea>
+
+            </div>
+            <div class="row d-flex justify-content-sm-end">
+                 <div class="mt-2 mb-5 text-right">
+                    <button class="btn btn-outline-primary btn-sm px-3 shadow-none" type="button">Avbryt</button>
+                    <button class="btn btn-primary btn-sm px-4 shadow-none" type="submit">Send</button>
+                    
+                </div>        
+            </div>
+            </form>
+
                 </div>
                 <div class="row d-flex justify-content-sm-end">
                     <div class="mt-2 mb-5 text-right">
                         <button class="btn btn-primary btn-sm shadow-none" type="submit">Post comment</button>
                         <button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button>
                     </div>
-                </div>
-            </form>
+                </div>       
         </div>
     </div>
 </body>
