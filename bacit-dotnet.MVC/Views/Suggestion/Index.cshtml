@@ -1,4 +1,5 @@
-﻿@using bacit_dotnet.MVC.Entities
+﻿@using System.Security.Claims
+@using bacit_dotnet.MVC.Entities
 @using bacit_dotnet.MVC.Models;
 @model bacit_dotnet.MVC.Models.EmployeeSuggestionViewModel
 <br />
@@ -19,11 +20,32 @@
                         {
                             @(team.team_name += " ")
                             ;
-                        }   
+                        }
                     </div>
+
                     <div class="col-2 @sugg.status"></div>
                     <div class="col-2">@sugg.status</div>
+                    <!--Sjekker om brukeren er en teamlead eller admin før den viser knappen for markering av forslag-->
+                    <!--Man må dele strengen og velge det andre elementet for å kun få "admin" eller "user" osv-->
+                    @if (@Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin") || @Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("TeamLead"))
+                    {
+                        <div class="col-1">
+                            @if (!sugg.favorite)
+                            {
+                                <a onclick="Fav(@sugg.suggestion_id)">
+                                    <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
+                                </a>
+                            }
+                            else
+                            {
+                                <a onclick="Fav(@sugg.suggestion_id)">
+                                    <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
+                                </a>
+                            }
+                        </div>
+                    }
                 </div>
+
                 <!--Suggestion-info-->
                 <div class="row">
                     <div class="col-10">
@@ -35,7 +57,8 @@
                 <hr />
                 <!--Show categories for suggestion-->
                 <div class="row test">
-                    <div class="col-8 categories"> Kategorier: 
+                    <div class="col-8 categories">
+                        Kategorier:
                         @foreach (var category in sugg.categories)
                         {
                             @(category.category_name += " ")
@@ -57,10 +80,43 @@
                         </a>
 
                     </div>
-
                 </div>
             </div>
             <hr />
         }
     }
 }
+<script type="text/javascript">
+    function Fav(id) {
+
+        var url = '@Url.Action("Favorite", "Suggestion")';
+        var element = document.getElementById(id);
+        var fav = "https://localhost:4000/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg"
+        var unfav = "https://localhost:4000/img/bootstrap-icons-1.9.1/bookmark-star.svg"
+        var src = element.src;
+
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                id: id
+            },
+            success: function (data) {
+                if (data.length == 0) {
+                    // No errors
+                    // alert(src);
+                    console.log(src);
+                    if (src == unfav) {
+                        element.src = fav;
+                        //alert("Favoritt!");
+                    } else {
+                        element.src = unfav;
+                        //alert("Ufavoritt!");
+                    }
+
+                }
+            }
+        });
+    };
+</script>
