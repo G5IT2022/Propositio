@@ -3,32 +3,28 @@ using bacit_dotnet.MVC.Models;
 using System.Data.SqlClient;
 using bacit_dotnet.MVC.DataAccess;
 using MySql.Data.MySqlClient;
-using bacit_dotnet.MVC.Repositories.Employee;
+using bacit_dotnet.MVC.Repositories;
 using bacit_dotnet.MVC.Entities;
 using System.Web;
 using Microsoft.AspNetCore.Components.Authorization;
 using bacit_dotnet.MVC.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
-using bacit_dotnet.MVC.Repositories.Team;
 
 namespace bacit_dotnet.MVC.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ITeamRepository teamRepository;
         private readonly IEmployeeRepository employeeRepository;
         private readonly ITokenService tokenservice;
         private readonly IConfiguration configuration;
         private string generatedToken = null;
 
-        public AccountController(IEmployeeRepository employeeRepository, ITokenService tokenservice, IConfiguration configuration, ITeamRepository teamRepository)
+        public AccountController(IEmployeeRepository employeeRepository, ITokenService tokenservice, IConfiguration configuration)
         {
             this.employeeRepository = employeeRepository;
             this.tokenservice = tokenservice;
             this.configuration = configuration;
-            this.teamRepository = teamRepository;
-
         }
 
 
@@ -44,7 +40,7 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpPost]
         public IActionResult Verify(AccountViewModel model)
         {
-            EmployeeEntity emp = employeeRepository.Get(model.emp_id);
+            EmployeeEntity emp = employeeRepository.GetEmployee(model.emp_id);
             if (emp == null)
             {
                 ViewBag.ErrorMessage = "Ansattnr eller passord er feil, vennligst prøv igjen.";
@@ -90,8 +86,8 @@ namespace bacit_dotnet.MVC.Controllers
         public IActionResult MyAccount()
         {
             MyAccountViewModel model = new MyAccountViewModel();
-            model.employees = employeeRepository.GetAll();
-            model.teams = teamRepository.GetAll();
+            model.employees = employeeRepository.GetEmployees();
+            model.teams = employeeRepository.GetTeams();
             return View(model);
         }
 

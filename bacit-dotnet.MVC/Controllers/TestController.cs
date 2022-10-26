@@ -1,35 +1,32 @@
 ﻿using bacit_dotnet.MVC.Entities;
 using bacit_dotnet.MVC.Models.Test;
-using bacit_dotnet.MVC.Repositories.Category;
+using bacit_dotnet.MVC.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bacit_dotnet.MVC.Controllers
 {
     public class TestController : Controller
-    {
-        private readonly ICategoryRepository categoryRepository;
-        public TestController(ICategoryRepository categoryRepository)
+    { 
+        private readonly IEmployeeRepository employeeRepository;
+        private readonly ISuggestionRepository suggestionRepository;
+        public TestController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository)
         {
-            this.categoryRepository = categoryRepository;
+            this.employeeRepository = employeeRepository;
+            this.suggestionRepository = suggestionRepository;
         }
         // GET: TestController
         public ActionResult Index()
         {
             TestViewModel model = new TestViewModel();
-            model.categories = categoryRepository.GetAll();
+            model.starEmployee = employeeRepository.GetEmployee(2);
+            model.employees = employeeRepository.GetEmployees();
+            model.starTeam = employeeRepository.GetTeam(1);
+            model.teams = employeeRepository.GetTeams();
+            // model.starSuggestion = suggestionRepository.GetSuggestionBySuggestionID(1);
+            // model.starSuggestion.author = employeeRepository.GetEmployee(model.starSuggestion.author_emp_id);
+            model.suggestions = suggestionRepository.GetAll();
             return View(model);
-        }
-        // POST: TestController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(CategoryEntity category)
-        {
-            if (ModelState.IsValid)
-            {
-                int i = categoryRepository.Create(category);
-            }
-            return View("Index");
         }
 
         // POST: TestController/Edit/5
@@ -45,17 +42,6 @@ namespace bacit_dotnet.MVC.Controllers
             {
                 return View();
             }
-        }
-        // POST: TestController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(TestViewModel model)
-        {
-
-            CategoryEntity category = new CategoryEntity();
-            int i = categoryRepository.Delete(category);
-
-            return RedirectToAction("Index");
         }
     }
 }

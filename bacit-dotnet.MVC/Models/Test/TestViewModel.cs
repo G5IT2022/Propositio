@@ -4,9 +4,18 @@ namespace bacit_dotnet.MVC.Models.Test
 {
     public class TestViewModel
     {
-        public int category_id { get; set; }
-        public string category_name { get; set; }
 
-        public List<CategoryEntity> categories { get; set; }
+
+        public EmployeeEntity starEmployee { get; set; }
+        public List<EmployeeEntity> employees { get; set; }
+
+        public TeamEntity starTeam { get; set; }
+        public List<TeamEntity> teams { get; set; }
+
+        public SuggestionEntity starSuggestion { get; set; }
+        public List<SuggestionEntity> suggestions
+        {
+            get; set;
+        }
     }
 }
