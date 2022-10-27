@@ -539,5 +539,5 @@ VALUES (
 INSERT INTO SuggestionComment(emp_id, suggestion_id, description)
 VALUES (10, 10, "Sjekk dette. Link: https://test.com/%22");
 
-INSERT INTO Image(emp_id, suggestion_id, image_filename, image_filepath)
+INSERT INTO Image(emp_id, suggestion_id, image_filepath)
 VALUES (1, 1, "/images/door.jpg")
