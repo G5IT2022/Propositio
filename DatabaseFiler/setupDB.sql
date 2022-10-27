@@ -79,7 +79,6 @@ CREATE TABLE Image(
     image_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     emp_id int NOT NULL,
     suggestion_id int NOT NULL,
-    image_filename nvarchar(100) NOT NULL,
     image_filepath nvarchar(1000) NOT NULL,
     CONSTRAINT EmployeeImageFK FOREIGN KEY (emp_id) REFERENCES Employee(emp_id),
     CONSTRAINT SuggestionImageFK FOREIGN KEY (suggestion_id) REFERENCES Suggestion(suggestion_id)
@@ -541,4 +540,4 @@ INSERT INTO SuggestionComment(emp_id, suggestion_id, description)
 VALUES (10, 10, "Sjekk dette. Link: https://test.com/%22");
 
 INSERT INTO Image(emp_id, suggestion_id, image_filename, image_filepath)
-VALUES (1, 1, "door.jpg", "C:/Users/Administrator/Documents/Propositio/DatabaseFiler/bilder/door.jpg")
+VALUES (1, 1, "/images/door.jpg")
