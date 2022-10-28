@@ -6,6 +6,10 @@ using MySqlConnector;
 
 namespace bacit_dotnet.MVC.Repositories
 {
+    /**
+     * Dette repositoryet har ansvaret for alt det som Suggestion, Category, Comment og Timestamp repositoryene gjorde før
+     * Den samler alt på ett sted.
+     * **/
     public class SuggestionRepository : ISuggestionRepository
     {
         private readonly ISqlConnector sqlConnector;
@@ -14,6 +18,10 @@ namespace bacit_dotnet.MVC.Repositories
         {
             this.sqlConnector = sqlConnector;
         }
+
+        /**
+         * Denne metoden henter alle forslagene i databasen komplett med kategorier og timestamp. 
+         * **/
         public List<SuggestionEntity> GetAll()
         {
             var query = @"@SELECT s.*, sts.*, c.* FROM Suggestion AS s INNER JOIN SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id
@@ -39,6 +47,10 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ToList();
             }
         }
+
+        /**
+         * Denne metoden gjør at du kan oppdatere om et forslag er favoritt eller ikke i databasen. 
+         * **/
         public void Favorite(int id, bool update)
         {
             var updateQuery = @"UPDATE Suggestion SET favorite = @state WHERE suggestion_id = @suggestion_id";
@@ -48,6 +60,11 @@ namespace bacit_dotnet.MVC.Repositories
             }
 
         }
+
+        /**
+         * Denne metoden henter en ny forslags id. 
+         * Trengs for å lage nytt forslag.
+         * **/
         private int GetNewSuggestionID()
         {
             var query = @"SELECT COUNT(*) FROM Suggestion";
@@ -57,6 +74,10 @@ namespace bacit_dotnet.MVC.Repositories
                 return count + 1;
             }
         }
+
+        /**
+         * Denne metoden henter et forslag basert på suggestion_id
+         * **/
         public SuggestionEntity GetSuggestionBySuggestionID(int suggestion_id)
         {
             var query = @"SELECT s.*, sts.*, c.* FROM Suggestion AS s INNER JOIN 
@@ -90,7 +111,7 @@ namespace bacit_dotnet.MVC.Repositories
             INNER JOIN SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id 
             INNER JOIN SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id 
             INNER JOIN Category AS c ON sc.category_id = c.category_id 
-            INNER JOIN SuggestionComment AS co ON co.suggestion_id = s.suggestion_id WHERE s.suggestion_id = @suggestion_id";
+            LEFT JOIN SuggestionComment AS co ON co.suggestion_id = s.suggestion_id WHERE s.suggestion_id = @suggestion_id";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, CommentEntity, SuggestionEntity>(query, (suggestion, timestamp, category, comment) =>
@@ -107,12 +128,18 @@ namespace bacit_dotnet.MVC.Repositories
                     suggestion.categories.Add(category);
                     suggestion.comments.Add(comment);
                     return suggestion;
-                }, new { suggestion_id }, splitOn: "timestamp_id, category_id, comment_id");
+                }, new { suggestion_id  = suggestion_id}, splitOn: "timestamp_id, category_id, comment_id");
                 var result = suggestions.GroupBy(s => s.suggestion_id).Select(suggestion =>
                 {
                     var groupedSuggestion = suggestion.First();
-                    groupedSuggestion.categories = suggestion.Select(s => s.categories.Single()).ToList();
-                    groupedSuggestion.comments = suggestion.Select(s => s.comments.Single()).ToList();
+                    if (groupedSuggestion.categories.Count > 0)
+                    {
+                        groupedSuggestion.categories = suggestion.Select(s => s.categories.Single()).ToList();
+                    }
+                    if (groupedSuggestion.comments.Count > 0)
+                    {
+                        groupedSuggestion.comments = suggestion.Select(s => s.comments.Single()).ToList();
+                    }
                     return groupedSuggestion;
                 });
                 return result.ElementAt(0);
@@ -156,7 +183,7 @@ namespace bacit_dotnet.MVC.Repositories
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 connection.Execute(suggestionQuery, new { suggestion.title, suggestion.description, suggestion.ownership_emp_id, poster_emp_id = suggestion.author_emp_id });
-                connection.Execute(timestampquery, new {suggestion_id = suggestion.suggestion_id, dueByTimestamp = suggestion.timestamp.dueByTimestamp});
+                connection.Execute(timestampquery, new { suggestion_id = suggestion.suggestion_id, dueByTimestamp = suggestion.timestamp.dueByTimestamp });
                 foreach (CategoryEntity category in suggestion.categories)
                 {
                     connection.Execute(cateogiresQuery, new { suggestion_id = suggestion.suggestion_id, categoryid = category.category_id });

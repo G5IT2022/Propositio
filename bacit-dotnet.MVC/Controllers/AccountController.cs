@@ -10,19 +10,22 @@ using Microsoft.AspNetCore.Components.Authorization;
 using bacit_dotnet.MVC.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
+using System.Security.Claims;
 
 namespace bacit_dotnet.MVC.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IEmployeeRepository employeeRepository;
+        private readonly ISuggestionRepository suggestionRepository;
         private readonly ITokenService tokenservice;
         private readonly IConfiguration configuration;
         private string generatedToken = null;
 
-        public AccountController(IEmployeeRepository employeeRepository, ITokenService tokenservice, IConfiguration configuration)
+        public AccountController(IEmployeeRepository employeeRepository,ISuggestionRepository suggestionRepository, ITokenService tokenservice, IConfiguration configuration)
         {
             this.employeeRepository = employeeRepository;
+            this.suggestionRepository = suggestionRepository;
             this.tokenservice = tokenservice;
             this.configuration = configuration;
         }
@@ -86,8 +89,13 @@ namespace bacit_dotnet.MVC.Controllers
         public IActionResult MyAccount()
         {
             MyAccountViewModel model = new MyAccountViewModel();
-            model.employees = employeeRepository.GetEmployees();
-            model.teams = employeeRepository.GetTeams();
+            model.employee = employeeRepository.GetEmployee(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)));
+            model.employee.suggestions = suggestionRepository.GetSuggestionsByAuthorID(model.employee.emp_id);
+            model.teams = new List<TeamEntity>();
+            var teamCount = model.employee.teams.Count();
+            for(int i = 0; i < teamCount; i++) {
+                model.teams.Add(employeeRepository.GetTeam(model.employee.teams.ElementAt(i).team_id));
+            }
             return View(model);
         }
 

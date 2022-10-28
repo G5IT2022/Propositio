@@ -17,7 +17,7 @@ namespace bacit_dotnet.MVC.Controllers
         private readonly IEmployeeRepository employeeRepository;
         private readonly ISuggestionRepository suggestionRepository;
 
-     
+
         public SuggestionController(ILogger<HomeController> logger, IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository)
         {
             this.suggestionRepository = suggestionRepository;
@@ -51,7 +51,8 @@ namespace bacit_dotnet.MVC.Controllers
                 status = STATUS.PLAN,
                 categories = parseCategories(collection),
                 ownership_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
-                timestamp = new TimestampEntity { 
+                timestamp = new TimestampEntity
+                {
                     dueByTimestamp = model.dueByTimestamp
                 },
                 author_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData))
@@ -91,10 +92,15 @@ namespace bacit_dotnet.MVC.Controllers
             SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
             detailsModel.suggestion = suggestionRepository.GetSuggestionBySuggestionIDWithComments(id);
             detailsModel.employee = employeeRepository.GetEmployee(detailsModel.suggestion.author_emp_id);
-            foreach(CommentEntity comment in detailsModel.suggestion.comments)
+            foreach (CommentEntity comment in detailsModel.suggestion.comments)
             {
-                comment.poster = employeeRepository.GetEmployee(comment.emp_id);
+                if (comment != null)
+                {
+                    comment.poster = employeeRepository.GetEmployee(comment.emp_id);
+                }
             }
+
+
             if (detailsModel.suggestion == null)
             {
                 return RedirectToAction("Index");
