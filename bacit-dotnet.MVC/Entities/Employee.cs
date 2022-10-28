@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using Dapper.Contrib.Extensions;
+using Newtonsoft.Json;
 
 namespace bacit_dotnet.MVC.Entities
 {
+    [Table("Employee")]
     public class EmployeeEntity
     {
         public int emp_id { get; set; }
