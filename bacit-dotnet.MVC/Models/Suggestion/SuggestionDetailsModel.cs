@@ -6,7 +6,7 @@ namespace bacit_dotnet.MVC.Models.Suggestion
     public class SuggestionDetailsModel
     {
         public SuggestionEntity suggestion { get; set; }
-        public EmployeeEntity employee { get; set; }        
+        public EmployeeEntity employee { get; set; }
 
         //Lage ny kommentar
         public string description { get; set; }

@@ -105,16 +105,17 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ElementAt(0);
             }
         }
-        public SuggestionEntity GetSuggestionBySuggestionIDWithComments(int suggestion_id)
+        public SuggestionEntity GetSuggestionBySuggestionIDWithCommentsAndImages(int suggestion_id)
         {
-            var query = @"SELECT s.*, sts.*, c.*, co.* FROM Suggestion AS s 
+            var query = @"SELECT s.*, sts.*, c.*, co.*, i.* FROM Suggestion AS s 
             INNER JOIN SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id 
             INNER JOIN SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id 
             INNER JOIN Category AS c ON sc.category_id = c.category_id 
             LEFT JOIN SuggestionComment AS co ON co.suggestion_id = s.suggestion_id WHERE s.suggestion_id = @suggestion_id";
+
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, CommentEntity, SuggestionEntity>(query, (suggestion, timestamp, category, comment) =>
+                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, CommentEntity, ImageEntity, SuggestionEntity>(query, (suggestion, timestamp, category, comment, image) =>
                 {
                     suggestion.timestamp = timestamp;
                     if (suggestion.categories == null)
@@ -125,8 +126,13 @@ namespace bacit_dotnet.MVC.Repositories
                     {
                         suggestion.comments = new List<CommentEntity>();
                     }
+                    if (suggestion.images == null)
+                    {
+                        suggestion.images = new List<ImageEntity>();
+                    }
                     suggestion.categories.Add(category);
                     suggestion.comments.Add(comment);
+                    suggestion.images.Add(image);
                     return suggestion;
                 }, new { suggestion_id  = suggestion_id}, splitOn: "timestamp_id, category_id, comment_id");
                 var result = suggestions.GroupBy(s => s.suggestion_id).Select(suggestion =>
@@ -140,6 +146,7 @@ namespace bacit_dotnet.MVC.Repositories
                     {
                         groupedSuggestion.comments = suggestion.Select(s => s.comments.Single()).ToList();
                     }
+
                     return groupedSuggestion;
                 });
                 return result.ElementAt(0);
@@ -222,6 +229,62 @@ namespace bacit_dotnet.MVC.Repositories
             {
                 var categories = connection.Query<CategoryEntity>(query);
                 return categories.ToList();
+            }
+        }
+        //metoder for bilder
+        //Legg til bilder
+        public int CreateImage(ImageEntity image)
+        {
+            var query = @"INSERT INTO Image(emp_id, suggestion_id, image_file) 
+                VALUES (@emp_id, @suggestion_id, @image_file);";
+
+            //starter connection
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                int result =
+                connection.Execute(query, new { emp_id = image.emp_id, suggestion_id = image.suggestion_id, image_file = image.image_file});
+                return result;
+            }
+        }
+        //metode som henter alle bilder
+        public List<ImageEntity> GetAllImages()
+        {
+            var query = @"SELECT * FROM Image;";
+
+            //starter connection til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                //lager variabel images bildene og hentes fra databasen
+                var images = connection.Query<ImageEntity>(query);
+                return images.ToList();
+            }
+        }
+        //metode som henter et bilde ved bruk av bildeID
+        public ImageEntity GetImage(int image_id)
+        {
+            var query = @"SELECT * FROM Image WHERE image_id = @image_id;";
+
+            //starter connection til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                //lager variabel img for et bilde og hentes fra databasen
+                //referere image_id i parameter med image_id i databasen --> gjennom connection
+                var img = connection.QueryFirstOrDefault<ImageEntity>(query, new { image_id = image_id });
+                return img;
+            }
+        }
+        //metode som sletter forslag ved bruk av bildeID
+        public int DeleteImage(int image_id)
+        {
+            var query = @"DELETE FROM Image WHERE image_id = @image_id;";
+
+            //starter connection til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                //lager variabel result for antall rader slettet som hentes fra databasen gjennom query
+                //referere image_id i parameter med image_id i databasen --> gjennom connection
+                var result = connection.Execute(query, new { image_id = image_id });
+                return result;
             }
         }
     }

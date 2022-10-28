@@ -90,7 +90,7 @@ namespace bacit_dotnet.MVC.Controllers
         public IActionResult Details(int id)
         {
             SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
-            detailsModel.suggestion = suggestionRepository.GetSuggestionBySuggestionIDWithComments(id);
+            detailsModel.suggestion = suggestionRepository.GetSuggestionBySuggestionIDWithCommentsAndImages(id);
             detailsModel.employee = employeeRepository.GetEmployee(detailsModel.suggestion.author_emp_id);
             foreach (CommentEntity comment in detailsModel.suggestion.comments)
             {

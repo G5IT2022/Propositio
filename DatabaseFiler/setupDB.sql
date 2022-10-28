@@ -22,7 +22,7 @@ CREATE TABLE AuthorizationRole(
     authorization_role_name nvarchar(100) NOT NULL
 );
 CREATE TABLE Employee(
-    emp_id  int NOT NULL PRIMARY KEY,
+    emp_id  int PRIMARY KEY,
     name nvarchar(200) NOT NULL,
     passwordhash nvarchar(200) NOT NULL,
     salt binary(64) NOT NULL,
