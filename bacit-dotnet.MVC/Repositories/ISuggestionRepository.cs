@@ -42,7 +42,7 @@ namespace bacit_dotnet.MVC.Repositories
         /// </summary>
         /// <param name="comment">A comment entity</param>
         /// <returns>An integer of the number of rows affected, 1 if successful</returns>
-        public int DeleteComment(CommentEntity comment);
+        public int DeleteComment(int comment_id);
 
         /**
          * Images

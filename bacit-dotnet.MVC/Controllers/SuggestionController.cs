@@ -18,7 +18,7 @@ namespace bacit_dotnet.MVC.Controllers
         private readonly ISuggestionRepository suggestionRepository;
 
 
-        public SuggestionController(ILogger<HomeController> logger, IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository)
+        public SuggestionController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository)
         {
             this.suggestionRepository = suggestionRepository;
             this.employeeRepository = employeeRepository;
@@ -100,6 +100,8 @@ namespace bacit_dotnet.MVC.Controllers
             SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
             detailsModel.suggestion = suggestionRepository.GetSuggestionBySuggestionIDWithCommentsAndImages(id);
             detailsModel.employee = employeeRepository.GetEmployee(detailsModel.suggestion.author_emp_id);
+            detailsModel.suggestion.author = employeeRepository.GetEmployee(detailsModel.suggestion.author_emp_id);
+            detailsModel.suggestion.responsible_employee = employeeRepository.GetEmployee(detailsModel.suggestion.ownership_emp_id);
             foreach (CommentEntity comment in detailsModel.suggestion.comments)
             {
                 if (comment != null)
@@ -132,10 +134,20 @@ namespace bacit_dotnet.MVC.Controllers
 
             if (result != 1)
             {
-                //Noe har gått feil med å lage kommentaren         
-
+                ViewBag.Message = "Noe gikk galt, prøv igjen";
+                return RedirectToAction("Details", "Suggestion", new { id = comment.suggestion_id });
             }
-            return RedirectToAction("Details", "Suggestion", new { id = comment.suggestion_id });
+            else
+            {
+                ViewBag.Message = "Kommentaren din ble postet!";
+                return RedirectToAction("Details", "Suggestion", new { id = comment.suggestion_id });
+            }
+        }
+        public IActionResult DeleteComment(int comment_id, int suggestion_id)
+        {
+            var result = suggestionRepository.DeleteComment(comment_id);
+            return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
+
         }
         //Favoritter
         [HttpPost]

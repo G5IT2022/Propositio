@@ -111,7 +111,7 @@ namespace bacit_dotnet.MVC.Repositories
             INNER JOIN SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id 
             INNER JOIN SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id 
             INNER JOIN Category AS c ON sc.category_id = c.category_id 
-            INNER JOIN SuggestionComment AS co ON co.suggestion_id = s.suggestion_id 
+            LEFT JOIN SuggestionComment AS co ON co.suggestion_id = s.suggestion_id 
             LEFT JOIN Image as i ON i.suggestion_id = s.suggestion_id WHERE s.suggestion_id = @suggestion_id";
             var fullSuggestion = new SuggestionEntity();
 
@@ -152,10 +152,6 @@ namespace bacit_dotnet.MVC.Repositories
                         }
                     }
                 }
-                var resultComments = fullSuggestion.comments.GroupBy(c => c.comment_id).ToList();
-
-                // fullSuggestion.comments = resultComments;
-
                 return fullSuggestion;
                 //   return suggestions.ElementAt(0);
             }
@@ -223,12 +219,12 @@ namespace bacit_dotnet.MVC.Repositories
         {
             throw new NotImplementedException();
         }
-        public int DeleteComment(CommentEntity comment)
+        public int DeleteComment(int comment_id)
         {
             var query = @"DELETE FROM SuggestionComment WHERE comment_id = @comment_id";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                var affectedRows = connection.Execute(query, new { comment.comment_id });
+                var affectedRows = connection.Execute(query, new { comment_id = comment_id });
                 return affectedRows;
             }
         }

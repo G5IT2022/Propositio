@@ -6,6 +6,7 @@ namespace bacit_dotnet.MVC.Repositories
     {
         string AuthorizeUser(int emp_id);
         bool UserExists(int emp_id);
+        public byte[] GetSalt(int emp_id);
         EmployeeEntity AuthenticateUser(int emp_id, string password);
     }
 }

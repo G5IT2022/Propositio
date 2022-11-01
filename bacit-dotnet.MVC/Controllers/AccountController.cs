@@ -58,7 +58,8 @@ namespace bacit_dotnet.MVC.Controllers
                 }
                 else
                 {
-                    byte[] password = PassHash.ComputeHMAC_SHA256(Encoding.UTF8.GetBytes(model.password), emp.salt);
+                    byte[] salt = adminRepository.GetSalt(model.emp_id);
+                    byte[] password = PassHash.ComputeHMAC_SHA256(Encoding.UTF8.GetBytes(model.password), salt);
                     string passwordstring = Convert.ToBase64String(password);
                     emp = adminRepository.AuthenticateUser(model.emp_id, passwordstring);
 

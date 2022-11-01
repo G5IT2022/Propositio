@@ -22,7 +22,7 @@ namespace bacit_dotnet.MVC.Repositories
             var query = @"SELECT emp_id, name FROM Employee WHERE emp_id = @emp_id AND passwordhash = @password";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                var emp = connection.QueryFirstOrDefault<EmployeeEntity>(query, new {emp_id = emp_id, password = password});
+                var emp = connection.QueryFirstOrDefault<EmployeeEntity>(query, new { emp_id = emp_id, password = password });
                 return emp;
             }
         }
@@ -38,13 +38,22 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
+        public byte[] GetSalt(int emp_id)
+        {
+            var query = @"SELECT salt FROM Employee WHERE emp_id = @emp_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection){
+                var result = connection.QueryFirstOrDefault<byte[]>(query, new { emp_id = emp_id });
+                return result;
+            }
+        }
+
         public bool UserExists(int emp_id)
         {
             var query = @"SELECT emp_id FROM Employee WHERE emp_id = @emp_id";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 var user = connection.QueryFirstOrDefault<EmployeeEntity>(query, new { emp_id = emp_id });
-                if(user != null)
+                if (user != null)
                 {
                     return true;
                 }
