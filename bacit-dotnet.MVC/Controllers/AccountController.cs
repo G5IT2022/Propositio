@@ -18,14 +18,16 @@ namespace bacit_dotnet.MVC.Controllers
     {
         private readonly IEmployeeRepository employeeRepository;
         private readonly ISuggestionRepository suggestionRepository;
+        private readonly IAdminRepository adminRepository;
         private readonly ITokenService tokenservice;
         private readonly IConfiguration configuration;
         private string generatedToken = null;
 
-        public AccountController(IEmployeeRepository employeeRepository,ISuggestionRepository suggestionRepository, ITokenService tokenservice, IConfiguration configuration)
+        public AccountController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository, IAdminRepository adminRepository, ITokenService tokenservice, IConfiguration configuration)
         {
             this.employeeRepository = employeeRepository;
             this.suggestionRepository = suggestionRepository;
+            this.adminRepository = adminRepository;
             this.tokenservice = tokenservice;
             this.configuration = configuration;
         }
@@ -43,47 +45,59 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpPost]
         public IActionResult Verify(AccountViewModel model)
         {
-            EmployeeEntity emp = employeeRepository.GetEmployee(model.emp_id);
-            if (emp == null)
+            //Finnes brukeren som prøver å logge inn
+            bool userExists = adminRepository.UserExists(model.emp_id);
+            if (userExists)
             {
-                ViewBag.ErrorMessage = "Ansattnr eller passord er feil, vennligst prøv igjen.";
-                return View("LogIn", new AccountViewModel());
-            }
-            if (model.emp_id <= 10)
-            {
-                emp = employeeRepository.DummyAuthenticate(model.emp_id, model.password);
+                //Ja det gjør de, sjekk om passordet stemmer overens
+                EmployeeEntity emp = new EmployeeEntity();
+                if (model.emp_id <= 10)
+                {
+                    emp = adminRepository.AuthenticateUser(model.emp_id, model.password);
 
+                }
+                else
+                {
+                    byte[] password = PassHash.ComputeHMAC_SHA256(Encoding.UTF8.GetBytes(model.password), emp.salt);
+                    string passwordstring = Convert.ToBase64String(password);
+                    emp = adminRepository.AuthenticateUser(model.emp_id, passwordstring);
+
+                }
+                if(emp == null)
+                {
+                    ViewBag.ErrorMessage = "Passordet er feil, prøv igjen.";
+                    return View("LogIn", new AccountViewModel());
+                }
+
+                emp.authorizationRole = adminRepository.AuthorizeUser(emp.emp_id);
+                generatedToken = tokenservice.BuildToken(configuration["Jwt:Key"].ToString(), configuration["Jwt:Issuer"].ToString(), emp);
+                if (generatedToken != null)
+                {
+                    HttpContext.Session.SetString("Token", generatedToken);
+                    return RedirectToAction("Index", "Suggestion");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "Login feilet, vennligst prøv igjen.";
+                    return View("LogIn", new AccountViewModel());
+                }
             }
             else
             {
-                byte[] password = PassHash.ComputeHMAC_SHA256(Encoding.UTF8.GetBytes(model.password), emp.salt);
-                string passwordstring = Convert.ToBase64String(password);
-                emp = employeeRepository.DummyAuthenticate(model.emp_id, passwordstring);
-                
-            }
-            if (emp == null)
-            {
-                ViewBag.ErrorMessage = "Passordet er feil, vennligst prøv igjen.";
-                return View("LogIn", new AccountViewModel());
-            }
-
-            emp.authorizationRole = employeeRepository.GetEmployeeRoleName(emp.authorization_role_id);
-            generatedToken = tokenservice.BuildToken(configuration["Jwt:Key"].ToString(), configuration["Jwt:Issuer"].ToString(), emp);
-            if (generatedToken != null)
-            {
-                HttpContext.Session.SetString("Token", generatedToken);
-                return RedirectToAction("Index", "Suggestion");
-            }
-            else
-            {
-                ViewBag.ErrorMessage = "Login feilet, vennligst prøv igjen.";
+                ViewBag.ErrorMessage = $"Finner ikke brukeren med ansattnummer: {model.emp_id}";
                 return View("LogIn", new AccountViewModel());
             }
         }
-        [AllowAnonymous]
+
         public IActionResult ChangePassword()
         {
             return View();
+        }
+
+        public IActionResult LogOut()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("LogIn");
         }
 
         public IActionResult MyAccount()
@@ -93,7 +107,8 @@ namespace bacit_dotnet.MVC.Controllers
             model.employee.suggestions = suggestionRepository.GetSuggestionsByAuthorID(model.employee.emp_id);
             model.teams = new List<TeamEntity>();
             var teamCount = model.employee.teams.Count();
-            for(int i = 0; i < teamCount; i++) {
+            for (int i = 0; i < teamCount; i++)
+            {
                 model.teams.Add(employeeRepository.GetTeam(model.employee.teams.ElementAt(i).team_id));
             }
             return View(model);

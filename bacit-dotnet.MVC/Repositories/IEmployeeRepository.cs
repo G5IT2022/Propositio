@@ -20,10 +20,5 @@ namespace bacit_dotnet.MVC.Repositories
         public List<TeamEntity> GetTeams();
 
         public int CreateEmployee(EmployeeEntity employee);
-        EmployeeEntity DummyAuthenticate(int emp_id, string password);
-
-        public string GetEmployeeRoleName(int authorization_role_id);
-
-
     }
 }

@@ -44,29 +44,37 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpPost]
         public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection)
         {
-            SuggestionEntity suggestion = new SuggestionEntity
+            ModelState.Remove("Categories");
+            if (ModelState.IsValid)
             {
-                title = model.title,
-                description = model.description,
-                status = STATUS.PLAN,
-                categories = parseCategories(collection),
-                ownership_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
-                timestamp = new TimestampEntity
+                SuggestionEntity suggestion = new SuggestionEntity
                 {
-                    dueByTimestamp = model.dueByTimestamp
-                },
-                author_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData))
-            };
-            if (model.isJustDoIt == true)
-            {
-                suggestion.status = STATUS.JUSTDOIT;
+                    title = model.title,
+                    description = model.description,
+                    status = STATUS.PLAN,
+                    categories = parseCategories(collection),
+                    ownership_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
+                    timestamp = new TimestampEntity
+                    {
+                        dueByTimestamp = model.dueByTimestamp
+                    },
+                    author_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData))
+                };
+                if (model.isJustDoIt == true)
+                {
+                    suggestion.status = STATUS.JUSTDOIT;
+                }
+                else
+                {
+                    suggestion.status = STATUS.PLAN;
+                }
+                suggestionRepository.CreateSuggestion(suggestion);
+                return RedirectToAction("Index");
             }
             else
             {
-                suggestion.status = STATUS.PLAN;
+                return RedirectToAction("Register");
             }
-            suggestionRepository.CreateSuggestion(suggestion);
-            return RedirectToAction("Index");
         }
 
         private List<CategoryEntity> parseCategories(IFormCollection collection)

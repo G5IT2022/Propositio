@@ -12,7 +12,7 @@ namespace bacit_dotnet.MVC.Models.Suggestion
         public string description { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{dd/mm/yyyy}")]
         public DateTime createdTimestamp { get; set; }
 
     }

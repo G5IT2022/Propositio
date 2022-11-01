@@ -26,16 +26,6 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
-        public EmployeeEntity DummyAuthenticate(int emp_id, string password)
-        {
-            var query = @"SELECT * FROM Employee WHERE emp_id = @emp_id AND passwordhash = @passwordhash";
-            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
-            {
-                EmployeeEntity emp = connection.QueryFirstOrDefault<EmployeeEntity>(query, new { emp_id, passwordhash = password });
-                return emp;
-            }
-        }
-
         //Henter en enkelt ansatt basert på employeeid, returnerer en EmployeeEntity med en liste over team de er med i og rolle. 
         /**
          1. Hent ansattnr, navn, role_id på den ansatte
@@ -70,15 +60,7 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
-        public string GetEmployeeRoleName(int authorization_role_id)
-        {
-            var query = @"SELECT authorization_role_name FROM AuthorizationRole WHERE authorization_role_id = @authorization_role_id";
-            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
-            {
-                var role = connection.QueryFirstOrDefault<string>(query, new { authorization_role_id });
-                return role;
-            }
-        }
+       
 
         public List<EmployeeEntity> GetEmployees()
         {

@@ -111,51 +111,59 @@ namespace bacit_dotnet.MVC.Repositories
             INNER JOIN SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id 
             INNER JOIN SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id 
             INNER JOIN Category AS c ON sc.category_id = c.category_id 
-            LEFT JOIN SuggestionComment AS co ON co.suggestion_id = s.suggestion_id WHERE s.suggestion_id = @suggestion_id";
+            INNER JOIN SuggestionComment AS co ON co.suggestion_id = s.suggestion_id 
+            LEFT JOIN Image as i ON i.suggestion_id = s.suggestion_id WHERE s.suggestion_id = @suggestion_id";
+            var fullSuggestion = new SuggestionEntity();
 
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
+
                 var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, CommentEntity, ImageEntity, SuggestionEntity>(query, (suggestion, timestamp, category, comment, image) =>
                 {
                     suggestion.timestamp = timestamp;
-                    if (suggestion.categories == null)
-                    {
-                        suggestion.categories = new List<CategoryEntity>();
-                    }
-                    if (suggestion.comments == null)
-                    {
-                        suggestion.comments = new List<CommentEntity>();
-                    }
-                    if (suggestion.images == null)
-                    {
-                        suggestion.images = new List<ImageEntity>();
-                    }
                     suggestion.categories.Add(category);
                     suggestion.comments.Add(comment);
                     suggestion.images.Add(image);
                     return suggestion;
-                }, new { suggestion_id  = suggestion_id}, splitOn: "timestamp_id, category_id, comment_id");
-                var result = suggestions.GroupBy(s => s.suggestion_id).Select(suggestion =>
-                {
-                    var groupedSuggestion = suggestion.First();
-                    if (groupedSuggestion.categories.Count > 0)
-                    {
-                        groupedSuggestion.categories = suggestion.Select(s => s.categories.Single()).ToList();
-                    }
-                    if (groupedSuggestion.comments.Count > 0)
-                    {
-                        groupedSuggestion.comments = suggestion.Select(s => s.comments.Single()).ToList();
-                    }
+                }, new { suggestion_id = suggestion_id }, splitOn: "timestamp_id, category_id, comment_id, image_id");
 
-                    return groupedSuggestion;
-                });
-                return result.ElementAt(0);
+                fullSuggestion = suggestions.ElementAt(0);
+                foreach (SuggestionEntity suggestion in suggestions)
+                {
+                    foreach (CommentEntity comment in suggestion.comments)
+                    {
+                        if (!fullSuggestion.comments.Contains(comment))
+                        {
+                            fullSuggestion.comments.Add(comment);
+                        }
+                    }
+                    foreach (ImageEntity image in suggestion.images)
+                    {
+                        if (!fullSuggestion.images.Contains(image))
+                        {
+                            fullSuggestion.images.Add(image);
+                        }
+                    }
+                    foreach (CategoryEntity category in suggestion.categories)
+                    {
+                        if (!fullSuggestion.categories.Contains(category))
+                        {
+                            fullSuggestion.categories.Add(category);
+                        }
+                    }
+                }
+                var resultComments = fullSuggestion.comments.GroupBy(c => c.comment_id).ToList();
+
+                // fullSuggestion.comments = resultComments;
+
+                return fullSuggestion;
+                //   return suggestions.ElementAt(0);
             }
         }
         public List<SuggestionEntity> GetSuggestionsByAuthorID(int author_emp_id)
         {
             var query = @"SELECT s.*, sts.*, c.* FROM Suggestion AS s INNER JOIN 
-            SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id  INNER JOIN 
+            SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id  RIGHT JOIN 
             SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id INNER JOIN 
             Category AS c ON sc.category_id = c.category_id WHERE s.author_emp_id = @author_emp_id";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
@@ -170,6 +178,8 @@ namespace bacit_dotnet.MVC.Repositories
                     suggestion.categories.Add(category);
                     return suggestion;
                 }, new { author_emp_id }, splitOn: "timestamp_id, category_id");
+
+
                 var result = suggestions.GroupBy(s => s.suggestion_id).Select(suggestion =>
                 {
                     var groupedSuggestion = suggestion.First();
@@ -242,7 +252,7 @@ namespace bacit_dotnet.MVC.Repositories
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 int result =
-                connection.Execute(query, new { emp_id = image.emp_id, suggestion_id = image.suggestion_id, image_file = image.image_file});
+                connection.Execute(query, new { emp_id = image.emp_id, suggestion_id = image.suggestion_id, image_file = image.image_file });
                 return result;
             }
         }

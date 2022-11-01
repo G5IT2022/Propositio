@@ -22,5 +22,12 @@ namespace bacit_dotnet.MVC.Entities
         public EmployeeEntity author { get; set; }
         public EmployeeEntity responsible_employee { get; set; }
 
+        public SuggestionEntity()
+        {
+            this.comments = new List<CommentEntity>();
+            this.categories = new List<CategoryEntity>();
+            this.images = new List<ImageEntity>();
+        }
+
     }
 }

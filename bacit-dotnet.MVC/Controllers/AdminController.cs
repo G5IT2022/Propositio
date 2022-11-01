@@ -85,7 +85,7 @@ namespace bacit_dotnet.MVC.Controllers
         public IActionResult AddTeamMember()
         {
             TeamMemberModel memberModel = new TeamMemberModel();
-            memberModel.employees = new List<EmployeeEntity>();
+            memberModel.employees = employeeRepository.GetEmployees();
             memberModel.teams = employeeRepository.GetTeams();
             return View(memberModel);     
         }
