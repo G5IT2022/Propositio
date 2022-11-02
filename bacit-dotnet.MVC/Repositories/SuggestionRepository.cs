@@ -152,8 +152,18 @@ namespace bacit_dotnet.MVC.Repositories
                         }
                     }
                 }
+                if (fullSuggestion.images.Count > 0 && fullSuggestion.images.ElementAt(0) != null)
+                {
+
+                    var groupedImages = fullSuggestion.images.GroupBy(image => image.image_id).Select(image => image.First()).ToList();
+                    fullSuggestion.images = groupedImages;
+                }
+                if (fullSuggestion.comments.Count > 0 && fullSuggestion.images.ElementAt(0) != null)
+                {
+                    var groupedComments = fullSuggestion.comments.GroupBy(comment => comment.comment_id).Select(comment => comment.First()).ToList();
+                    fullSuggestion.comments = groupedComments;
+                }
                 return fullSuggestion;
-                //   return suggestions.ElementAt(0);
             }
         }
         public List<SuggestionEntity> GetSuggestionsByAuthorID(int author_emp_id)
@@ -248,7 +258,7 @@ namespace bacit_dotnet.MVC.Repositories
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 int result =
-                connection.Execute(query, new { emp_id = image.emp_id, suggestion_id = image.suggestion_id, image_file = image.image_file });
+                connection.Execute(query, new { emp_id = image.emp_id, suggestion_id = image.suggestion_id, image_file = image.image_filepath });
                 return result;
             }
         }

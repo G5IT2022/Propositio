@@ -4,6 +4,9 @@
 @using bacit_dotnet.MVC.DataAccess
 @using bacit_dotnet.MVC.Entities
 @model bacit_dotnet.MVC.Models.Suggestion.SuggestionDetailsModel
+@{
+    ViewBag.Title = "Propositio | " + Model.suggestion.title;
+}
 
 <head>
     <meta charset="utf-8" />
@@ -22,7 +25,9 @@
             @ViewBag.Message
         }
         <div class="row">
-            <img src=@Url.Content(FilePathBuilder.GetRelativeFilepath("logo.jpeg")) />
+            @if(Model.suggestion.images.ElementAt(0) != null){
+                <img src=@Url.Content(FilePathBuilder.GetRelativeFilepath(Model.suggestion.images.ElementAt(0).image_filepath))  class="userimg"/>
+            }
             @if (!Model.suggestion.favorite)
             {
                 <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" />

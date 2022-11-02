@@ -5,7 +5,6 @@
         public int image_id { get; set; }
         public int emp_id { get; set; }
         public int suggestion_id { get; set; }
-        public string image_file { get; set; }
-        public EmployeeEntity poster { get; set; }
+        public string image_filepath { get; set; }
     }
 }

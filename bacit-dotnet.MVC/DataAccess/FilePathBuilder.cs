@@ -3,7 +3,7 @@
     public static class FilePathBuilder
     {
         public static string GetRelativeFilepath(string fileName){
-            return "~/img/" + fileName;
+            return "~/uploadedImages/" + fileName;
         }
     }
 }

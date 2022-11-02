@@ -8,6 +8,7 @@ using bacit_dotnet.MVC.Models;
 using bacit_dotnet.MVC.Models.Suggestion;
 using System.Security.Cryptography.X509Certificates;
 using bacit_dotnet.MVC.Repositories;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -23,8 +24,8 @@ namespace bacit_dotnet.MVC.Controllers
         public IActionResult Index()
         {
             AdminIndexViewModel aivm = new AdminIndexViewModel();
-            aivm.employees = new List<EmployeeEntity>();
-            aivm.teams = employeeRepository.GetTeams();         
+            aivm.employees = employeeRepository.GetEmployees();
+            aivm.teams = employeeRepository.GetTeams();      
             return View(aivm);
         }
         [HttpGet]
