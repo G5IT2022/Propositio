@@ -38,6 +38,26 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
+        public int CreateCategory()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CreateEmployee()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CreateRole()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CreateTeam()
+        {
+            throw new NotImplementedException();
+        }
+
         public byte[] GetSalt(int emp_id)
         {
             var query = @"SELECT salt FROM Employee WHERE emp_id = @emp_id";
@@ -45,6 +65,11 @@ namespace bacit_dotnet.MVC.Repositories
                 var result = connection.QueryFirstOrDefault<byte[]>(query, new { emp_id = emp_id });
                 return result;
             }
+        }
+
+        public int UpdateEmployee()
+        {
+            throw new NotImplementedException();
         }
 
         public bool UserExists(int emp_id)
