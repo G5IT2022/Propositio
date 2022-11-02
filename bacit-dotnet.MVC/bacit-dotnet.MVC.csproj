@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\uploadedImages\bilde1.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\css\site.css" />
     <None Include="wwwroot\favicon.ico" />
     <None Include="wwwroot\img\logo.jpeg" />
@@ -72,6 +76,7 @@
     <None Include="wwwroot\lib\jquery\dist\jquery.min.js" />
     <None Include="wwwroot\lib\jquery\dist\jquery.min.map" />
     <None Include="wwwroot\lib\jquery\LICENSE.txt" />
+    <None Include="wwwroot\uploadedImages\bilde1.png" />
   </ItemGroup>
 
   <ItemGroup>

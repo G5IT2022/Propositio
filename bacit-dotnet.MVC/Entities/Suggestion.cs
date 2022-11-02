@@ -16,10 +16,18 @@ namespace bacit_dotnet.MVC.Entities
         public int ownership_emp_id { get; set; }
         public int author_emp_id   { get; set; }
         public TimestampEntity timestamp { get; set; }
-      
-        
-        public List<CommentEntity> comments;
-        public List<CategoryEntity> categories;
+        public List<CommentEntity> comments { get; set; }
+        public List<CategoryEntity> categories { get; set; }
+        public List<ImageEntity> images { get; set; }
+        public EmployeeEntity author { get; set; }
+        public EmployeeEntity responsible_employee { get; set; }
+
+        public SuggestionEntity()
+        {
+            this.comments = new List<CommentEntity>();
+            this.categories = new List<CategoryEntity>();
+            this.images = new List<ImageEntity>();
+        }
 
     }
 }

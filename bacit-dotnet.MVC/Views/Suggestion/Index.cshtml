@@ -2,9 +2,13 @@
 @using bacit_dotnet.MVC.Entities
 @using bacit_dotnet.MVC.Models;
 @model bacit_dotnet.MVC.Models.EmployeeSuggestionViewModel
+@{
+    ViewBag.Title = "Propositio | Alle Forslag";
+}
 <br />
 <h1>Alle Forslag</h1>
 <br />
+
 
 @foreach (EmployeeEntity emp in Model.employees)
 {
@@ -41,6 +45,22 @@
                                 <a onclick="Fav(@sugg.suggestion_id)">
                                     <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
                                 </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-1">
+                            @if (!sugg.favorite)
+                            {
+                                <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
+
+                            }
+                            else
+                            {
+
+                                <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@sugg.suggestion_id" />
+
                             }
                         </div>
                     }

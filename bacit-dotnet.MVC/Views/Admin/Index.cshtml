@@ -1,6 +1,9 @@
 ﻿@using bacit_dotnet.MVC.Entities
 @using bacit_dotnet.MVC.Models.AdminViewModels;
 @model bacit_dotnet.MVC.Models.AdminViewModels.AdminIndexViewModel;
+@{
+    ViewBag.Title = "Admin | Index";
+}
 <a href="newUser">Ny Bruker</a> &nbsp;&nbsp;
 <a class="buttonDetails" asp-controller="Admin" asp-action="CreateNewTeam">Nytt Team</a>
 <ul class="nav nav-tabs" id="myTab" role="tablist">

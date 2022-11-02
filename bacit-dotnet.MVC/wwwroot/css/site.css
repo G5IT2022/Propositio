@@ -113,11 +113,8 @@ body {
 }
 
 
-/**Favoritter*/
-
-.Favorite{
-    background-color: gold;
-}
-.Unfavorite{
-    background-color: white;
+/**Bilder**/
+.userimg{
+    width: 200px;
+    height: 200px;
 }

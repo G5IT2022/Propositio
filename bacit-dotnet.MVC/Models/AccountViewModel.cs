@@ -5,7 +5,7 @@ namespace bacit_dotnet.MVC.Models
 {
     public class AccountViewModel
     {
-        [Required(ErrorMessage = "Du glemte å skrive inn navn.")]
+        [Required(ErrorMessage = "Du glemte å skrive inn ansattnr.")]
         public int emp_id { get; set; }
 
         [Required(ErrorMessage = "Husk å skrive passord!")]

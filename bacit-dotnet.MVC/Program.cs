@@ -1,13 +1,7 @@
 
 using bacit_dotnet.MVC.Authentication;
 using bacit_dotnet.MVC.DataAccess;
-using bacit_dotnet.MVC.Repositories.Category;
-using bacit_dotnet.MVC.Repositories.Comment;
-using bacit_dotnet.MVC.Repositories.Employee;
-using bacit_dotnet.MVC.Repositories.Role;
-using bacit_dotnet.MVC.Repositories.Suggestion;
-using bacit_dotnet.MVC.Repositories.Team;
-using bacit_dotnet.MVC.Repositories.Timestamp;
+using bacit_dotnet.MVC.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -31,13 +25,9 @@ public class Program
             options.UseMySql(builder.Configuration.GetConnectionString("propositio"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("propositio")));
         });
         
-        builder.Services.AddSingleton<ICategoryRepository, DapperCategoryRepository>();
-        builder.Services.AddSingleton<ICommentRepository, DapperCommentRepository>();
-        builder.Services.AddSingleton<IEmployeeRepository, DapperEmployeeRepository>();
-        builder.Services.AddSingleton<IRoleRepository, DapperRoleRepository>();
-        builder.Services.AddSingleton<ISuggestionRepository, DapperSuggestionRepository>();
-        builder.Services.AddSingleton<ITeamRepository, DapperTeamRepository>();
-        builder.Services.AddSingleton<ITimestampRepository, DapperTimestampRepository>();
+        builder.Services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
+        builder.Services.AddSingleton<ISuggestionRepository, SuggestionRepository>();
+        builder.Services.AddSingleton<IAdminRepository, AdminRepository>();
         builder.Services.AddSession();
 
         builder.Services.AddAuthentication(options =>

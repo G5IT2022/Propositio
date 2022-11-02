@@ -1,7 +1,9 @@
-
 ﻿@using bacit_dotnet.MVC.Models
 @using bacit_dotnet.MVC.Entities
 @model bacit_dotnet.MVC.Models.Suggestion.SuggestionRegisterModel
+@{
+    ViewBag.Title = "Propositio | Nytt Forslag";
+}
 
 
 <form asp-action="Create" asp-controller="suggestion" method="post">
@@ -12,6 +14,7 @@
             <div class="form-group">
                 <label for="title">Tittel</label>
                 <input name="title" type="text" class="form-control" id="title" aria-describedby="emailHelp" placeholder="Skriv inn en tittel" value="@Model.title">
+                @Html.ValidationMessageFor(m => m.title);
             </div>
         </div>
         <div class="col-sm-3"></div>
@@ -22,6 +25,7 @@
                 <div class="form-group">
                     <label for="description">Beskrivelse av forbedringsforslaget</label>
                     <textarea name="description" class="form-control" id="description" aria-describedby="emailHelp" placeholder="Skriv inn ditt forbedringsforslag" value="@Model.description"></textarea>
+                    @Html.ValidationMessageFor(m => m.description);
                 </div>
             </div>
             <div class="col-sm-3"></div>

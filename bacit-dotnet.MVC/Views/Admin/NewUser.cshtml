@@ -1,6 +1,9 @@
 ﻿@using bacit_dotnet.MVC.Models;
 @using bacit_dotnet.MVC.Models.AdminViewModels;
 @model AdminNewUserModel;
+@{
+    ViewBag.Title = "Admin | Ny Bruker";
+}
 
 @using (Html.BeginForm()){
     @Html.AntiForgeryToken()

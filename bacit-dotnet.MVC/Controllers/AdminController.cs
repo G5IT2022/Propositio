@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using bacit_dotnet.MVC.Repositories.Employee;
 using bacit_dotnet.MVC.Entities;
 using bacit_dotnet.MVC.Authentication;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using bacit_dotnet.MVC.Models.AdminViewModels;
-using bacit_dotnet.MVC.Repositories.Team;
-using bacit_dotnet.MVC.Repositories.Role;
-using bacit_dotnet.MVC.Repositories.Category;
 using bacit_dotnet.MVC.Models;
 using bacit_dotnet.MVC.Models.Suggestion;
 using System.Security.Cryptography.X509Certificates;
+using bacit_dotnet.MVC.Repositories;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -18,36 +16,16 @@ namespace bacit_dotnet.MVC.Controllers
     public class AdminController : Controller
     {
         private readonly IEmployeeRepository employeeRepository;
-        private readonly ITeamRepository teamRepository;
-        private readonly IRoleRepository roleRepository;
-        private readonly ICategoryRepository categoryRepository;
-        public AdminController(IEmployeeRepository employeeRepository, ITeamRepository teamRepository, IRoleRepository roleRepository, ICategoryRepository categoryRepository)
+        public AdminController(IEmployeeRepository employeeRepository)
         {
             this.employeeRepository = employeeRepository;
-            this.teamRepository = teamRepository;
-            this.roleRepository = roleRepository;
-            this.categoryRepository = categoryRepository;
         }
 
         public IActionResult Index()
         {
             AdminIndexViewModel aivm = new AdminIndexViewModel();
-            aivm.employees = new List<EmployeeEntity>();
-            aivm.teams = teamRepository.GetAll();
-            foreach(TeamEntity team in aivm.teams)
-            {
-                team.employees = teamRepository.GetEmployeesForTeam(team.team_id);
-                foreach(EmployeeEntity emp in team.employees)
-                {
-                    emp.role = roleRepository.Get(emp.role_id);
-                    emp.teams = teamRepository.Get(emp.emp_id);
-                    if (!aivm.employees.Contains(emp))
-                    {
-                    aivm.employees.Add(emp);
-                    }
-                }
-            }
-         
+            aivm.employees = employeeRepository.GetEmployees();
+            aivm.teams = employeeRepository.GetTeams();      
             return View(aivm);
         }
         [HttpGet]
@@ -74,7 +52,7 @@ namespace bacit_dotnet.MVC.Controllers
                 };
                 var tmp = PassHash.ComputeHMAC_SHA256(Encoding.UTF8.GetBytes(newEmp.passwordhash), newEmp.salt);
                 newEmp.passwordhash = Convert.ToBase64String(tmp);
-                result = employeeRepository.Create(newEmp);
+                result = employeeRepository.CreateEmployee(newEmp);
             }
             if(result != 1)
             {
@@ -92,8 +70,7 @@ namespace bacit_dotnet.MVC.Controllers
         public IActionResult EditTeam(int id)
         {
             AdminEditTeamModel aetm = new AdminEditTeamModel();
-            aetm.team = teamRepository.GetTeam(id);
-            aetm.team.employees = teamRepository.GetEmployeesForTeam(id);
+            aetm.team = employeeRepository.GetTeam(id);
             return View(aetm);
         }
 
@@ -109,21 +86,8 @@ namespace bacit_dotnet.MVC.Controllers
         public IActionResult AddTeamMember()
         {
             TeamMemberModel memberModel = new TeamMemberModel();
-            memberModel.employees = new List<EmployeeEntity>();
-            memberModel.teams = teamRepository.GetAll();
-            foreach (TeamEntity team in memberModel.teams)
-            {
-                team.employees = teamRepository.GetEmployeesForTeam(team.team_id);
-                foreach (EmployeeEntity emp in team.employees)
-                {
-                    emp.role = roleRepository.Get(emp.role_id);
-                    emp.teams = teamRepository.Get(emp.emp_id);
-                    if (!memberModel.employees.Contains(emp))
-                    {
-                        memberModel.employees.Add(emp);
-                    }
-                }
-            }
+            memberModel.employees = employeeRepository.GetEmployees();
+            memberModel.teams = employeeRepository.GetTeams();
             return View(memberModel);     
         }
         

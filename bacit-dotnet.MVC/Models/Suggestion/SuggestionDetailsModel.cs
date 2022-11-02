@@ -6,14 +6,13 @@ namespace bacit_dotnet.MVC.Models.Suggestion
     public class SuggestionDetailsModel
     {
         public SuggestionEntity suggestion { get; set; }
-        public EmployeeEntity employee { get; set; }        
-        public CommentEntity comment { get; set; }
+        public EmployeeEntity employee { get; set; }
 
         //Lage ny kommentar
         public string description { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{dd/mm/yyyy}")]
         public DateTime createdTimestamp { get; set; }
 
     }
