@@ -1,5 +1,7 @@
-﻿@using bacit_dotnet.MVC.Models
+﻿@using Org.BouncyCastle.Asn1.Ocsp
+@using bacit_dotnet.MVC.Models
 @using bacit_dotnet.MVC.Entities
+@using Microsoft.Web.Helpers;
 @model bacit_dotnet.MVC.Models.Suggestion.SuggestionRegisterModel
 @{
     ViewBag.Title = "Propositio | Nytt Forslag";
@@ -46,6 +48,8 @@
             </div>
         </div>
     </div>
+    <h3>Velg Ansatt</h3>
+    @Html.DropDownListFor(m => m.responsibleEmployeeID, Model.possibleResponsibleEmployees, new {@class="form-control"})
     <h3>Velg Kategorier: </h3>
     <!--Kategorier-->
     <div class="row">

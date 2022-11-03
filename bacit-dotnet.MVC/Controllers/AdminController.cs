@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace bacit_dotnet.MVC.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IEmployeeRepository employeeRepository;
@@ -25,7 +25,7 @@ namespace bacit_dotnet.MVC.Controllers
         {
             AdminIndexViewModel aivm = new AdminIndexViewModel();
             aivm.employees = employeeRepository.GetEmployees();
-            aivm.teams = employeeRepository.GetTeams();      
+            aivm.teams = employeeRepository.GetTeams();
             return View(aivm);
         }
         [HttpGet]
@@ -54,7 +54,7 @@ namespace bacit_dotnet.MVC.Controllers
                 newEmp.passwordhash = Convert.ToBase64String(tmp);
                 result = employeeRepository.CreateEmployee(newEmp);
             }
-            if(result != 1)
+            if (result != 1)
             {
                 ViewBag.Created = "Noe gikk galt, prøv igjen.";
             }
@@ -77,21 +77,18 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpGet]
         public IActionResult CreateNewTeam()
         {
-            AdminNewTeamModel adminNewTeamModel = new AdminNewTeamModel();       
+
+            AdminNewTeamModel adminNewTeamModel = new AdminNewTeamModel();
             return View(adminNewTeamModel);
-        }      
-        
+        }
+
 
         [HttpGet]
         public IActionResult AddTeamMember()
         {
             TeamMemberModel memberModel = new TeamMemberModel();
             memberModel.employees = employeeRepository.GetEmployees();
-            memberModel.teams = employeeRepository.GetTeams();
-            return View(memberModel);     
+            return View(memberModel);
         }
-        
     }
-
-
 }

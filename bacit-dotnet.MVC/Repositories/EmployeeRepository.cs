@@ -2,6 +2,7 @@
 using bacit_dotnet.MVC.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using MySqlConnector;
 
@@ -64,7 +65,7 @@ namespace bacit_dotnet.MVC.Repositories
                 }, new { emp_id }, splitOn: "role_id, team_id");
                 var result = emp.GroupBy(e => e.emp_id).Select(employee =>
                 {
-                    //grupper ansatte
+                    //grupper teamene til den ansatte, dette må gjøres fordi siden vi har mange til mange forhold kobler returnerer den flere rader med data
                     var groupedEmployee = employee.First();
                     groupedEmployee.teams = employee.Select(e => e.teams.Single()).ToList();
                     return groupedEmployee;
@@ -114,8 +115,35 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ToList();
             }
         }
+      //Metode som henter en liste over ansatte som SelectListItem så de fungerer med checkbox 
+        public List<SelectListItem> GetEmployeeSelectList()
+        {
+         //Spørring
+            var query = @"SELECT emp_id, name FROM Employee";
+            List<SelectListItem> list = new List<SelectListItem>();
+            //Kobler spørring til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = query;
+                var reader = command.ExecuteReader();
+                //Dapper mapper ikke automatisk til en SelectListItem så vi må gjøre det på gamlemåten
+                while (reader.Read())
+                {
+                    var item = new SelectListItem();
+                    item.Value = reader[0].ToString();
+                    item.Text = reader[1].ToString();
+                    list.Add(item);
+                }
+                connection.Close();
+                //Returnerer listen
+                return list;
+            }
+        }
 
-        //metode som henter team basert på team_id
+    //metode som henter team basert på team_id
         public TeamEntity GetTeam(int team_id)
         {
             //spørring
