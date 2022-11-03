@@ -6,16 +6,21 @@
 }
 <a href="newUser">Ny Bruker</a> &nbsp;&nbsp;
 <a class="buttonDetails" asp-controller="Admin" asp-action="CreateNewTeam">Nytt Team</a>
+<!--Navbar for ansatte ansatte, teams, kategorier, roller-->
 <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <!--Ansatte-->
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employees" type="button" role="tab" aria-controls="home" aria-selected="true">Ansatte</button>
     </li>
+    <!--Teams-->
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="team-tab" data-bs-toggle="tab" data-bs-target="#teams" type="button" role="tab" aria-controls="profile" aria-selected="false">Teams</button>
     </li>
+    <!--Kategorier-->
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="profile" aria-selected="false">Kategorier</button>
     </li>
+    <!--Roller-->
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button" role="tab" aria-controls="profile" aria-selected="false">Roller</button>
     </li>

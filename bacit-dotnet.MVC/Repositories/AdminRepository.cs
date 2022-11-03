@@ -17,6 +17,7 @@ namespace bacit_dotnet.MVC.Repositories
         {
             this.sqlConnector = sqlConnector;
         }
+        //Sjekk bruker med emp_id og passord om brukeren er registrert
         public EmployeeEntity AuthenticateUser(int emp_id, string password)
         {
             var query = @"SELECT emp_id, name FROM Employee WHERE emp_id = @emp_id AND passwordhash = @password";
@@ -27,6 +28,7 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
+        //Sjekk rollen til brukeren og returner rollen
         public string AuthorizeUser(int emp_id)
         {
             var authorizeUser = @"SELECT ar.authorization_role_name FROM AuthorizationRole AS ar
@@ -37,32 +39,40 @@ namespace bacit_dotnet.MVC.Repositories
                 return role;
             }
         }
-
+        //registrer kategori 
         public int CreateCategory()
         {
             throw new NotImplementedException();
         }
 
+        //registrer ansatt
         public int CreateEmployee()
         {
             throw new NotImplementedException();
         }
-
+        //registrer rolle
         public int CreateRole()
         {
             throw new NotImplementedException();
         }
-
+        //registrer team
         public int CreateTeam()
         {
             throw new NotImplementedException();
         }
-
+        /**
+         * Metode som henter salt(tilfeldig data) basert på ansatte
+         */
         public byte[] GetSalt(int emp_id)
         {
+            //spørring
             var query = @"SELECT salt FROM Employee WHERE emp_id = @emp_id";
+
+            //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection){
                 var result = connection.QueryFirstOrDefault<byte[]>(query, new { emp_id = emp_id });
+
+                //returnerer streng med tilfeldig data knyttet til brukeren
                 return result;
             }
         }

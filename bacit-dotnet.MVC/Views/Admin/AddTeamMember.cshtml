@@ -9,9 +9,11 @@
     <div class="container">
         <h3 class="header text-center"><b>Legg til medlemmer</b></h3>
         <div class="table-responsive">
+            <!--tabell der man kan legge til medlemmer-->
             <table class="table">
             <thead>
                 <tr>
+                    <!--Info om ansatte-->
                     <th scope="col">Ansattnr</th>
                     <th scope="col">Navn</th>
                     <th scope="col">Team</th>
@@ -20,6 +22,7 @@
                 </tr>
             </thead>
             <tbody>
+                <!--Foreach-loop som skriver ut ansatte for hvert team-->
                 @foreach (EmployeeEntity employee in Model.employees)
                 {
                     <tr>
@@ -43,7 +46,8 @@
             <div class="row">
                 <div class="col-xs-12 mb-5">
                     <div class="text-center mt-5">
-
+                        
+                        <!--Knapper-->
                         <button type="submit" class="btn btn-outline-danger px-4">Avbryt</button>
 
                         &nbsp;&nbsp;
