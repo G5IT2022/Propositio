@@ -22,5 +22,6 @@ namespace bacit_dotnet.MVC.Models.Suggestion
         public bool isJustDoIt { get; set; }
 
         public DateTime dueByTimestamp { get; set; }
+        public ImageEntity image { get; set; }
     }
 }

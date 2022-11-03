@@ -16,9 +16,15 @@ namespace bacit_dotnet.MVC.Repositories
         {
             this.sqlConnector = sqlConnector;
         }
+        /**
+         * Metode for å registrere ansatte 
+         */
         public int CreateEmployee(EmployeeEntity emp)
         {
+            //spørring
             var query = @"INSERT INTO Employee(emp_id, name, passwordhash,salt, role_id, authorization_role_id) VALUES (@emp_id, @name, @passwordhash, @salt, @role_id, @authorization_role_id)";
+
+            //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 int result = connection.Execute(query, new { emp.emp_id, emp.name, emp.passwordhash, emp.salt, emp.role_id, emp.authorization_role_id });
@@ -34,52 +40,69 @@ namespace bacit_dotnet.MVC.Repositories
          */
         public EmployeeEntity GetEmployee(int emp_id)
         {
+            //spørring
             var query = @"SELECT e.emp_id, e.name, e.role_id, r.role_id, r.role_name, t.team_id, t.team_name, t.team_lead_id FROM Employee AS e 
             INNER JOIN Role AS r ON e.role_id = r.role_id INNER JOIN TeamList AS tl ON tl.emp_id = e.emp_id 
             INNER JOIN Team AS t ON tl.team_id = t.team_id WHERE e.emp_id = @emp_id";
 
+            //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
+                //kobler spørring til databasen 
                 var emp = connection.Query<EmployeeEntity, RoleEntity, TeamEntity, EmployeeEntity>(query, (employee, role, team) =>
                 {
+                    //variabel role i koden kobles til variabel role i databasen
                     employee.role = role;
                     if (employee.teams == null)
                     {
                         employee.teams = new List<TeamEntity>();
                     }
+                    //legg til team
                     employee.teams.Add(team);
+                    //returner ansatt
                     return employee;
                 }, new { emp_id }, splitOn: "role_id, team_id");
                 var result = emp.GroupBy(e => e.emp_id).Select(employee =>
                 {
+                    //grupper ansatte
                     var groupedEmployee = employee.First();
                     groupedEmployee.teams = employee.Select(e => e.teams.Single()).ToList();
                     return groupedEmployee;
                 });
+                //returner første ansatt i gruppen med ansatte
                 return result.ElementAt(0);
             }
         }
 
        
-
+        /**
+         * Metode som henter alle ansatte
+         */
         public List<EmployeeEntity> GetEmployees()
         {
+            //spørring
             var query = @"SELECT e.emp_id, e.name, e.role_id, r.role_id, r.role_name, t.team_id, t.team_name, t.team_lead_id FROM Employee AS e 
             INNER JOIN Role AS r ON e.role_id = r.role_id INNER JOIN TeamList AS tl ON tl.emp_id = e.emp_id 
             INNER JOIN Team AS t ON tl.team_id = t.team_id";
 
+            //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
+                //kobler spørring til databasen
                 var emp = connection.Query<EmployeeEntity, RoleEntity, TeamEntity, EmployeeEntity>(query, (employee, role, team) =>
                 {
+                    //variabel role i koden kobles med variabel role i databasen
                     employee.role = role;
                     if (employee.teams == null)
                     {
                         employee.teams = new List<TeamEntity>();
                     }
+                    //legg til team
                     employee.teams.Add(team);
+                    //returner ansatt
                     return employee;
                 }, splitOn: "role_id, team_id");
+                //grupper ansatte
                 var result = emp.GroupBy(e => e.emp_id).Select(employee =>
                 {
                     var groupedEmployee = employee.First();
@@ -87,20 +110,23 @@ namespace bacit_dotnet.MVC.Repositories
                     return groupedEmployee;
                 });
 
-
+                //returner liste med ansatte
                 return result.ToList();
             }
         }
 
-
+        //metode som henter team basert på team_id
         public TeamEntity GetTeam(int team_id)
         {
+            //spørring
             var query = @"SELECT t.team_id, t.team_name, t.team_lead_id, e.emp_id, e.name, r.role_id, r.role_name FROM Team AS t INNER JOIN 
             TeamList AS tl ON t.team_id = tl.team_id INNER JOIN Employee AS e ON e.emp_id = tl.emp_id INNER JOIN Role AS r ON
             e.role_id = r.role_id WHERE t.team_id = @team_id";
 
+            //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
+                //kobler spørring til databasen
                 var team = connection.Query<TeamEntity, EmployeeEntity, RoleEntity, TeamEntity>(query, (team, employee, role) =>
                 {
                     if (team.employees == null)
@@ -115,24 +141,31 @@ namespace bacit_dotnet.MVC.Repositories
 
                 var result = team.GroupBy(e => e.team_id).Select(team =>
                 {
+                    //grupperer team
                     var groupedTeams = team.First();
                     groupedTeams.employees = team.Select(e => e.employees.Single()).ToList();
                     return groupedTeams;
                 });
 
-
+                //returner første team i gruppen med team
                 return result.ElementAt(0);
             }
         }
 
+        /**
+         * Metode som henter teamene
+         */
         public List<TeamEntity> GetTeams()
         {
+            //Spørring
             var query = @"SELECT t.team_id, t.team_name, t.team_lead_id, e.emp_id, e.name, r.role_id, r.role_name FROM Team AS t INNER JOIN 
             TeamList AS tl ON t.team_id = tl.team_id INNER JOIN Employee AS e ON e.emp_id = tl.emp_id INNER JOIN Role AS r ON
             e.role_id = r.role_id";
 
+            //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
+                //kobler spørring til databasen
                 var team = connection.Query<TeamEntity, EmployeeEntity, RoleEntity, TeamEntity>(query, (team, employee, role) =>
                 {
                     if (team.employees == null)
@@ -144,13 +177,14 @@ namespace bacit_dotnet.MVC.Repositories
                     return team;
 
                 }, splitOn: "emp_id, role_id");
-
+                //grupper team
                 var result = team.GroupBy(e => e.team_id).Select(team =>
                 {
                     var groupedTeams = team.First();
                     groupedTeams.employees = team.Select(e => e.employees.Single()).ToList();
                     return groupedTeams;
                 });
+                //returner gruppen med team
                 return result.ToList();
             }
         }

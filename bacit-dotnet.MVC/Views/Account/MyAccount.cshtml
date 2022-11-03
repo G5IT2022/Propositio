@@ -27,7 +27,7 @@
         }
     </div>
     <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="team-tab">
-
+        <!--foreach-loop som skriver ut alle medlemmene i teamet ditt-->
         @foreach (TeamEntity team in Model.teams)
         {
             <h3>@team.team_name</h3>
@@ -50,7 +50,7 @@
         }
     </div>
     <div class="tab-pane fade" id="suggestions" role="tabpanel" aria-labelledby="suggestions-tab">
-
+        <!--foreach-loop som skriver ut forslagene til en ansatt-->
         @foreach (SuggestionEntity sugg in Model.employee.suggestions)
         {
             EmployeeEntity emp = Model.employee;

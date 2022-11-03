@@ -15,5 +15,7 @@ namespace bacit_dotnet.MVC.Models.Suggestion
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{dd/mm/yyyy}")]
         public DateTime createdTimestamp { get; set; }
 
+        public List<ImageEntity> image { get; set; }
+
     }
 }
