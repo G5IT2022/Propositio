@@ -4,6 +4,7 @@ using bacit_dotnet.MVC.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Web;
 using bacit_dotnet.MVC.Models.Suggestion;
 using bacit_dotnet.MVC.Repositories;
 
@@ -39,8 +40,20 @@ namespace bacit_dotnet.MVC.Controllers
         {
             SuggestionRegisterModel suggestionRegisterModel = new SuggestionRegisterModel();
             suggestionRegisterModel.categories = suggestionRepository.GetAllCategories();
+            suggestionRegisterModel.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
             return View(suggestionRegisterModel);
         }
+        /*
+        public void UploadFile(string fileName)
+        {
+            var fileSavePath = "";
+            var uploadedFile = Request.;
+            fileName = Path.GetFileName(uploadedFile.FileName);
+            fileSavePath = Server.MapPath("~/App_Data/UploadedFiles/" +
+              fileName);
+            uploadedFile.SaveAs(fileSavePath);
+        }*/
+
         [HttpPost]
         public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection)
         {
