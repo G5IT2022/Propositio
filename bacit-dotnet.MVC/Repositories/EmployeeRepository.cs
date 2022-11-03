@@ -2,6 +2,7 @@
 using bacit_dotnet.MVC.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using MySqlConnector;
 
@@ -92,6 +93,28 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
+        public List<SelectListItem> GetEmployeeSelectList()
+        {
+            var query = @"SELECT emp_id, name FROM Employee";
+            List<SelectListItem> list = new List<SelectListItem>();
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = query;
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var item = new SelectListItem();
+                    item.Value = reader[0].ToString();
+                    item.Text = reader[1].ToString();
+                    list.Add(item);
+                }
+                connection.Close();
+                return list;
+            }
+        }
 
         public TeamEntity GetTeam(int team_id)
         {
