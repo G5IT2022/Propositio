@@ -72,7 +72,7 @@
     </div>
     <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="team-tab">
         @foreach(TeamEntity team in Model.teams){
-                <a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit">rediger team</a>
+           <a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit">Rediger Team</a>     
             <div class="team-container">
                 <div class="row"></div>
                 <div class="row">
@@ -80,11 +80,12 @@
                     <div class="col-sm-4">Navn</div>
                     <div class="col-sm-4">Rolle</div>
                 </div>
-                @foreach(EmployeeEntity emp in team.employees){
+                    @foreach(EmployeeEntity emp in team.employees){
                 <div class="row">
-                    <div class="col-sm-4">@emp.emp_id</div>
-                    <div class="col-sm-4">@emp.name</div>
-                    <div class="col-sm-4">@emp.role</div>
+                   <div class="col-sm-3">@emp.emp_id</div>
+                    <div class="col-sm-3">@emp.name</div>
+                    <div class="col-sm-3">@emp.role.role_name</div>
+                    <div class="col-sm-3">@team.team_name</div>
                 </div>
                 }
             </div>
