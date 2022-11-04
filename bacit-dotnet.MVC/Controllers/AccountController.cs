@@ -11,6 +11,7 @@ using bacit_dotnet.MVC.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using System.Security.Claims;
+using System.Web.WebPages;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -45,6 +46,10 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpPost]
         public IActionResult Verify(AccountViewModel model)
         {
+            if (model.password.IsEmpty())
+            {
+                ViewBag.ErrorMessage = "Vennligst skriv inn et passord";
+            }
             //Finnes brukeren som prøver å logge inn
             bool userExists = adminRepository.UserExists(model.emp_id);
             if (userExists)
@@ -66,7 +71,7 @@ namespace bacit_dotnet.MVC.Controllers
                 }
                 if(emp == null)
                 {
-                    ViewBag.ErrorMessage = "Passordet er feil, prøv igjen.";
+                    ViewBag.ErrorMessage += " Passordet er feil, prøv igjen.";
                     return View("LogIn", new AccountViewModel());
                 }
 
@@ -85,9 +90,15 @@ namespace bacit_dotnet.MVC.Controllers
             }
             else
             {
+               
                 ViewBag.ErrorMessage = $"Finner ikke brukeren med ansattnummer: {model.emp_id}";
+                if (model.password.IsEmpty())
+                {
+                    ViewBag.ErrorMessage = "Vennligst skriv inn et passord";
+                }
                 return View("LogIn", new AccountViewModel());
             }
+           
         }
 
         public IActionResult ChangePassword()
