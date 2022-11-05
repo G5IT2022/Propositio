@@ -5,5 +5,6 @@ namespace bacit_dotnet.MVC.Models
     public class EmployeeSuggestionViewModel
     {
         public List<EmployeeEntity> employees;
+        public List<SuggestionEntity> suggestions;
     }
 }

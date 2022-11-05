@@ -25,14 +25,16 @@ namespace bacit_dotnet.MVC.Repositories
         public List<SuggestionEntity> GetAll()
         {
             //spørring til databasen
-            var query = @"@SELECT s.*, sts.*, c.* FROM Suggestion AS s INNER JOIN SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id
-            INNER JOIN SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id INNER JOIN Category AS c ON sc.category_id = c.category_id";
+            var query = @"SELECT s.*, sts.*, c.*, i.* FROM Suggestion AS s INNER JOIN 
+            SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id INNER JOIN 
+            SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id INNER JOIN 
+            Category AS c ON sc.category_id = c.category_id LEFT JOIN Image AS i on i.suggestion_id = s.suggestion_id" ;
 
             //kobling til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 //koble spørring til databasen for å hente informasjon
-                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, SuggestionEntity>(query, (suggestion, timestamp, category) =>
+                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity,ImageEntity, SuggestionEntity>(query, (suggestion, timestamp, category, image) =>
                 {
                     //variabel "suggestion.timestamp" i koden kobles med variabel timestamp i databasen
                     suggestion.timestamp = timestamp;
@@ -42,18 +44,24 @@ namespace bacit_dotnet.MVC.Repositories
                     {
                         suggestion.categories = new List<CategoryEntity>();
                     }
+                    if (suggestion.images == null)
+                    {
+                        suggestion.images = new List<ImageEntity>();
+                    }
                     //legg til kategori i kategori-liste for forslag
                     suggestion.categories.Add(category);
+                    suggestion.images.Add(image);
 
                     //returner forslag
                     return suggestion;
-                }, splitOn: "timestamp_id, category_id");
+                }, splitOn: "timestamp_id, category_id, image_id");
 
                 //grupperer alle forslagene
                 var result = suggestions.GroupBy(s => s.suggestion_id).Select(suggestion =>
                 {
                     var groupedSuggestion = suggestion.First();
                     groupedSuggestion.categories = suggestion.Select(e => e.categories.Single()).ToList();
+                    //groupedSuggestion.images = suggestion.Select(e => e.images.Single()).ToList();
                     return groupedSuggestion;
                 });
                 //returnerer en liste med forslag
@@ -214,16 +222,16 @@ namespace bacit_dotnet.MVC.Repositories
         public List<SuggestionEntity> GetSuggestionsByAuthorID(int author_emp_id)
         {
             //spørring
-            var query = @"SELECT s.*, sts.*, c.* FROM Suggestion AS s INNER JOIN 
+            var query = @"SELECT s.*, sts.*, c.*, i.* FROM Suggestion AS s INNER JOIN 
             SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id  RIGHT JOIN 
             SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id INNER JOIN 
-            Category AS c ON sc.category_id = c.category_id WHERE s.author_emp_id = @author_emp_id";
+            Category AS c ON sc.category_id = c.category_id  LEFT JOIN Image as i on i.suggestion_id = s.suggestion_id WHERE s.author_emp_id = @author_emp_id";
 
             //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 //kobler spørring til databasen
-                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, SuggestionEntity>(query, (suggestion, timestamp, category) =>
+                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity,ImageEntity, SuggestionEntity>(query, (suggestion, timestamp, category, image) =>
                 {
                     //variabel timestamp i koden kobles til variabel timestamp i databasen
                     suggestion.timestamp = timestamp;
@@ -232,18 +240,27 @@ namespace bacit_dotnet.MVC.Repositories
                     {
                         suggestion.categories = new List<CategoryEntity>();
                     }
+
+                  
+                    if (suggestion.images == null)
+                    {
+                        suggestion.images = new List<ImageEntity>();
+                    }
                     //legg til kategori for forslaget
                     suggestion.categories.Add(category);
+                    //legg til bilde for forslaget
+                    suggestion.images.Add(image);
 
                     //returner forslaget
                     return suggestion;
-                }, new { author_emp_id }, splitOn: "timestamp_id, category_id");
+                }, new { author_emp_id }, splitOn: "timestamp_id, category_id, image_id");
 
                 //grupper forslagene
                 var result = suggestions.GroupBy(s => s.suggestion_id).Select(suggestion =>
                 {
                     var groupedSuggestion = suggestion.First();
                     groupedSuggestion.categories = suggestion.Select(s => s.categories.Single()).ToList();
+                    groupedSuggestion.images = suggestion.Select(s => s.images.Single()).ToList();
                     return groupedSuggestion;
                 });
                 //returner forslagene til forfatteren

@@ -1,0 +1,60 @@
+﻿@using bacit_dotnet.MVC.Entities
+@using bacit_dotnet.MVC.Models;
+@model SortOrderModel;
+<div class="sortingContainer">
+
+    <div class="row align-items-start">
+        <div class="btn-group">
+            <div class="col-sm-1">
+                <!--Sortering-->
+                <div class="sortDropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="~/img/bootstrap-icons-1.9.1/sort-up.svg" class="dropdown-toggle" type="button" data-bs-toggle="sortDropdown" /> Sorter
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-sortOrder="name_asc">Sorter etter navn (Stigende)</a></li>
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-sortOrder="name_desc">Sorter etter navn (Synkende)</a></li>
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-sortOrder="date_old">Sorter etter dato (Eldst først)</a></li>
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-sortOrder="date_new">Sorter etter dato (Nyest først)</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+            <!--Filtrering-->
+            <div class="col-1">
+                <div class="filterDropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/img/bootstrap-icons-1.9.1/filter.svg" class="dropdown-toggle" type="button" data-bs-toggle="filterDropdown" /> Filtrer
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="planStatus">Status (Plan)</a></li>
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="doStatus">Status (Do)</a></li>
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="studyStatus">Status (Study)</a></li>
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="actStatus">Status (Act)</a></li>
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="justDoIt">Just Do It</a></li>
+                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="lastWeek">Siste Uke</a></li>
+                        @foreach (CategoryEntity category in Model.categories)
+                        {
+                            <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="Kategori @category.category_name">@category.category_name</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+            <!--Søkefelt-->
+            <div class="col-sm-4">
+                @using (Html.BeginForm())
+                {
+                    <div class="input-group mb-3">
+                        @Html.TextBox("SearchString", null, new{@class="form-control", @placeholder="Søk..."} )
+                        <div class="input-group-append">
+                            <button class="btn btn-light" type="submit">Søk</button>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<hr />

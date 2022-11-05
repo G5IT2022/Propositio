@@ -51,65 +51,10 @@
     </div>
     <div class="tab-pane fade" id="suggestions" role="tabpanel" aria-labelledby="suggestions-tab">
         <!--foreach-loop som skriver ut forslagene til en ansatt-->
-        @foreach (SuggestionEntity sugg in Model.employee.suggestions)
+        @Html.Partial("_FilterSortControl", new SortOrderModel{actionName = "MyAccount", controllername = "Account"})
+        @foreach (SuggestionEntity sugg in Model.suggestions)
         {
-            EmployeeEntity emp = Model.employee;
-            if (Model.employee.suggestions.Count > 0)
-            {
-                <div class="container sugg-container">
-                    <div class="row sugg-info">
-                        <div class="col-2">@emp.name   @emp.authorizationRole</div>
-                        <div class="col-6">
-                            @foreach (var team in emp.teams)
-                            {
-                                @(team.team_name += " ")
-                                ;
-                            }
-                        </div>
-
-                        <div class="col-2 @sugg.status"></div>
-                        <div class="col-2">@sugg.status</div>
-                    </div>
-
-                    <!--Suggestion-info-->
-                    <div class="row">
-                        <div class="col-10">
-                            <p class="suggtitle">@sugg.title</p>
-                            <p>@sugg.description</p>
-                        </div>
-                        <div class="col-2"></div>
-                    </div>
-                    <hr />
-                    <!--Show categories for suggestion-->
-                    <div class="row test">
-                        <div class="col-8 categories">
-                            Kategorier:
-                            @foreach (var category in sugg.categories)
-                            {
-                                @(category.category_name += " ")
-                                ;
-                            }
-                            <br>
-                            <div class="date">
-                                <span class="made">Opprettet: @sugg.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
-                                <br>
-                                <span class="due">Frist: @sugg.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
-                            </div>
-                        </div>
-                        <br>
-                        <!--Button for Suggestion Details-->
-                        <div class="col-4">
-                            <br>
-                            <a class="buttonDetails" asp-controller="Suggestion" asp-action="Details" asp-route-id="@sugg.suggestion_id">
-                                Vis mer
-                            </a>
-
-                        </div>
-                    </div>
-                </div>
-                <hr />
-            }
+            @Html.Partial("_Suggestion", sugg)
         }
-
     </div>
 </div>

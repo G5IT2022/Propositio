@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Web;
 using bacit_dotnet.MVC.Models.Suggestion;
 using bacit_dotnet.MVC.Repositories;
+using bacit_dotnet.MVC.Helpers;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -24,14 +25,88 @@ namespace bacit_dotnet.MVC.Controllers
             this.suggestionRepository = suggestionRepository;
             this.employeeRepository = employeeRepository;
         }
+
+
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, string searchString, string filterParameter)
         {
-            EmployeeSuggestionViewModel model = new EmployeeSuggestionViewModel();
-            model.employees = employeeRepository.GetEmployees();
-            foreach (EmployeeEntity emp in model.employees)
+            //Vi måtte bruke en annen modell enn den vi hadde før fordi vi må filtrere alle forslagene så vi må bruke en modell med kun listen over forslag
+            SuggestionViewModel model = new SuggestionViewModel();
+
+            model.suggestions = suggestionRepository.GetAll();
+            //Henter kategoriene for filtrering
+            model.categories = suggestionRepository.GetAllCategories();
+            foreach (SuggestionEntity suggestion in model.suggestions)
             {
-                emp.suggestions = suggestionRepository.GetSuggestionsByAuthorID(emp.emp_id);
+                //Setter author og responsible employee entitetene i forslagene til fullverdige employee entiteter slik at man kan vise info om den ansatte
+                suggestion.author = employeeRepository.GetEmployee(suggestion.author_emp_id);
+                suggestion.responsible_employee = employeeRepository.GetEmployee(suggestion.ownership_emp_id);
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                //Sjekker om søkestrengen finnes i tittelen, beskrivelsen eller navnet på forfatter/ansvarlig
+                //Måtte lage et midlertidig variabel for å søke med fordi jeg fikk ikke lov til å søke på samlignen som allerede var der
+                var searched = model.suggestions.Where(
+                   s => s.title.Contains(searchString) ||
+                   s.description.Contains(searchString) ||
+                   s.author.name.Contains(searchString) ||
+                   s.responsible_employee.name.Contains(searchString));
+                //Setter listen over forslag i modellen til de man har søkt etter
+                model.suggestions = searched.ToList();
+            }
+
+            //Filtrering
+            //Sjekker først at filteret er satt og at det ikke er en kategori
+            if (!string.IsNullOrEmpty(filterParameter))
+            {
+                var newFilter = filterParameter.Split(" ");
+
+                if (newFilter[0] != "Kategori")
+                {
+                    model.suggestions = FilterHelper.FilterSuggestions(model.suggestions, filterParameter);
+                }
+                else
+                {
+                    var CategoryToSend = new CategoryEntity();
+                    foreach(CategoryEntity category in model.categories)
+                    {
+                        if(category.category_name.Equals(newFilter[1]))
+                        {
+                            CategoryToSend = category;
+                        }
+                    }
+                    model.suggestions = FilterHelper.FilterCategories(model.suggestions, CategoryToSend);
+                }
+            }
+
+            //Switch statement som sjekker hva du sorterer på, switch er basically en if/elseif/else
+            switch (sortOrder)
+            {
+                case "name_asc":
+                    var sortedNameAsc = model.suggestions.OrderBy(s => s.author.name);
+                    model.suggestions = sortedNameAsc.ToList();
+                    break;
+                case "name_desc":
+                    var sortedNameDesc = model.suggestions.OrderByDescending(s => s.author.name);
+                    model.suggestions = sortedNameDesc.ToList();
+                    break;
+                case "date_old":
+                    var sortedDateOld = model.suggestions.OrderBy(s => s.timestamp.createdTimestamp);
+                    model.suggestions = sortedDateOld.ToList();
+                    break;
+                case "date_new":
+                    var sortedDateNew = model.suggestions.OrderBy(s => s.timestamp.createdTimestamp);
+                    model.suggestions = sortedDateNew.ToList();
+                    break;
+                default:
+                    break;
+
+            }
+            //Hvis man sitter igjen med null forslag på slutten av søket/filtreringen får man en feilmelding
+            if (model.suggestions.Count <= 0)
+            {
+                ViewBag.SortedMessage = "Fant ingen forslag med dine søkekriterier :(";
             }
             return View(model);
         }
