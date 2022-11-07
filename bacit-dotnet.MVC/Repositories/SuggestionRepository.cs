@@ -28,13 +28,13 @@ namespace bacit_dotnet.MVC.Repositories
             var query = @"SELECT s.*, sts.*, c.*, i.* FROM Suggestion AS s INNER JOIN 
             SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id INNER JOIN 
             SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id INNER JOIN 
-            Category AS c ON sc.category_id = c.category_id LEFT JOIN Image AS i on i.suggestion_id = s.suggestion_id" ;
+            Category AS c ON sc.category_id = c.category_id LEFT JOIN Image AS i on i.suggestion_id = s.suggestion_id";
 
             //kobling til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 //koble spørring til databasen for å hente informasjon
-                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity,ImageEntity, SuggestionEntity>(query, (suggestion, timestamp, category, image) =>
+                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, ImageEntity, SuggestionEntity>(query, (suggestion, timestamp, category, image) =>
                 {
                     //variabel "suggestion.timestamp" i koden kobles med variabel timestamp i databasen
                     suggestion.timestamp = timestamp;
@@ -123,7 +123,7 @@ namespace bacit_dotnet.MVC.Repositories
                     }
                     //legg til kategori for forslag
                     suggestion.categories.Add(category);
-                   
+
                     //returner forslag
                     return suggestion;
                 }, new { suggestion_id }, splitOn: "timestamp_id, category_id");
@@ -206,7 +206,7 @@ namespace bacit_dotnet.MVC.Repositories
                     fullSuggestion.images = groupedImages;
                 }
                 //grupperer kommentarene i forslaget
-                if (fullSuggestion.comments.Count > 0 && fullSuggestion.images.ElementAt(0) != null)
+                if (fullSuggestion.comments.Count > 0 && fullSuggestion.comments.ElementAt(0) != null)
                 {
                     var groupedComments = fullSuggestion.comments.GroupBy(comment => comment.comment_id).Select(comment => comment.First()).ToList();
                     fullSuggestion.comments = groupedComments;
@@ -231,7 +231,7 @@ namespace bacit_dotnet.MVC.Repositories
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 //kobler spørring til databasen
-                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity,ImageEntity, SuggestionEntity>(query, (suggestion, timestamp, category, image) =>
+                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, ImageEntity, SuggestionEntity>(query, (suggestion, timestamp, category, image) =>
                 {
                     //variabel timestamp i koden kobles til variabel timestamp i databasen
                     suggestion.timestamp = timestamp;
@@ -241,7 +241,7 @@ namespace bacit_dotnet.MVC.Repositories
                         suggestion.categories = new List<CategoryEntity>();
                     }
 
-                  
+
                     if (suggestion.images == null)
                     {
                         suggestion.images = new List<ImageEntity>();
@@ -277,6 +277,7 @@ namespace bacit_dotnet.MVC.Repositories
             var suggestionQuery = @"INSERT INTO Suggestion(title, description, status, ownership_emp_id, author_emp_id) VALUES (@title, @description, 'PLAN', @ownership_emp_id, @poster_emp_id)";
             var timestampquery = @"INSERT INTO SuggestionTimestamp(suggestion_id, dueByTimestamp) VALUES (@suggestion_id, @dueByTimestamp)";
             var categoriesQuery = @"INSERT INTO SuggestionCategory(suggestion_id, category_id) VALUES (@suggestion_id, @categoryid)";
+            var imageQuery = @"INSERT INTO Image(emp_id, suggestion_id, image_filepath) VALUES(@emp_id, @suggestion_id, @image_filepath)";
 
             //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
@@ -290,6 +291,13 @@ namespace bacit_dotnet.MVC.Repositories
                 {
                     //kobler kategori-spørring til databasen (kobler hver kategori gjeldende for forslaget til forslaget)
                     connection.Execute(categoriesQuery, new { suggestion_id = suggestion.suggestion_id, categoryid = category.category_id });
+                }
+                if(suggestion.images.Count > 0 && suggestion.images.ElementAt(0) != null)
+                {
+                    foreach(ImageEntity image in suggestion.images)
+                    {
+                    connection.Execute(imageQuery, new {emp_id = suggestion.author_emp_id, suggestion_id = suggestion.suggestion_id, image_filepath = image.image_filepath });
+                    }
                 }
             }
             //returnerer tallverdi på 1
@@ -334,7 +342,7 @@ namespace bacit_dotnet.MVC.Repositories
             {
                 //kobler spørring til databasen - viser til hvilke rader som blir påvirket i databasen
                 var affectedRows = connection.Execute(query, new { comment_id = comment_id });
-               
+
                 //returnerer antall rader påvirket av å bli slettet
                 return affectedRows;
             }
@@ -414,6 +422,55 @@ namespace bacit_dotnet.MVC.Repositories
                 var result = connection.Execute(query, new { image_id = image_id });
                 //returnerer antall rader påvirket
                 return result;
+            }
+        }
+        //Henter forslag basert på status
+        public List<SuggestionEntity> GetSuggestionsByStatus(string status)
+        {
+            //spørring
+            var query = @"SELECT s.*, sts.*, c.*, i.* FROM Suggestion AS s INNER JOIN 
+            SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id  RIGHT JOIN 
+            SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id INNER JOIN 
+            Category AS c ON sc.category_id = c.category_id  LEFT JOIN Image as i on i.suggestion_id = s.suggestion_id WHERE s.status = @status";
+
+            //kobler til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                //kobler spørring til databasen
+                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, ImageEntity, SuggestionEntity>(query, (suggestion, timestamp, category, image) =>
+                {
+                    //variabel timestamp i koden kobles til variabel timestamp i databasen
+                    suggestion.timestamp = timestamp;
+                    //Hvis det er ingen kategorier i kategori-lista for forslaget, lages det en ny
+                    if (suggestion.categories == null)
+                    {
+                        suggestion.categories = new List<CategoryEntity>();
+                    }
+
+
+                    if (suggestion.images == null)
+                    {
+                        suggestion.images = new List<ImageEntity>();
+                    }
+                    //legg til kategori for forslaget
+                    suggestion.categories.Add(category);
+                    //legg til bilde for forslaget
+                    suggestion.images.Add(image);
+
+                    //returner forslaget
+                    return suggestion;
+                }, new { status = status }, splitOn: "timestamp_id, category_id, image_id");
+
+                //grupper forslagene
+                var result = suggestions.GroupBy(s => s.suggestion_id).Select(suggestion =>
+                {
+                    var groupedSuggestion = suggestion.First();
+                    groupedSuggestion.categories = suggestion.Select(s => s.categories.Single()).ToList();
+                    groupedSuggestion.images = suggestion.Select(s => s.images.Single()).ToList();
+                    return groupedSuggestion;
+                });
+                //returner forslagene basert på status
+                return result.ToList();
             }
         }
     }

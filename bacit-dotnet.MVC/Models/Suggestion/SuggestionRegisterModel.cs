@@ -25,6 +25,5 @@ namespace bacit_dotnet.MVC.Models.Suggestion
         public List<SelectListItem> possibleResponsibleEmployees { get; set; }
 
         public DateTime dueByTimestamp { get; set; }
-        public ImageEntity image { get; set; }
     }
 }

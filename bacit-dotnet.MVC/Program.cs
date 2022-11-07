@@ -28,6 +28,7 @@ public class Program
         builder.Services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
         builder.Services.AddSingleton<ISuggestionRepository, SuggestionRepository>();
         builder.Services.AddSingleton<IAdminRepository, AdminRepository>();
+        builder.Services.AddSingleton<IFileRepository, FileRepository>();
         builder.Services.AddSession();
 
         builder.Services.AddAuthentication(options =>

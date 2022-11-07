@@ -4,29 +4,31 @@ namespace bacit_dotnet.MVC.Helpers
 {
     public static class FilterHelper
     {
+
+
         //Filtrerer forslag på status, tar inn en liste med forslag og en streng som er filteret også filtrerer den basert på det med
         //Collection.FindAll metoden, denne metoden går gjennom alle tingene i listen og sjekker det mot et kriterie. 
         public static List<SuggestionEntity> FilterSuggestions(List<SuggestionEntity> suggestions, string filter)
         {
             switch (filter)
             {
-                case "planStatus":
+                case "PLAN":
                     var filteredPlan = suggestions.FindAll(s => s.status == STATUS.PLAN);
                     suggestions = filteredPlan;
                     break;
-                case "doStatus":
+                case "DO":
                     var filteredDo = suggestions.FindAll(s => s.status == STATUS.DO);
                     suggestions = filteredDo;
                     break;
-                case "studyStatus":
+                case "STUDY":
                     var filteredStudy = suggestions.FindAll(s => s.status == STATUS.STUDY);
                     suggestions = filteredStudy;
                     break;
-                case "actStatus":
+                case "ACT":
                     var filteredAct = suggestions.FindAll(s => s.status == STATUS.ACT);
                     suggestions = filteredAct;
                     break;
-                case "justDoIt":
+                case "JUSTDOIT":
                     var filteredJDI = suggestions.FindAll(s => s.status == STATUS.JUSTDOIT);
                     suggestions = filteredJDI;
                     break;

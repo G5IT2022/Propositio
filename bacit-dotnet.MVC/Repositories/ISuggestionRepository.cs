@@ -13,6 +13,7 @@ namespace bacit_dotnet.MVC.Repositories
         public SuggestionEntity GetSuggestionBySuggestionIDWithCommentsAndImages(int suggestion_id);
         public List<SuggestionEntity> GetSuggestionsByAuthorID(int author_emp_id);
         public List<SuggestionEntity> GetAll();
+        public List<SuggestionEntity> GetSuggestionsByStatus(string status);
 
         /**
          * Categories

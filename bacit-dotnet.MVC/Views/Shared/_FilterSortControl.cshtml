@@ -5,7 +5,7 @@
 
     <div class="row align-items-start">
         <div class="btn-group">
-            <div class="col-sm-1">
+            <div class="col-sm-2">
                 <!--Sortering-->
                 <div class="sortDropdown">
                     <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -19,20 +19,26 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-sm-1"></div>
-            <!--Filtrering-->
-            <div class="col-1">
-                <div class="filterDropdown">
+            <div class="col-sm-2">
+                <div class="filterStatusDropdown">
                     <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="/img/bootstrap-icons-1.9.1/filter.svg" class="dropdown-toggle" type="button" data-bs-toggle="filterDropdown" /> Filtrer
+                        <img src="/img/bootstrap-icons-1.9.1/filter.svg" class="dropdown-toggle" type="button" data-bs-toggle="filterStatusDropdown" /> Filtrer (Status)
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="planStatus">Status (Plan)</a></li>
-                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="doStatus">Status (Do)</a></li>
-                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="studyStatus">Status (Study)</a></li>
-                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="actStatus">Status (Act)</a></li>
-                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="justDoIt">Just Do It</a></li>
-                        <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="lastWeek">Siste Uke</a></li>
+                        @foreach (STATUS status in Enum.GetValues(typeof(STATUS)))
+                        {
+                            <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="@status.ToString()">@status.ToString()</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <!--Filtrering-->
+            <div class="col-sm-2">
+                <div class="filterDropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/img/bootstrap-icons-1.9.1/filter.svg" class="dropdown-toggle" type="button" data-bs-toggle="filterDropdown" /> Filtrer (Kategori)
+                    </button>
+                    <ul class="dropdown-menu">
                         @foreach (CategoryEntity category in Model.categories)
                         {
                             <li><a class="dropdown-item" asp-action="@Model.actionName" asp-controller="@Model.controllername" asp-route-filterParameter="Kategori @category.category_name">@category.category_name</a></li>
@@ -51,7 +57,6 @@
                             <button class="btn btn-light" type="submit">Søk</button>
                         </div>
                     </div>
-
                 }
             </div>
         </div>

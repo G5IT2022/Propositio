@@ -18,12 +18,14 @@ namespace bacit_dotnet.MVC.Controllers
 
         private readonly IEmployeeRepository employeeRepository;
         private readonly ISuggestionRepository suggestionRepository;
+        private readonly IFileRepository fileRepository;
 
 
-        public SuggestionController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository)
+        public SuggestionController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository, IFileRepository fileRepository)
         {
             this.suggestionRepository = suggestionRepository;
             this.employeeRepository = employeeRepository;
+            this.fileRepository = fileRepository;
         }
 
 
@@ -64,14 +66,15 @@ namespace bacit_dotnet.MVC.Controllers
 
                 if (newFilter[0] != "Kategori")
                 {
+                    //model.suggestions = suggestionRepository.GetSuggestionsByStatus(filterParameter);
                     model.suggestions = FilterHelper.FilterSuggestions(model.suggestions, filterParameter);
                 }
                 else
                 {
                     var CategoryToSend = new CategoryEntity();
-                    foreach(CategoryEntity category in model.categories)
+                    foreach (CategoryEntity category in model.categories)
                     {
-                        if(category.category_name.Equals(newFilter[1]))
+                        if (category.category_name.Equals(newFilter[1]))
                         {
                             CategoryToSend = category;
                         }
@@ -103,6 +106,8 @@ namespace bacit_dotnet.MVC.Controllers
                     break;
 
             }
+
+
             //Hvis man sitter igjen med null forslag på slutten av søket/filtreringen får man en feilmelding
             if (model.suggestions.Count <= 0)
             {
@@ -130,11 +135,18 @@ namespace bacit_dotnet.MVC.Controllers
         }*/
 
         [HttpPost]
-        public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection)
+        public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection, IFormFile file = null)
         {
+            ModelState.Remove("file");
+            ModelState.Remove("possibleResponsibleEmployees");
             ModelState.Remove("Categories");
             if (ModelState.IsValid)
             {
+                if(file != null)
+                {
+                 
+                }
+              
                 SuggestionEntity suggestion = new SuggestionEntity
                 {
                     title = model.title,
@@ -155,6 +167,31 @@ namespace bacit_dotnet.MVC.Controllers
                 else
                 {
                     suggestion.status = STATUS.PLAN;
+                }
+          
+                if(file != null)
+                {
+                    try
+                    {
+                        if (fileRepository.UploadFile(file))
+                        {
+                            ImageEntity imageEntity = new ImageEntity()
+                            {
+                                image_filepath = file.FileName
+                            };
+                            suggestion.images.Add(imageEntity);
+                            ViewBag.Message = "File Upload Successful";
+                        }
+                        else
+                        {
+                            ViewBag.Message = "File Upload Failed";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        //Log ex
+                        ViewBag.Message = "File Upload Failed";
+                    }
                 }
                 suggestionRepository.CreateSuggestion(suggestion);
                 return RedirectToAction("Index");
