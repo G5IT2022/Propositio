@@ -149,8 +149,7 @@
                             &nbsp;&nbsp;&nbsp;
                             <a asp-controller="admin" asp-action="deleteteam" asp-route-id="@team.team_id" type="submit"><i class="fas fa-trash-alt"></i></a>
                         </div>
-                    </div>
-                    
+                    </div>                 
 
                    
                 </div>
@@ -169,7 +168,7 @@
                             <div class="col-4">@emp.role.role_name</div>
                         </div>
                     }
-
+        }
         @foreach(TeamEntity team in Model.teams){
            <a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit">Rediger Team</a>     
             <div class="team-container">
