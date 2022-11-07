@@ -6,9 +6,12 @@
 @{
     ViewBag.Title = "Propositio | Nytt Forslag";
 }
+@if (ViewBag.Message != "")
+{
+    @ViewBag.Message
+}
 
-
-<form asp-action="Create" asp-controller="suggestion" method="post">
+<form asp-action="Create" asp-controller="suggestion" enctype="multipart/form-data" method="post">
     <!--Tittel-->
     <div class="row">
         <div class="col-sm-3"></div>
@@ -68,8 +71,7 @@
     <div class="row">
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
-            <label for="formFile" class="form-label">Default file input example</label>
-            <input class="form-control" type="file" id="formFile">
+            <input type="file" name="file" />
         </div>
         <div class="col-sm-4"></div>
     </div>
@@ -81,4 +83,7 @@
             <button class="btn btn-danger">Avbryt</button>
         </div>
     </div>
+</form>
+<form method="post" enctype="multipart/form-data" action="/fileUpload">
+    <button type="submit">Upload File</button>
 </form>
