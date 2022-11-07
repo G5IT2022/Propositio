@@ -89,7 +89,13 @@ namespace bacit_dotnet.MVC.Controllers
                 return RedirectToAction("Register");
             }
         }
-
+        /**
+         * Denne private metoden gjør at:
+         * 1. du kan hente list av katergorier
+         * 2. du kan legge til kategorier som du velger fra checkbox til forslaget.
+         * @Paramter collection - en samling av kategorier
+         * @Return utvaglte kategorier listen
+         */
         private List<CategoryEntity> parseCategories(IFormCollection collection)
         {
             List<CategoryEntity> availableCategories = suggestionRepository.GetAllCategories();
@@ -107,7 +113,11 @@ namespace bacit_dotnet.MVC.Controllers
             return categories;
         }
 
-        //Dette er en metode for å hente info til ett forslag og alle kommentarer som tilhører til forslaget
+        /**
+         * Dette er en metode for å hente info til ett forslag og alle kommentarer som tilhører til forslaget.
+         * @Parameter suggestion_id
+         * @Return informasjon av et forslag i Details Viewet
+         */
         public IActionResult Details(int id)
         {
             SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
@@ -131,7 +141,7 @@ namespace bacit_dotnet.MVC.Controllers
             return View(detailsModel);
         }
 
-        //Lage en ny kommentar
+        //Suggestion/Details/suggestion_id
         [HttpPost]
         public IActionResult CreateComment(SuggestionDetailsModel model, IFormCollection collections)
         {
@@ -156,6 +166,11 @@ namespace bacit_dotnet.MVC.Controllers
                 return RedirectToAction("Details", "Suggestion", new { id = comment.suggestion_id });
             }
         }
+        /**
+         * Denne metoden gjør at du kan slette kommentarer i forslaget
+         * @Parameter comment_id og suggestion id
+         * @Return Suggestion/Details/suggestion_id
+         */
         public IActionResult DeleteComment(int comment_id, int suggestion_id)
         {
             var result = suggestionRepository.DeleteComment(comment_id);

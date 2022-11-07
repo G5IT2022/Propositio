@@ -1,5 +1,6 @@
 ﻿using bacit_dotnet.MVC.DataAccess;
 using bacit_dotnet.MVC.Entities;
+using bacit_dotnet.MVC.Models.AdminViewModels.TeamModels;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,6 +18,12 @@ namespace bacit_dotnet.MVC.Repositories
         {
             this.sqlConnector = sqlConnector;
         }
+
+        /**
+         * Denne metoden gjør at du kan lage en ny bruker i databasen
+         * @Parameter EmployeeEntity som består av alle nødvendige attributter om en ansatt
+         * @Return ny bruker/ansatt
+         */
         public int CreateEmployee(EmployeeEntity emp)
         {
             var query = @"INSERT INTO Employee(emp_id, name, passwordhash,salt, role_id, authorization_role_id) VALUES (@emp_id, @name, @passwordhash, @salt, @role_id, @authorization_role_id)";
@@ -29,9 +36,11 @@ namespace bacit_dotnet.MVC.Repositories
 
         //Henter en enkelt ansatt basert på employeeid, returnerer en EmployeeEntity med en liste over team de er med i og rolle. 
         /**
-         1. Hent ansattnr, navn, role_id på den ansatte
-         2. Hent role_name på den ansatte 
-         3. Hent team_id, team_navn og team_lead_id på teamene den ansatte er med i. 
+         * 1. Hent ansattnr, navn, role_id på den ansatte
+         * 2. Hent role_name på den ansatte
+         * 3. Hent team_id, team_navn og team_lead_id på teamene den ansatte er med i. 
+         * @Parameter ansattnr
+         * @Return informasjon av en ansatt.
          */
         public EmployeeEntity GetEmployee(int emp_id)
         {
@@ -60,9 +69,11 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ElementAt(0);
             }
         }
-
-       
-
+        
+        /**
+         * Denne metoden er for å hente en list av ansatte fra databasen
+         * @Return list av ansatte.
+         */
         public List<EmployeeEntity> GetEmployees()
         {
             var query = @"SELECT e.emp_id, e.name, e.role_id, r.role_id, r.role_name, t.team_id, t.team_name, t.team_lead_id FROM Employee AS e 
@@ -92,7 +103,10 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ToList();
             }
         }
-
+        /**
+         * Denne metoden gjør at du kan hente list av ansatte fra databasen
+         * @Return List av ansatte.
+         */
         public List<SelectListItem> GetEmployeeSelectList()
         {
             var query = @"SELECT emp_id, name FROM Employee";
@@ -115,7 +129,11 @@ namespace bacit_dotnet.MVC.Repositories
                 return list;
             }
         }
-
+        /**
+         * Denne metoden er for å hente et team basert på team_id
+         * @Parameter team_id
+         * @Return team med list team medlemmers og tilhørende roller. 
+         */
         public TeamEntity GetTeam(int team_id)
         {
             var query = @"SELECT t.team_id, t.team_name, t.team_lead_id, e.emp_id, e.name, r.role_id, r.role_name FROM Team AS t INNER JOIN 
@@ -147,7 +165,10 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ElementAt(0);
             }
         }
-
+        /**
+         * Denne metoden gjør at du kan hente alle team fra databasen
+         * @Return Team List
+         */
         public List<TeamEntity> GetTeams()
         {
             var query = @"SELECT t.team_id, t.team_name, t.team_lead_id, e.emp_id, e.name, r.role_id, r.role_name FROM Team AS t INNER JOIN 
@@ -175,6 +196,99 @@ namespace bacit_dotnet.MVC.Repositories
                     return groupedTeams;
                 });
                 return result.ToList();
+            }
+        }
+
+        /**
+         * Denne metoden er for å lage et nytt team i databasen
+         * Denne metoden fungerer sammen med metoden GetTeamByName
+         * Når du lager et nytt team, blir nytt team navn og en teamleder lagret i databasen
+         * Et nytt teamnavn skal bli lagret i databasen dersom det ikke har eksistert før
+         * @Parameter AdminNewTeamModel som består av attributter team_name og team_lead_id
+         * @Return nytt teamnavn
+         */
+        public TeamEntity CreateNewTeam(AdminNewTeamModel model)
+        {
+            var query = $"INSERT INTO Team(team_name,team_lead_id) VALUES(@team_name,@team_lead_id)";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var result = connection.QueryFirstOrDefault(query, new {model.team_name, model.team_lead_id });               
+            }
+            return GetTeamByName(model.team_name);
+        }
+
+        /**
+         * Denne metoden gjør at du kan hente nytt teamnavn for å sjekke dersom det teamnavnet har eksistert i databasen.
+         * @Parameter en string name av team
+         * @Return teamnavn.
+         */
+        public TeamEntity GetTeamByName(string name)
+        {
+            var query = @"SELECT * FROM Team as t WHERE t.team_name = @team_name";
+
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var result = connection.QueryFirstOrDefault(query, new { team_name = name });
+                if (result != null)
+                {
+                    TeamEntity team = new TeamEntity();
+                    team.team_id = result.team_id;
+                    team.team_name = result.team_name;
+                    team.team_lead_id = result.team_lead_id;
+                    return team;
+                }
+                return result;
+            }
+        }        
+        /**
+         * Denne metoden med boolean datatype som fungerer sammen med metoden CheckExistedMember
+         * Metoden gjør at når du velger noen ansatte fra checkbox, går det til CheckExistedMember
+         * for å sjekke dersom det nye teamet med list av utvalgte ansatte og utvalgte teamleder har eksistert i TeamList.
+         * Hvis ikke, @Returnerer "True", og så blir de lagt til TeamList i databasen.     
+         * @Parameter teamnr og ansattnr
+         */
+        public bool InsertMemberToTeam(int team_id, int emp_id)
+        {
+            //check exist employee in Team Table
+             if (CheckExistedMember(team_id, emp_id))
+            {
+                var sql = $"INSERT INTO TeamList(emp_id,team_id) VALUES(@emp_id,@team_id)";
+                using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+                {
+                    var result = connection.QueryFirstOrDefault(sql, new { team_id, emp_id });
+                    //return result;
+                }
+            }
+            return true;
+        }
+        public bool CheckExistedMember(int team_id, int emp_id)
+        {
+            var query = @"SELECT * FROM TeamList WHERE team_id=@team_id and emp_id=@emp_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var user = connection.QueryFirstOrDefault<EmployeeEntity>(query, new { team_id = team_id, emp_id = emp_id });
+                if (user == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }               
+        /**
+         * Denne metoden er for å slette Team fra databasen.
+         * @Parameter team_id
+         */
+
+        public int DeleteTeam(int team_id)
+        {
+            var query = @"DELETE FROM Team WHERE team_id = @team_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var affectedRows = connection.Execute(query, new { team_id = team_id });
+                return affectedRows;
             }
         }
     }

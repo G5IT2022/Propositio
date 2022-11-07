@@ -4,6 +4,10 @@
 @{
     ViewBag.Title = "Admin | Index";
 }
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   
+</head>
 <a href="newUser">Ny Bruker</a> &nbsp;&nbsp;
 <a class="buttonDetails" asp-controller="Admin" asp-action="CreateNewTeam">Nytt Team</a>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -22,8 +26,40 @@
 </ul>
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="employees" role="tabpanel" aria-labelledby="employee-tab">
-        <div class="row">
-            <div class="col-sm-2">
+        <div class="table-responsive">
+            <table class="table table-responsive-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Ansattnummer</th>
+                        <th scope="col">Ansattnavn</th>
+                        <th scope="col">Teams</th>
+                        <th scope="col">Rolle</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                   @foreach(EmployeeEntity emp in Model.employees)
+                   {
+                       <tr>
+                           <td>@emp.emp_id</td>
+                           <td>@emp.name</td>
+                            <td>
+                                @foreach (TeamEntity team in emp.teams)
+                           {
+                               @team.team_name <br />
+                                }
+                            </td>
+                           <td>@emp.role.role_name</td>
+                           <td><button type="button" class="btn btn-primary btn-sm mt-1">Endre</button></td>
+                           <td><button type="button" class="btn btn-danger btn-sm mt-1">Slett</button></td>
+
+                       </tr>
+                   }
+                </tbody>
+
+            </table>
+            @*<div class="col-sm-2">
                 Ansattnummer
             </div>
             <div class="col-sm-2">
@@ -38,8 +74,8 @@
             <div class="col-sm-2"></div>
             <div class="col-sm-2"></div>
         </div>
-        <hr />
-        @foreach(EmployeeEntity emp in Model.employees){
+        <hr />*@
+       @* @foreach(EmployeeEntity emp in Model.employees){
             <div class="row">
                 <div class="col-sm-2">
                     @emp.emp_id
@@ -63,28 +99,75 @@
                 </div>
             </div>
             <hr />
-        }
+        }*@
+        </div>
     </div>
     <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="team-tab">
-        @foreach(TeamEntity team in Model.teams){
-                <a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit">rediger team</a>
-            <div class="team-container">
-                <div class="row"></div>
-                <div class="row">
-                    <div class="col-sm-4">Ansattnr</div>
-                    <div class="col-sm-4">Navn</div>
-                    <div class="col-sm-4">Rolle</div>
-                </div>
-                @foreach(EmployeeEntity emp in team.employees){
-                <div class="row">
-                    <div class="col-sm-4">@emp.emp_id</div>
-                    <div class="col-sm-4">@emp.name</div>
-                    <div class="col-sm-4">@emp.role</div>
-                </div>
-                }
-            </div>
-            <row></row>
+       @* @foreach(TeamEntity team in Model.teams)
+        {
+            <div class="table-responsive-md m-2">
+                <table class="table">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">Team Navn</th>
+                            <th scope="col">Ansatt Navn</th>
+                            <th scope="col">Rolle</th>
+                            <th scope="col"><a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit">Rediger team</a></th>
+                        </tr>
+                    </thead>
+                    @foreach (EmployeeEntity emp in team.employees)
+                    {
+                        <tbody>
+                            <tr>
+                                <td class="col-4">@team.team_name</td>
+                                <td class="col-4">@emp.name</td>
+                                <td class="col-2">@emp.role.role_name</td>
+                                <td class="col-4"></td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>            
+            </div>        
         }
+        *@
+        @foreach(TeamEntity team in Model.teams)
+        {
+            <div class="card bg-light mt-3">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex flex-row align-items-center">
+                            <b>Team: @team.team_name</b>
+                        </div>
+                        <div class="d-flex flex-row align-items-center">
+                            <a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit" class="link-muted"><i class="fas fa-pencil-alt"></i></a>
+                            &nbsp;&nbsp;&nbsp;
+                            <a asp-controller="admin" asp-action="deleteteam" asp-route-id="@team.team_id" type="submit"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                    </div>
+                    
+
+                   
+                </div>
+                <div class="card-body">
+                    <div class="row justify-content-center">
+                        <div class="col-4"><b>Ansattnr</b></div>
+                        <div class="col-4"><b>Ansattnavn</b></div>
+                        <div class="col-4"><b>Rolle</b></div>
+                    </div>
+                    
+                    @foreach(EmployeeEntity emp in team.employees)
+                    {
+                        <div class="row justify-content-center">
+                            <div class="col-4">@emp.emp_id</div>
+                            <div class="col-4">@emp.name</div>
+                            <div class="col-4">@emp.role.role_name</div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        }
+      
     </div>
     <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
     </div>
