@@ -19,6 +19,7 @@ namespace bacit_dotnet.MVC.Entities
         public List<CommentEntity> comments { get; set; }
         public List<CategoryEntity> categories { get; set; }
         public List<ImageEntity> images { get; set; }
+        public List<TeamEntity> teams { get; set; }
         public EmployeeEntity author { get; set; }
         public EmployeeEntity responsible_employee { get; set; }
 

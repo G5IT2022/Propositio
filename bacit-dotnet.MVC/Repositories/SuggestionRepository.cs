@@ -195,6 +195,39 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ToList();
             }
         }
+        public List<SuggestionEntity> GetSuggestionsByTeamID(int team_id)
+        {
+            var query = @"SELECT s.*, sts.*, c.* FROM Suggestion AS s INNER JOIN 
+            SuggestionTimestamp AS sts ON s.suggestion_id = sts.suggestion_id  RIGHT JOIN 
+            SuggestionCategory AS sc ON sc.suggestion_id = s.suggestion_id INNER JOIN 
+            Category AS c ON sc.category_id = c.category_id WHERE s.team_id = @team_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var suggestions = connection.Query<SuggestionEntity, TimestampEntity, CategoryEntity, SuggestionEntity>(query, (suggestion, timestamp, category) =>
+                {
+                    suggestion.timestamp = timestamp;
+                    if (suggestion.categories == null)
+                    {
+                        suggestion.categories = new List<CategoryEntity>();
+                    }
+                    suggestion.categories.Add(category);
+                    return suggestion;
+                }, new { team_id }, splitOn: "timestamp_id, category_id");
+
+
+                var result = suggestions.GroupBy(s => s.suggestion_id).Select(suggestion =>
+                {
+                    var groupedSuggestion = suggestion.First();
+                    groupedSuggestion.categories = suggestion.Select(s => s.categories.Single()).ToList();
+                    return groupedSuggestion;
+                });
+                return result.ToList();
+            }
+        }
+
+
+
+
         public int CreateSuggestion(SuggestionEntity suggestion)
         {
             suggestion.suggestion_id = GetNewSuggestionID();
@@ -290,6 +323,8 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
         //metode som sletter forslag ved bruk av bildeID
+
+
         public int DeleteImage(int image_id)
         {
             var query = @"DELETE FROM Image WHERE image_id = @image_id;";
