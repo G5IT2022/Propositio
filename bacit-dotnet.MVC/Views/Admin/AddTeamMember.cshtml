@@ -1,48 +1,72 @@
-﻿<html>
 @using bacit_dotnet.MVC.Models
 @using bacit_dotnet.MVC.Entities
-@model bacit_dotnet.MVC.Models.AdminViewModels.TeamMemberModel
+@using bacit_dotnet.MVC.Controllers
+@using bacit_dotnet.MVC.Models.AdminViewModels.TeamModels
+@model AddTeamMemberModel
 @{
     ViewBag.Title = "Admin | Legg til medlemmer";
 }
-<body>
+<body>    
     <div class="container">
         <h3 class="header text-center"><b>Legg til medlemmer</b></h3>
+        <form asp-controller="Admin" asp-action="AddTeamMember" method="post">
         <div class="table-responsive">
             <!--tabell der man kan legge til medlemmer-->
             <table class="table">
             <thead>
                 <tr>
+
+                    @*<th scope="col">Ansattnr</th>*@
+                    <th scope="col">Navn</th>                    
+                   @* <th scope="col">Rolle</th>*@
+
                     <!--Info om ansatte-->
                     <th scope="col">Ansattnr</th>
                     <th scope="col">Navn</th>
                     <th scope="col">Team</th>
                     <th scope="col">Rolle</th>
+
                     <th scope="col"></th>
                 </tr>
             </thead>
+            
             <tbody>
+
+                @*foreach(var employee in Model.employees)
+                
+
                 <!--Foreach-loop som skriver ut ansatte for hvert team-->
                 @foreach (EmployeeEntity employee in Model.employees)
+
                 {
                     <tr>
-                        <th scope="row">@employee.emp_id</th>
                         <td>@employee.name</td>
-                        <td>
-                            @foreach (TeamEntity team in employee.teams)
-                            {
-                                @(team.team_name += " ")
-                            }
-                        </td>
                         <td>@employee.role.role_name</td>
-                        <td><input type="checkbox" /></td>
+                        <td><input type="checkbox" ></td>
+                       
+                    </tr>
+                }*@
+                @foreach (var employee in Model.selectEmployeesForNewTeam)
+                {
+                    <tr>
+                        <td>@employee.employee.name</td>
+                        <td><input type="hidden" name="emp_id" value="@employee.employee.emp_id" /></td>
+                        
+                        <td><input id="check@(employee.employee.emp_id)" type="hidden" value="@employee.employee.emp_id" name="@employee.selected" checked="@employee.selected" /></td>
+                        <td><input type="checkbox" name="selected" value="@employee.employee.name" checked="@employee.selected" /></td>
+                        
                     </tr>
                 }
+                        <td><button type="submit" class="btn btn-outline-success px-4">Add</button></td>                
+     
             </tbody>
         </table>
         </div>
+        </form>
+
+
         
-        <form asp-controller="Admin" asp-action="CreateNewTeam" method="post">
+        @*<form asp-controller="Admin" asp-action="AddTeamMember" method="post">
             <div class="row">
                 <div class="col-xs-12 mb-5">
                     <div class="text-center mt-5">
@@ -55,8 +79,8 @@
                     </div>
                 </div>
             </div>
-        </form>
+        </form>*@
     </div>
                    
 </body>
-</html>
+

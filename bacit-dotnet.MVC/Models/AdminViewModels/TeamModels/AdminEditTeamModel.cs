@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using bacit_dotnet.MVC.Entities;
 
 
-namespace bacit_dotnet.MVC.Models.AdminViewModels
+namespace bacit_dotnet.MVC.Models.AdminViewModels.TeamModels
 {
     public class AdminEditTeamModel
     {
@@ -20,9 +20,9 @@ namespace bacit_dotnet.MVC.Models.AdminViewModels
         public string team_beskrivelse { get; set; }
 
 
-        
-        public TeamEntity team {get; set;}
-        
+
+        public TeamEntity team { get; set; }
+
     }
 }
 

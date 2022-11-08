@@ -16,6 +16,8 @@ namespace bacit_dotnet.MVC.DataAccess
 
         public IDbConnection GetDbConnection()
         {
+            var cnn = config.GetConnectionString("propositio");
+            var connect = new MySqlConnection(config.GetConnectionString("propositio"));
             return new MySqlConnection(config.GetConnectionString("propositio"));
         }
           
