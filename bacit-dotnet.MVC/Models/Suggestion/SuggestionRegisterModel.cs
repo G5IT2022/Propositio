@@ -21,6 +21,9 @@ namespace bacit_dotnet.MVC.Models.Suggestion
         [DisplayName("Just Do It?")]
         public bool isJustDoIt { get; set; }
 
+        public int responsibleEmployeeID { get; set; }
+        public List<SelectListItem> possibleResponsibleEmployees { get; set; }
+
         public DateTime dueByTimestamp { get; set; }
     }
 }

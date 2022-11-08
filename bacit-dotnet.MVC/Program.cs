@@ -1,9 +1,9 @@
-
 using bacit_dotnet.MVC.Authentication;
 using bacit_dotnet.MVC.DataAccess;
 using bacit_dotnet.MVC.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
@@ -19,7 +19,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddTransient<ISqlConnector, SqlConnector>();
-        builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services.AddSingleton<ITokenService, TokenService>();
         
         builder.Services.AddDbContext<DataContext>(options => {
             options.UseMySql(builder.Configuration.GetConnectionString("propositio"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("propositio")));
@@ -28,6 +28,9 @@ public class Program
         builder.Services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
         builder.Services.AddSingleton<ISuggestionRepository, SuggestionRepository>();
         builder.Services.AddSingleton<IAdminRepository, AdminRepository>();
+        //builder.Services.AddSingleton<IAdminRepository, AdminRepository>();
+        builder.Services.AddSingleton<IFileRepository, FileRepository>();
+
         builder.Services.AddSession();
 
         builder.Services.AddAuthentication(options =>

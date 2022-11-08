@@ -1,55 +1,74 @@
-﻿<html>
-@using bacit_dotnet.MVC.Models
+﻿@using bacit_dotnet.MVC.Models
 @using bacit_dotnet.MVC.Entities
-@using bacit_dotnet.MVC.Models.AdminViewModels
-@model AdminNewTeamModel
+@using bacit_dotnet.MVC.Models.AdminViewModels.TeamModels
+@model AddTeamMemberModel
 @{
     ViewBag.Title = "Admin | Nytt Team";
 }
-<body>    
-    <div class="containter newteam-container mt-5">       
-       <div class="row">
-           <div class="col"></div>
-           <div class="col text-center">
-               <h3>Nytt Team</h3>
-           </div>
-            <div class="col"></div>
-       </div>
-       <div class="row mt-3">
-           <div class="col-sm-4"></div>
-           <div class="col-sm-4">
-               <div class="form-group">
-                    <input name="team_navn" type="text" class="form-control" id="team_navn" placeholder="Teamnavn">
-               </div><br/>
-                
-               <div class="form-group text-center">
-                    <a class="btn-link" asp-controller="Admin" asp-action="AddTeamMember">Legg til memlemmer</a>
-               </div>
-               
-           </div>
-       </div>
-        <form asp-action="CreateNewTeam" asp-controller="Admin" method="post">
-            
-            <div class="row text-center mt-4">
-                <div class="col"><b>Ansattnummer</b></div>
-                <div class="col"><b>Navn</b></div>
-                <div class="col"><b>Team</b></div>
-                <div class="col"><b>Rolle</b></div>
-            </div><hr/>       
-        <div class="row text-center mt-3">
-                
-            </div>
-       
+<form asp-controller="Admin" asp-action="CreateNewTeam" method="post">
+    <div class="containter newteam-container mt-5">
         <div class="row">
-            <div class="col-xs-12 mt-5">
-                <div class="text-center mt-xxl-5">
-                    <button type="submit" class="btn btn-outline-danger px-4">Avbryt</button>
-                    &nbsp;&nbsp;
-                    <button type="submit" class="btn btn-outline-success px-4">Lagre</button>
+            <div class="col"></div>
+            <div class="col text-center">
+                <h3>Nytt Team</h3>
+            </div>
+            <div class="col"></div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.TextBoxFor(a=>a.team_name,new {placeholder = "Teamnavn", @class= "form-control"})
+                    
+                </div><br />
+                <div class="text-danger text-center">
+                    <p><b>@ViewBag.ErrorMessage</b></p>
                 </div>
             </div>
         </div>
-        </form>        
+        <h4 class="header text-center"><b>Legg til medlemmer</b></h4>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        @*<th scope="col">Ansattnr</th>*@
+                        <th scope="col">Navn</th>
+                        <th scope="col">Rolle</th>
+                        <th scope="col">Velg Ansatt</th>
+                        <th scope="col">Velg Teamleder</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @for (int i = 0; i < Model.selectEmployeesForNewTeam.Count; i++)
+                    {
+                        <tr>
+                            <td>@Model.selectEmployeesForNewTeam[i].employee.name</td>
+                            <td>@Model.selectEmployeesForNewTeam[i].employee.role.role_name</td>
+
+                            @* <td><input type="hidden" name="emp_id" value="@Model.selectEmployeesForNewTeam[i].employee.emp_id" /></td>
+
+                        <td><input id="check@(Model.selectEmployeesForNewTeam[i].employee.emp_id)" type="hidden" value="@Model.selectEmployeesForNewTeam[i].employee.emp_id"
+                        name="@Model.selectEmployeesForNewTeam[i].selected" checked="@Model.selectEmployeesForNewTeam[i].selected" /></td>*@
+                            <td>
+                                @*binding values emp_id in SelectEmployeesForNewTeam *@
+                                @Html.HiddenFor(a=>a.selectEmployeesForNewTeam[i].emp_id)
+                                @Html.CheckBoxFor(a=>a.selectEmployeesForNewTeam[i].selected)
+                            </td>
+                            <td>
+                                @Html.RadioButtonFor(a=>a.team_lead_id,Model.selectEmployeesForNewTeam[i].employee.emp_id,new{@name="teamlead"})
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+        <div class="form-group text-center">
+            @*<button type="submit" class="btn btn-outline-danger">Avbryt</button*@
+            <button type="submit" class="btn btn-outline-success mx-3">Lagre</button>
+
+        </div>
     </div>
-</body>
-</html>
+
+</form>

@@ -2,6 +2,10 @@
 
 namespace bacit_dotnet.MVC.Repositories
 {
+    /**
+     * Repositository for admin
+     * ansvar for lagring av employees
+     */
     public interface IAdminRepository
     {
         string AuthorizeUser(int emp_id);

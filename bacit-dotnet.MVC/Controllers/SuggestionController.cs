@@ -4,8 +4,10 @@ using bacit_dotnet.MVC.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Web;
 using bacit_dotnet.MVC.Models.Suggestion;
 using bacit_dotnet.MVC.Repositories;
+using bacit_dotnet.MVC.Helpers;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -16,21 +18,100 @@ namespace bacit_dotnet.MVC.Controllers
 
         private readonly IEmployeeRepository employeeRepository;
         private readonly ISuggestionRepository suggestionRepository;
+        private readonly IFileRepository fileRepository;
 
 
-        public SuggestionController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository)
+        public SuggestionController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository, IFileRepository fileRepository)
         {
             this.suggestionRepository = suggestionRepository;
             this.employeeRepository = employeeRepository;
+            this.fileRepository = fileRepository;
         }
+
+
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, string searchString, string filterParameter)
         {
-            EmployeeSuggestionViewModel model = new EmployeeSuggestionViewModel();
-            model.employees = employeeRepository.GetEmployees();
-            foreach (EmployeeEntity emp in model.employees)
+            //Vi måtte bruke en annen modell enn den vi hadde før fordi vi må filtrere alle forslagene så vi må bruke en modell med kun listen over forslag
+            SuggestionViewModel model = new SuggestionViewModel();
+
+            model.suggestions = suggestionRepository.GetAll();
+            //Henter kategoriene for filtrering
+            model.categories = suggestionRepository.GetAllCategories();
+            foreach (SuggestionEntity suggestion in model.suggestions)
             {
-                emp.suggestions = suggestionRepository.GetSuggestionsByAuthorID(emp.emp_id);
+                //Setter author og responsible employee entitetene i forslagene til fullverdige employee entiteter slik at man kan vise info om den ansatte
+                suggestion.author = employeeRepository.GetEmployee(suggestion.author_emp_id);
+                suggestion.responsible_employee = employeeRepository.GetEmployee(suggestion.ownership_emp_id);
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                //Sjekker om søkestrengen finnes i tittelen, beskrivelsen eller navnet på forfatter/ansvarlig
+                //Måtte lage et midlertidig variabel for å søke med fordi jeg fikk ikke lov til å søke på samlignen som allerede var der
+                var searched = model.suggestions.Where(
+                   s => s.title.Contains(searchString) ||
+                   s.description.Contains(searchString) ||
+                   s.author.name.Contains(searchString) ||
+                   s.responsible_employee.name.Contains(searchString));
+                //Setter listen over forslag i modellen til de man har søkt etter
+                model.suggestions = searched.ToList();
+            }
+
+            //Filtrering
+            //Sjekker først at filteret er satt og at det ikke er en kategori
+            if (!string.IsNullOrEmpty(filterParameter))
+            {
+                var newFilter = filterParameter.Split(" ");
+
+                if (newFilter[0] != "Kategori")
+                {
+                    //model.suggestions = suggestionRepository.GetSuggestionsByStatus(filterParameter);
+                    model.suggestions = FilterHelper.FilterSuggestions(model.suggestions, filterParameter);
+                }
+                else
+                {
+                    var CategoryToSend = new CategoryEntity();
+                    foreach (CategoryEntity category in model.categories)
+                    {
+                        if (category.category_name.Equals(newFilter[1]))
+                        {
+                            CategoryToSend = category;
+                        }
+                    }
+                    model.suggestions = FilterHelper.FilterCategories(model.suggestions, CategoryToSend);
+                }
+            }
+
+            //Switch statement som sjekker hva du sorterer på, switch er basically en if/elseif/else
+            switch (sortOrder)
+            {
+                case "name_asc":
+                    var sortedNameAsc = model.suggestions.OrderBy(s => s.author.name);
+                    model.suggestions = sortedNameAsc.ToList();
+                    break;
+                case "name_desc":
+                    var sortedNameDesc = model.suggestions.OrderByDescending(s => s.author.name);
+                    model.suggestions = sortedNameDesc.ToList();
+                    break;
+                case "date_old":
+                    var sortedDateOld = model.suggestions.OrderBy(s => s.timestamp.createdTimestamp);
+                    model.suggestions = sortedDateOld.ToList();
+                    break;
+                case "date_new":
+                    var sortedDateNew = model.suggestions.OrderBy(s => s.timestamp.createdTimestamp);
+                    model.suggestions = sortedDateNew.ToList();
+                    break;
+                default:
+                    break;
+
+            }
+
+
+            //Hvis man sitter igjen med null forslag på slutten av søket/filtreringen får man en feilmelding
+            if (model.suggestions.Count <= 0)
+            {
+                ViewBag.SortedMessage = "Fant ingen forslag med dine søkekriterier :(";
             }
             return View(model);
         }
@@ -39,14 +120,33 @@ namespace bacit_dotnet.MVC.Controllers
         {
             SuggestionRegisterModel suggestionRegisterModel = new SuggestionRegisterModel();
             suggestionRegisterModel.categories = suggestionRepository.GetAllCategories();
+            suggestionRegisterModel.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
             return View(suggestionRegisterModel);
         }
-        [HttpPost]
-        public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection)
+        /*
+        public void UploadFile(string fileName)
         {
+            var fileSavePath = "";
+            var uploadedFile = Request.;
+            fileName = Path.GetFileName(uploadedFile.FileName);
+            fileSavePath = Server.MapPath("~/App_Data/UploadedFiles/" +
+              fileName);
+            uploadedFile.SaveAs(fileSavePath);
+        }*/
+
+        [HttpPost]
+        public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection, IFormFile file = null)
+        {
+            ModelState.Remove("file");
+            ModelState.Remove("possibleResponsibleEmployees");
             ModelState.Remove("Categories");
             if (ModelState.IsValid)
             {
+                if(file != null)
+                {
+                 
+                }
+              
                 SuggestionEntity suggestion = new SuggestionEntity
                 {
                     title = model.title,
@@ -68,6 +168,31 @@ namespace bacit_dotnet.MVC.Controllers
                 {
                     suggestion.status = STATUS.PLAN;
                 }
+          
+                if(file != null)
+                {
+                    try
+                    {
+                        if (fileRepository.UploadFile(file))
+                        {
+                            ImageEntity imageEntity = new ImageEntity()
+                            {
+                                image_filepath = file.FileName
+                            };
+                            suggestion.images.Add(imageEntity);
+                            ViewBag.Message = "File Upload Successful";
+                        }
+                        else
+                        {
+                            ViewBag.Message = "File Upload Failed";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        //Log ex
+                        ViewBag.Message = "File Upload Failed";
+                    }
+                }
                 suggestionRepository.CreateSuggestion(suggestion);
                 return RedirectToAction("Index");
             }
@@ -76,7 +201,13 @@ namespace bacit_dotnet.MVC.Controllers
                 return RedirectToAction("Register");
             }
         }
-
+        /**
+         * Denne private metoden gjør at:
+         * 1. du kan hente list av katergorier
+         * 2. du kan legge til kategorier som du velger fra checkbox til forslaget.
+         * @Paramter collection - en samling av kategorier
+         * @Return utvaglte kategorier listen
+         */
         private List<CategoryEntity> parseCategories(IFormCollection collection)
         {
             List<CategoryEntity> availableCategories = suggestionRepository.GetAllCategories();
@@ -94,7 +225,11 @@ namespace bacit_dotnet.MVC.Controllers
             return categories;
         }
 
-        //Dette er en metode for å hente info til ett forslag og alle kommentarer som tilhører til forslaget
+        /**
+         * Dette er en metode for å hente info til ett forslag og alle kommentarer som tilhører til forslaget.
+         * @Parameter suggestion_id
+         * @Return informasjon av et forslag i Details Viewet
+         */
         public IActionResult Details(int id)
         {
             SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
@@ -118,7 +253,7 @@ namespace bacit_dotnet.MVC.Controllers
             return View(detailsModel);
         }
 
-        //Lage en ny kommentar
+        //Suggestion/Details/suggestion_id
         [HttpPost]
         public IActionResult CreateComment(SuggestionDetailsModel model, IFormCollection collections)
         {
@@ -143,6 +278,11 @@ namespace bacit_dotnet.MVC.Controllers
                 return RedirectToAction("Details", "Suggestion", new { id = comment.suggestion_id });
             }
         }
+        /**
+         * Denne metoden gjør at du kan slette kommentarer i forslaget
+         * @Parameter comment_id og suggestion id
+         * @Return Suggestion/Details/suggestion_id
+         */
         public IActionResult DeleteComment(int comment_id, int suggestion_id)
         {
             var result = suggestionRepository.DeleteComment(comment_id);
