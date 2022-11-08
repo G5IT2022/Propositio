@@ -12,7 +12,6 @@ namespace bacit_dotnet.MVC.Repositories
         public SuggestionEntity GetSuggestionBySuggestionID(int suggestion_id);
         public SuggestionEntity GetSuggestionBySuggestionIDWithCommentsAndImages(int suggestion_id);
         public List<SuggestionEntity> GetSuggestionsByAuthorID(int author_emp_id);
-        public List<SuggestionEntity> GetSuggestionsByTeamID(int team_id);
         public List<SuggestionEntity> GetAll();
         public List<SuggestionEntity> GetSuggestionsByStatus(string status);
 
