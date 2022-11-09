@@ -267,6 +267,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ToList();
             }
         }
+
         /**
          * Denne metoden lager nytt forslag
          */
@@ -410,6 +411,8 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
         //metode som sletter forslag ved bruk av bildeID
+
+
         public int DeleteImage(int image_id)
         {
             var query = @"DELETE FROM Image WHERE image_id = @image_id;";
