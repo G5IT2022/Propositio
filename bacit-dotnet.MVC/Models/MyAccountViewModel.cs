@@ -8,6 +8,7 @@ namespace bacit_dotnet.MVC.Models
 
         public EmployeeEntity employee { get; set; }
         public List<SuggestionEntity> suggestions { get; set; }
+        public List<CategoryEntity> categories { get; set; }
        
     }
 }

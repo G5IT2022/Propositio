@@ -8,6 +8,9 @@ using System.Web;
 using bacit_dotnet.MVC.Models.Suggestion;
 using bacit_dotnet.MVC.Repositories;
 using bacit_dotnet.MVC.Helpers;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Web.WebPages.Html;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -116,23 +119,13 @@ namespace bacit_dotnet.MVC.Controllers
             return View(model);
         }
 
-        public IActionResult Register()
+        public IActionResult Register(SuggestionRegisterModel suggestionRegisterModel)
         {
-            SuggestionRegisterModel suggestionRegisterModel = new SuggestionRegisterModel();
+            //SuggestionRegisterModel suggestionRegisterModel = new SuggestionRegisterModel();
             suggestionRegisterModel.categories = suggestionRepository.GetAllCategories();
             suggestionRegisterModel.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
             return View(suggestionRegisterModel);
         }
-        /*
-        public void UploadFile(string fileName)
-        {
-            var fileSavePath = "";
-            var uploadedFile = Request.;
-            fileName = Path.GetFileName(uploadedFile.FileName);
-            fileSavePath = Server.MapPath("~/App_Data/UploadedFiles/" +
-              fileName);
-            uploadedFile.SaveAs(fileSavePath);
-        }*/
 
         [HttpPost]
         public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection, IFormFile file = null)
@@ -142,11 +135,11 @@ namespace bacit_dotnet.MVC.Controllers
             ModelState.Remove("Categories");
             if (ModelState.IsValid)
             {
-                if(file != null)
+                if (file != null)
                 {
-                 
+
                 }
-              
+
                 SuggestionEntity suggestion = new SuggestionEntity
                 {
                     title = model.title,
@@ -168,8 +161,8 @@ namespace bacit_dotnet.MVC.Controllers
                 {
                     suggestion.status = STATUS.PLAN;
                 }
-          
-                if(file != null)
+
+                if (file != null)
                 {
                     try
                     {
@@ -296,6 +289,82 @@ namespace bacit_dotnet.MVC.Controllers
             SuggestionEntity suggestion = suggestionRepository.GetSuggestionBySuggestionID(id);
             suggestion.favorite = !suggestion.favorite;
             suggestionRepository.Favorite(id, suggestion.favorite);
+        }
+        //Suggestion/Edit/id
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            SuggestionEditModel model = new SuggestionEditModel();
+            model.suggestion = suggestionRepository.GetSuggestionBySuggestionIDWithCommentsAndImages(id);
+            model.suggestion.responsible_employee = employeeRepository.GetEmployee(model.suggestion.ownership_emp_id);
+            model.suggestion.author = employeeRepository.GetEmployee(model.suggestion.author_emp_id);
+            model.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
+
+            return View(model);
+        }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public IActionResult EditSuggestion(SuggestionEditModel model)
+        {
+            ModelState.Remove("possibleResponsibleEmployees");
+            ModelState.Remove("suggestion.author");
+            ModelState.Remove("suggestion.responsible_employee");
+            //Denne sjekker om året ikke er 1 som er default året på en DateTime, dvs at ny dato er satt. 
+            //Finnes sikkert en mer sikker måte å gjøre dette på men det fungerer. 
+            if (model.newDueByDate.Year != 1)
+            {
+                model.suggestion.timestamp.dueByTimestamp = model.newDueByDate;
+            }
+            //Sjekker om ansvaret er oppdatert
+            if (model.responsibleEmployeeID != model.suggestion.ownership_emp_id)
+            {
+                model.suggestion.ownership_emp_id = model.responsibleEmployeeID;
+            }
+            //Lager en ny suggestionentity som vi kan sende til repositoryet
+            SuggestionEntity suggestion = new SuggestionEntity()
+            {
+                suggestion_id = model.suggestion.suggestion_id,
+                description = model.suggestion.description + " " + model.newDescription,
+                ownership_emp_id = model.suggestion.ownership_emp_id,
+                timestamp = new TimestampEntity()
+                {
+                    dueByTimestamp = model.suggestion.timestamp.dueByTimestamp,
+                    lastUpdatedTimestamp = DateTime.Now
+                }
+            };
+
+            int result = suggestionRepository.UpdateSuggestion(suggestion);
+            if (result == 0)
+            {
+                //Noe gikk galt
+                ViewBag.Message = "";
+            }
+            return RedirectToAction("Edit", new { id = model.suggestion.suggestion_id });
+
+        }
+
+        //Oppdaterer status på et forslag
+        public IActionResult UpdateStatus(int suggestion_id, STATUS status)
+        {
+            switch (status)
+            {
+                case STATUS.PLAN:
+                    suggestionRepository.UpdateSuggestionStatus(suggestion_id, "DO");
+                    break;
+                case STATUS.DO:
+                    suggestionRepository.UpdateSuggestionStatus(suggestion_id, "STUDY");
+                    break;
+                case STATUS.STUDY:
+                    suggestionRepository.UpdateSuggestionStatus(suggestion_id, "ACT");
+                    break;
+                case STATUS.ACT:
+                    suggestionRepository.UpdateSuggestionStatus(suggestion_id, "FINISHED");
+                    break;
+                case STATUS.JUSTDOIT:
+                    suggestionRepository.UpdateSuggestionStatus(suggestion_id, "FINISHED");
+                    break;
+            }
+            return RedirectToAction("Details", new { id = suggestion_id });
         }
     }
 }

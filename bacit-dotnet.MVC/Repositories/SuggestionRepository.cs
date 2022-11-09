@@ -473,5 +473,33 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ToList();
             }
         }
+        //Oppdaterer et forslag med en suggestionentity. Returnerer antall rader som er blitt endret
+        public int UpdateSuggestion(SuggestionEntity suggestion)
+        {
+            //Query for oppdatering av beskrivelse, status og eier for ett forslag. 
+            var query = @"UPDATE Suggestion SET description = @description, status = @status, ownership_emp_id = @ownership_emp_id WHERE suggestion_id = @suggestion_id";
+            //Query for å oppdatere timetamps.
+            var updateTimestampQuery = @"UPDATE SuggestionTimestamp SET dueByTimestamp = @dueByTimestamp, lastUpdatedTimestamp = @lastUpdatedTimestamp WHERE suggestion_id = @suggestion_id";
+
+            //starter connection til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                //lager variabel result for antall rader som blir endret i databasen gjennom query
+                var result = connection.Execute(query, new { description = suggestion.description, status = suggestion.status.ToString(), ownership_emp_id = suggestion.ownership_emp_id, suggestion_id = suggestion.suggestion_id});
+                result += connection.Execute(updateTimestampQuery, new { dueByTimestamp = suggestion.timestamp.dueByTimestamp, lastUpdatedTimestamp = suggestion.timestamp.lastUpdatedTimestamp, suggestion_id = suggestion.suggestion_id });
+                //returnerer antall rader påvirket
+                return result;
+            }
+        }
+
+        public int UpdateSuggestionStatus(int suggestion_id, string status)
+        {
+            var query = @"UPDATE Suggestion SET status = @status WHERE suggestion_id = @suggestion_id";
+            using(var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var result = connection.Execute(query, new { suggestion_id = suggestion_id, status = status });
+                return result;
+            }
+        }
     }
 }

@@ -57,6 +57,14 @@ body {
 .JUSTDOIT{
     background-color: #E30B5C;
 }
+.BIG{
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+}
+.status-col{
+    display: inline-block;
+}
 .date{
     margin: 0;
     font-size: 12px;

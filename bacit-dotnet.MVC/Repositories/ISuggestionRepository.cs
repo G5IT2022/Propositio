@@ -14,6 +14,8 @@ namespace bacit_dotnet.MVC.Repositories
         public List<SuggestionEntity> GetSuggestionsByAuthorID(int author_emp_id);
         public List<SuggestionEntity> GetAll();
         public List<SuggestionEntity> GetSuggestionsByStatus(string status);
+        public int UpdateSuggestion(SuggestionEntity suggestion);
+        public int UpdateSuggestionStatus(int suggestion_id, string status);
 
         /**
          * Categories
