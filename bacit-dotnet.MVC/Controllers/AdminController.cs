@@ -28,6 +28,7 @@ namespace bacit_dotnet.MVC.Controllers
             AdminIndexViewModel aivm = new AdminIndexViewModel();
             aivm.employees = employeeRepository.GetEmployees();
             aivm.teams = employeeRepository.GetTeams();
+            aivm.roles = employeeRepository.GetAllRoles();
             return View(aivm);
         }
         //Get: /Admin/newUser
