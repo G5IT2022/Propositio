@@ -1,0 +1,77 @@
+﻿<html>
+@using System.Security.Claims
+@using bacit_dotnet.MVC.Models
+@using bacit_dotnet.MVC.DataAccess
+@using bacit_dotnet.MVC.Entities
+@model bacit_dotnet.MVC.Models.Suggestion.SuggestionEditModel
+@{
+    ViewBag.Title = "Propositio | " + Model.suggestion.title;
+}
+
+<div class="container details-container mt-5">
+    @if (ViewBag.Message != "")
+    {
+        @ViewBag.Message
+    }
+    <div class="row">
+        <div class="col-sm-4">
+            <h3 class="fw-bold suggtitle2">@Model.suggestion.title</h3>
+        </div>
+    </div>
+    <form asp-action="EditSuggestion" asp-controller="suggestion" method="post">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.suggestion.suggestion_id)
+        @Html.HiddenFor(m => m.suggestion.title)
+
+        <div class="d-flex justify-content-between">
+            <p class="mt-3 emp-name">Forfattet av: @Model.suggestion.author.name Ansvarlig: @Model.suggestion.responsible_employee.name</p>
+            <div class="d-flex flex-row align-items-center">
+                <p class="mt-3 mx-2 @Model.suggestion.status"></p>
+                <p class="mt-3 mx-2 sugg-status">@Model.suggestion.status</p>
+            </div>
+        </div>
+        <div class="row">
+            <h4>Velg Ny Ansvarlig Ansatt</h4>
+            @Html.HiddenFor(m => m.suggestion.ownership_emp_id)
+            @Html.DropDownListFor(m => m.responsibleEmployeeID, Model.possibleResponsibleEmployees, new {@class="form-control"})
+        </div>
+        <div class="row">
+            <div class="row align-item-start mt-2">
+                @Html.HiddenFor(m => m.suggestion.description)
+                <p>Beskrivelse</p>
+                <div class="col sugg-description">@Model.suggestion.description</div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <p>Legg til ekstra informasjon i beskrivelsen: </p>
+                        @Html.TextAreaFor(m => m.newDescription, new {@class="form-control"})
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-between mt-2">
+                <div class="col-4">
+                    <div class="due">Frist: @Model.suggestion.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</div>
+                </div>
+                <label>Ny Frist:</label>
+                @Html.HiddenFor(m => m.suggestion.timestamp.dueByTimestamp)
+                <input type="date" class="form-control" id="newDueByDate" name="newDueByDate" value="@Model.newDueByDate" />
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Lagre endringer</button>
+        <button class="btn btn-danger" asp-action="index" asp-controller="suggestion">Avbryt</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+    function Update(id, status) {
+
+        var url = '@Url.Action("UpdateStatus", "Suggestion")';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                id: id,
+                status: status
+            }
+        });
+    };
+</script>

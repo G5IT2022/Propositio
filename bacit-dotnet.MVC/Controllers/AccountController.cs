@@ -118,6 +118,7 @@ namespace bacit_dotnet.MVC.Controllers
             MyAccountViewModel model = new MyAccountViewModel();
             model.employee = employeeRepository.GetEmployee(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)));
             model.suggestions = suggestionRepository.GetSuggestionsByAuthorID(model.employee.emp_id);
+            model.categories = suggestionRepository.GetAllCategories();
             foreach (SuggestionEntity suggestion in model.suggestions)
             {
                 suggestion.author = employeeRepository.GetEmployee(suggestion.author_emp_id);
