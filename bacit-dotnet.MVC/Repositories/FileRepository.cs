@@ -9,6 +9,7 @@ namespace bacit_dotnet.MVC.Repositories
         {
             this.hostingEnvironment = hostingEnvironment;
         }
+        //upload bilde/fil
         public bool UploadFile(IFormFile file)
         {
             string path = "";

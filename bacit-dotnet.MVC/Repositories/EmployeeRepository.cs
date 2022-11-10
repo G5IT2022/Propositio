@@ -112,7 +112,7 @@ namespace bacit_dotnet.MVC.Repositories
                     //returner ansatt
                     return employee;
                 }, splitOn: "role_id, team_id");
-                //grupper ansatte
+                //grupperer ansatte
                 var result = emp.GroupBy(e => e.emp_id).Select(employee =>
                 {
                     var groupedEmployee = employee.First();
@@ -225,7 +225,7 @@ namespace bacit_dotnet.MVC.Repositories
                     return team;
 
                 }, splitOn: "emp_id, role_id");
-                //grupper team
+                //grupperer team
                 var result = team.GroupBy(e => e.team_id).Select(team =>
                 {
                     var groupedTeams = team.First();

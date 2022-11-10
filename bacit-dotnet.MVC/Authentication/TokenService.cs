@@ -8,8 +8,10 @@ namespace bacit_dotnet.MVC.Authentication
 {
     public class TokenService : ITokenService
     {
+        //konstant som viser hvor lenge token varer
         private const double EXPIRY_DURATION_MINUTES = 30;
 
+        //lage token
         public string BuildToken(string key, string issuer, EmployeeEntity employee)
         {
             var claims = new[] {
@@ -26,6 +28,7 @@ namespace bacit_dotnet.MVC.Authentication
                 expires: DateTime.Now.AddMinutes(EXPIRY_DURATION_MINUTES), signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
+        //sjekke om Token er gyldig
         public bool IsTokenValid(string key, string issuer, string token)
         {
             var mySecret = Encoding.UTF8.GetBytes(key);

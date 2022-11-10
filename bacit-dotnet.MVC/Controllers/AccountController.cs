@@ -101,12 +101,12 @@ namespace bacit_dotnet.MVC.Controllers
             }
 
         }
-
+        //Endre passord
         public IActionResult ChangePassword()
         {
             return View();
         }
-
+        //Logg ut
         public IActionResult LogOut()
         {
             HttpContext.Session.Clear();

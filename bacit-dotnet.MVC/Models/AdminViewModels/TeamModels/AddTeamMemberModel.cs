@@ -5,8 +5,8 @@ namespace bacit_dotnet.MVC.Models.AdminViewModels.TeamModels
 {
     public class AddTeamMemberModel
     {
-        public string team_name { get; set; }
         public int team_lead_id { get; set; }
+        public string team_name { get; set; }
         public List<SelectEmployeesForNewTeamModel> selectEmployeesForNewTeam { get; set; }
 
 

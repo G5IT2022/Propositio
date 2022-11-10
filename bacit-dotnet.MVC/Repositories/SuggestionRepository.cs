@@ -74,7 +74,9 @@ namespace bacit_dotnet.MVC.Repositories
          * **/
         public void Favorite(int id, bool update)
         {
+            //spørring
             var updateQuery = @"UPDATE Suggestion SET favorite = @state WHERE suggestion_id = @suggestion_id";
+            //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 connection.Execute(updateQuery, new { state = update, suggestion_id = id });
@@ -88,7 +90,9 @@ namespace bacit_dotnet.MVC.Repositories
          * **/
         private int GetNewSuggestionID()
         {
+            //spørring
             var query = @"SELECT COUNT(*) FROM Suggestion";
+            //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 var count = connection.QueryFirst<int>(query);
