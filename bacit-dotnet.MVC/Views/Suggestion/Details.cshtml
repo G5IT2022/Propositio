@@ -96,7 +96,7 @@
                     }
                     else
                     {
-                        <p>X</p>
+                        <p class="temp">X</p>
                     }
                 </div>
                 <div class="status-col">
@@ -108,7 +108,7 @@
                     }
                     else
                     {
-                        <p>X</p>
+                        <p class="temp">X</p>
                     }
                 </div>
                 <div class="status-col">
@@ -120,7 +120,7 @@
                     }
                     else
                     {
-                        <p>X</p>
+                        <p class="temp">X</p>
                     }
                 </div>
             </div>
@@ -155,7 +155,7 @@
                                 @if (comment.poster.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin"))
                                 {
                                     <div class="d-flex flex-row align-items-center">
-                                        <a asp-action="Endre" asp-controller="suggestion" class="link-muted"><i class="fas fa-pencil-alt"></i></a>
+                                        <a asp-action="Endre" asp-controller="suggestion" class="link-muted"><i class="fas fa-pencil-alt">endre</i></a>
                                         &nbsp;&nbsp;&nbsp;
                                         <a data-bs-toggle="modal" data-bs-target="#ConfirmPopup" class="link-muted"><i class="fas fa-trash-alt">slett</i></a>
                                     </div>
