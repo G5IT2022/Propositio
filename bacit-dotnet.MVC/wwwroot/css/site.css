@@ -30,7 +30,7 @@ body {
     display: inline-block;
 }
 .sugg-info {
-    background-color: dimgrey;
+    background-color: #a9a9a9;
     color: #FFF;
     font-weight: bold;
     line-height: 30px;
