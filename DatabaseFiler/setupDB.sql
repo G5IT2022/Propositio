@@ -58,10 +58,11 @@ CREATE TABLE SuggestionTimestamp(
     timestamp_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     suggestion_id int NOT NULL,
     createdTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    planTimestamp datetime,
+    planTimestamp datetime, 
     doTimestamp datetime,
     studyTimestamp datetime,
     actTimestamp datetime,
+    finishedTimestamp datetime,
     lastUpdatedTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     dueByTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT SuggestionTimestampFK FOREIGN KEY (suggestion_id) REFERENCES Suggestion(suggestion_id)
@@ -72,6 +73,7 @@ CREATE TABLE SuggestionComment(
     suggestion_id int NOT NULL,
     description nvarchar(6000) NOT NULL,
     createdTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    lastUpdatedTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT EmployeeCommentFK FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE SET NULL,
     CONSTRAINT SuggestionFK FOREIGN KEY (suggestion_id) REFERENCES Suggestion(suggestion_id)
 );

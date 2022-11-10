@@ -495,12 +495,19 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
+        //Oppdaterer status på ett forslag skal returnere 2 rader
+
         public int UpdateSuggestionStatus(int suggestion_id, string status)
         {
+            var newTimestampName = status.ToLower() + "Timestamp";
             var query = @"UPDATE Suggestion SET status = @status WHERE suggestion_id = @suggestion_id";
-            using(var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            var timestampQuery = String.Format(@"UPDATE SuggestionTimestamp SET {0} = CURRENT_TIMESTAMP, lastUpdatedTimestamp = CURRENT_TIMESTAMP WHERE suggestion_id = @suggestion_id", newTimestampName);
+                
+               // @"$UPDATE SuggestionTimestamp SET {newTimestampName} = CURRENT_TIMESTAMP, lastUpdatedTimestamp = CURRENT_TIMESTAMP  WHERE suggestion_id = @suggestion_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 var result = connection.Execute(query, new { suggestion_id = suggestion_id, status = status });
+                result += connection.Execute(timestampQuery, new { timestampName = newTimestampName, suggestion_id = suggestion_id });
                 return result;
             }
         }

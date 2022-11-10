@@ -159,11 +159,11 @@ namespace bacit_dotnet.MVC.Controllers
                     model.suggestions = sortedNameDesc.ToList();
                     break;
                 case "date_old":
-                    var sortedDateOld = model.suggestions.OrderBy(s => s.timestamp.createdTimestamp);
+                    var sortedDateOld = model.suggestions.OrderByDescending(s => s.timestamp.createdTimestamp.Date).ThenByDescending(s => s.timestamp.createdTimestamp.TimeOfDay);
                     model.suggestions = sortedDateOld.ToList();
                     break;
                 case "date_new":
-                    var sortedDateNew = model.suggestions.OrderBy(s => s.timestamp.createdTimestamp);
+                    var sortedDateNew = model.suggestions.OrderBy(s => s.timestamp.createdTimestamp.Date).ThenByDescending(s => s.timestamp.createdTimestamp.TimeOfDay);
                     model.suggestions = sortedDateNew.ToList();
                     break;
                 default:
