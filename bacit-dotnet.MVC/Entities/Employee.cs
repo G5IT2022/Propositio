@@ -19,6 +19,6 @@ namespace bacit_dotnet.MVC.Entities
         public string authorizationRole { get; set; }
         public List<TeamEntity> teams { get; set; }
         public List<SuggestionEntity> suggestions { get; set; }
-
+        public List<RoleEntity> roles { get; set; }
     }
 }

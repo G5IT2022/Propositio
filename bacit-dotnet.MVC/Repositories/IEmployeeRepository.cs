@@ -29,6 +29,8 @@ namespace bacit_dotnet.MVC.Repositories
         public bool InsertMemberToTeam(int team_id, int emp_id);
         public bool CheckExistedMember(int team_id, int employeeID);
         public int DeleteTeam(int team_id);
+
+        public List<RoleEntity> GetAllRoles();
     }
     
 }

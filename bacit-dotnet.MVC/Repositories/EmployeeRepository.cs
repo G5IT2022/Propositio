@@ -6,6 +6,7 @@ using Dapper.Contrib.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using MySqlConnector;
+using System.Xml.Linq;
 
 namespace bacit_dotnet.MVC.Repositories
 {
@@ -87,10 +88,6 @@ namespace bacit_dotnet.MVC.Repositories
          * Denne metoden er for å hente en list av ansatte fra databasen
          * @Return list av ansatte.
          */
-
-        /**
-         * Metode som henter alle ansatte
-         */
         public List<EmployeeEntity> GetEmployees()
         {
             //spørring
@@ -166,10 +163,6 @@ namespace bacit_dotnet.MVC.Repositories
          * @Parameter team_id
          * @Return team med list team medlemmers og tilhørende roller. 
          */
-
-
-        //Metode som henter team basert på team_id
-
         public TeamEntity GetTeam(int team_id)
         {
             //spørring
@@ -209,11 +202,6 @@ namespace bacit_dotnet.MVC.Repositories
         /**
          * Denne metoden gjør at du kan hente alle team fra databasen
          * @Return Team List
-         */
-
-
-        /**
-         * Metode som henter teamene
          */
         public List<TeamEntity> GetTeams()
         {
@@ -326,12 +314,12 @@ namespace bacit_dotnet.MVC.Repositories
                     return false;
                 }
             }
-        }               
+        }          
+        
         /**
          * Denne metoden er for å slette Team fra databasen.
          * @Parameter team_id
          */
-
         public int DeleteTeam(int team_id)
         {
             var query = @"DELETE FROM Team WHERE team_id = @team_id";
@@ -339,6 +327,16 @@ namespace bacit_dotnet.MVC.Repositories
             {
                 var affectedRows = connection.Execute(query, new { team_id = team_id });
                 return affectedRows;
+            }
+        }
+
+        public List<RoleEntity> GetAllRoles()
+        {
+            var query = @"SELECT role_id, role_name FROM Role";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var roles = connection.Query<RoleEntity>(query);
+                return roles.ToList();
             }
         }
     }

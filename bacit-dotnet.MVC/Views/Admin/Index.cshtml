@@ -25,12 +25,13 @@
     </li>
 </ul>
 <div class="tab-content" id="myTabContent">
+    <!--Ansattlisten-->
     <div class="tab-pane fade show active" id="employees" role="tabpanel" aria-labelledby="employee-tab">
         <div class="table-responsive">
             <table class="table table-responsive-sm">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col">Ansattnummer</th>
+                        <th scope="col">Ansattnr</th>
                         <th scope="col">Ansattnavn</th>
                         <th scope="col">Teams</th>
                         <th scope="col">Rolle</th>
@@ -58,95 +59,26 @@
                    }
                 </tbody>
 
-            </table>
-            @*<div class="col-sm-2">
-                Ansattnummer
-            </div>
-            <div class="col-sm-2">
-                Navn
-            </div>
-            <div class="col-sm-2">
-                Teams
-            </div>
-            <div class="col-sm-2">
-                Rolle
-            </div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2"></div>
-        </div>
-        <hr />*@
-       @* @foreach(EmployeeEntity emp in Model.employees){
-            <div class="row">
-                <div class="col-sm-2">
-                    @emp.emp_id
-                </div>
-                <div class="col-sm-2">
-                    @emp.name
-                </div>
-                <div class="col-sm-2">
-                    @foreach(TeamEntity team in emp.teams){
-                        @(team.team_name += " ")
-                    }
-                </div>
-                <div class="col-sm-2">
-                    @emp.role.role_name
-                </div>
-                <div class="col-sm-2">
-                    <button type="button" class="btn btn-primary btn-sm">Endre</button>
-                </div>
-                <div class="col-sm-2">
-                    <button type="button" class="btn btn-danger btn-sm">Slett</button>
-                </div>
-            </div>
-            <hr />
-        }*@
+            </table>           
         </div>
     </div>
-    <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="team-tab">
-       @* @foreach(TeamEntity team in Model.teams)
-        {
-            <div class="table-responsive-md m-2">
-                <table class="table">
-                    <thead class="table-primary">
-                        <tr>
-                            <th scope="col">Team Navn</th>
-                            <th scope="col">Ansatt Navn</th>
-                            <th scope="col">Rolle</th>
-                            <th scope="col"><a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit">Rediger team</a></th>
-                        </tr>
-                    </thead>
-                    @foreach (EmployeeEntity emp in team.employees)
-                    {
-                        <tbody>
-                            <tr>
-                                <td class="col-4">@team.team_name</td>
-                                <td class="col-4">@emp.name</td>
-                                <td class="col-2">@emp.role.role_name</td>
-                                <td class="col-4"></td>
-                            </tr>
-                        </tbody>
-                    }
-                </table>            
-            </div>        
-        }
-        *@
+    <!--Teamlist-->
+    <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="team-tab">       
         @foreach(TeamEntity team in Model.teams)
         {
             <div class="card bg-light mt-3">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
                         <div class="d-flex flex-row align-items-center">
-                            <b>Team: @team.team_name</b>
+                            <b>Team: @team.team_name</b> &nbsp;&nbsp;&nbsp; <b>- Teamleder:</b>
                         </div>
                         <div class="d-flex flex-row align-items-center">
                             <a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit" class="link-muted"><i class="fas fa-pencil-alt"></i></a>
                             &nbsp;&nbsp;&nbsp;
                             <a asp-controller="admin" asp-action="deleteteam" asp-route-id="@team.team_id" type="submit"><i class="fas fa-trash-alt"></i></a>
                         </div>
-                    </div>
-                    
-
-                   
+                    </div>                
+                  
                 </div>
                 <div class="card-body">
                     <div class="row justify-content-center">
@@ -166,11 +98,22 @@
                 </div>
 
             </div>
-        }
-      
-    </div>
+        }      
+    </div>    
     <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
     </div>
+    <!--Rollelisten-->
     <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
+        <h3 class="mt-3"><b>Rolle liste</b></h3>
+        <a asp-controller="Admin" asp-action="CreateNewRole">Legg til ny Rolle</a>       
+        @foreach(RoleEntity role in Model.roles)
+        {
+            <div class="row mt-2">
+                <div class="col">@role.role_name</div>
+                <div class="col"><button type="button" class="btn btn-outline-primary btn-sm">Endre</button> &nbsp; &nbsp;
+                    <button type="button" class="btn btn-outline-danger btn-sm">Slett</button></div>            
+            </div>
+        }
+
     </div>
 </div>
