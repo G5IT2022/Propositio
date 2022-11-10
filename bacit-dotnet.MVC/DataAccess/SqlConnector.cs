@@ -13,7 +13,7 @@ namespace bacit_dotnet.MVC.DataAccess
         {
             this.config = config;
         }
-
+        //kobler til databasen
         public IDbConnection GetDbConnection()
         {
             var cnn = config.GetConnectionString("propositio");

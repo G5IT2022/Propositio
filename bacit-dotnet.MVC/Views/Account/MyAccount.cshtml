@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "Propositio | Min Side";
 }
+<!--Overskrifter og menyvalg for Min Side-->
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="home" aria-selected="true">Mine Opplysninger</button>
@@ -15,6 +16,7 @@
         <button class="nav-link" id="suggestions-tab" data-bs-toggle="tab" data-bs-target="#suggestions" type="button" role="tab" aria-controls="profile" aria-selected="false">Mine Forslag</button>
     </li>
 </ul>
+<!--Informasjon om brukeren-->
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
         <div class="col-12">Navn: @Model.employee.name</div>
@@ -26,6 +28,7 @@
             <div class="col-12">@team.team_name</div>
         }
     </div>
+    <!--Informasjon om hvem som er i team med brukeren-->
     <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="team-tab">
         <!--foreach-loop som skriver ut alle medlemmene i teamet ditt-->
         @foreach (TeamEntity team in Model.teams)

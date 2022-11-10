@@ -17,10 +17,12 @@ namespace bacit_dotnet.MVC.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private readonly IEmployeeRepository employeeRepository;        
-        public AdminController(IEmployeeRepository employeeRepository)
+        private readonly IEmployeeRepository employeeRepository;
+        private readonly ISuggestionRepository suggestionRepository;
+        public AdminController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository)
         {
-            this.employeeRepository = employeeRepository;          
+            this.employeeRepository = employeeRepository;
+            this.suggestionRepository = suggestionRepository;
         }
 
         public IActionResult Index()
@@ -28,6 +30,7 @@ namespace bacit_dotnet.MVC.Controllers
             AdminIndexViewModel aivm = new AdminIndexViewModel();
             aivm.employees = employeeRepository.GetEmployees();
             aivm.teams = employeeRepository.GetTeams();
+            aivm.categories = suggestionRepository.GetAllCategories();
             return View(aivm);
         }
         //Get: /Admin/newUser
@@ -38,6 +41,7 @@ namespace bacit_dotnet.MVC.Controllers
             return View();
         }
 
+        //registrere ny bruker
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult NewUser(AdminNewUserModel model, IFormCollection coll)

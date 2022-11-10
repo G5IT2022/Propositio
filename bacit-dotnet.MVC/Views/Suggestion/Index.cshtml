@@ -8,7 +8,8 @@
 <br />
 <h1>Alle Forslag</h1>
 <br />
-    @Html.Partial("_FilterSortControl", new SortOrderModel{actionName = "Index", controllername = "Suggestion", categories = Model.categories})
+    @Html.Partial("_FilterSortControl", new SortOrderModel{actionName = "Index", 
+    controllername = "Suggestion", categories = Model.categories})
 
 
 @if (!String.IsNullOrEmpty(ViewBag.SortedMessage))
