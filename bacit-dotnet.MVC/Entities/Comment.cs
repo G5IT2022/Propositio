@@ -10,6 +10,7 @@ namespace bacit_dotnet.MVC.Entities
         public int suggestion_id { get; set; }
         public string description { get; set; }
         public DateTime createdTimestamp { get; set; }
+        public DateTime lastUpdatedTimestamp { get; set; }
         public SuggestionEntity suggestion { get; set; }
         public EmployeeEntity poster { get; set; }
     }

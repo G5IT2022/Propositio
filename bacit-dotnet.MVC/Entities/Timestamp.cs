@@ -9,6 +9,7 @@
         public DateTime doTimestamp { get; set; }
         public DateTime studyTimestamp { get; set; }
         public DateTime actTimestamp { get; set; }
+        public DateTime finishedTimestamp { get; set; }
         public DateTime lastUpdatedTimestamp { get; set; }
 
         public DateTime dueByTimestamp { get; set; }
