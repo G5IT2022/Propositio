@@ -271,6 +271,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ToList();
             }
         }
+
         /**
          * Denne metoden lager nytt forslag
          */
@@ -414,6 +415,8 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
         //metode som sletter forslag ved bruk av bildeID
+
+
         public int DeleteImage(int image_id)
         {
             var query = @"DELETE FROM Image WHERE image_id = @image_id;";
@@ -475,6 +478,41 @@ namespace bacit_dotnet.MVC.Repositories
                 });
                 //returner forslagene basert på status
                 return result.ToList();
+            }
+        }
+        //Oppdaterer et forslag med en suggestionentity. Returnerer antall rader som er blitt endret
+        public int UpdateSuggestion(SuggestionEntity suggestion)
+        {
+            //Query for oppdatering av beskrivelse, status og eier for ett forslag. 
+            var query = @"UPDATE Suggestion SET description = @description, status = @status, ownership_emp_id = @ownership_emp_id WHERE suggestion_id = @suggestion_id";
+            //Query for å oppdatere timetamps.
+            var updateTimestampQuery = @"UPDATE SuggestionTimestamp SET dueByTimestamp = @dueByTimestamp, lastUpdatedTimestamp = @lastUpdatedTimestamp WHERE suggestion_id = @suggestion_id";
+
+            //starter connection til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                //lager variabel result for antall rader som blir endret i databasen gjennom query
+                var result = connection.Execute(query, new { description = suggestion.description, status = suggestion.status.ToString(), ownership_emp_id = suggestion.ownership_emp_id, suggestion_id = suggestion.suggestion_id});
+                result += connection.Execute(updateTimestampQuery, new { dueByTimestamp = suggestion.timestamp.dueByTimestamp, lastUpdatedTimestamp = suggestion.timestamp.lastUpdatedTimestamp, suggestion_id = suggestion.suggestion_id });
+                //returnerer antall rader påvirket
+                return result;
+            }
+        }
+
+        //Oppdaterer status på ett forslag skal returnere 2 rader
+
+        public int UpdateSuggestionStatus(int suggestion_id, string status)
+        {
+            var newTimestampName = status.ToLower() + "Timestamp";
+            var query = @"UPDATE Suggestion SET status = @status WHERE suggestion_id = @suggestion_id";
+            var timestampQuery = String.Format(@"UPDATE SuggestionTimestamp SET {0} = CURRENT_TIMESTAMP, lastUpdatedTimestamp = CURRENT_TIMESTAMP WHERE suggestion_id = @suggestion_id", newTimestampName);
+                
+               // @"$UPDATE SuggestionTimestamp SET {newTimestampName} = CURRENT_TIMESTAMP, lastUpdatedTimestamp = CURRENT_TIMESTAMP  WHERE suggestion_id = @suggestion_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var result = connection.Execute(query, new { suggestion_id = suggestion_id, status = status });
+                result += connection.Execute(timestampQuery, new { timestampName = newTimestampName, suggestion_id = suggestion_id });
+                return result;
             }
         }
     }

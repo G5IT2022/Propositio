@@ -31,6 +31,8 @@ namespace bacit_dotnet.MVC.Controllers
             aivm.employees = employeeRepository.GetEmployees();
             aivm.teams = employeeRepository.GetTeams();
             aivm.categories = suggestionRepository.GetAllCategories();
+            aivm.roles = employeeRepository.GetAllRoles();
+
             return View(aivm);
         }
         //Get: /Admin/newUser

@@ -20,6 +20,6 @@ namespace bacit_dotnet.MVC.Entities
 
         public List<TeamEntity> teams { get; set; }
         public List<SuggestionEntity> suggestions { get; set; }
-
+        public List<RoleEntity> roles { get; set; }
     }
 }

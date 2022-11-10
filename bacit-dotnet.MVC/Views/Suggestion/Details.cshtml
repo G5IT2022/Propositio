@@ -1,4 +1,3 @@
-<html>
 @using System.Security.Claims
 @using bacit_dotnet.MVC.Models
 @using bacit_dotnet.MVC.DataAccess
@@ -7,158 +6,210 @@
 @{
     ViewBag.Title = "Propositio | " + Model.suggestion.title;
 }
+<div class="container details-container mt-5">
+    @if (ViewBag.Message != "")
+    {
+        @ViewBag.Message
+    }
+    <div class="row">
 
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] Propositio</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/bacit_dotnet.MVC.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-</head>
-<body>
-    <div class="container details-container mt-5">
-        @if (ViewBag.Message != "")
+        @if (!Model.suggestion.favorite)
         {
-            @ViewBag.Message
+            <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" />
         }
-        <div class="row">
-            @if(Model.suggestion.images.ElementAt(0) != null){
-                <img src=@Url.Content(FilePathBuilder.GetRelativeFilepath(Model.suggestion.images.ElementAt(0).image_filepath))  class="userimg"/>
-            }
-            @if (!Model.suggestion.favorite)
-            {
-                <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" />
-            }
-            else
-            {
-                <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" />
-            }
-            <div class="col-sm-4">
-                <h3 class="fw-bold suggtitle2">@Model.suggestion.title</h3>
-            </div>
-        </div>
-        <div class="d-flex justify-content-between">
-            <p class="mt-3 emp-name">Forfattet av: @Model.employee.name Ansvarlig: @Model.suggestion.responsible_employee.name</p>
-            <p class="mt-3 text-center emp_team">
-                @foreach (var team in Model.employee.teams)
-                {
-                    @(team.team_name += " ")
-                    ;
-                }
-                Team
-            </p>
-
-            <div class="d-flex flex-row align-items-center">
-                <p class="mt-3 mx-2 @Model.suggestion.status"></p>
-                <p class="mt-3 mx-2 sugg-status">@Model.suggestion.status</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="d-flex justify-content-between">
-                <p class="mt-2 sugg-category">
-                    Kategorier:
-                    @foreach (var category in Model.suggestion.categories)
-                    {
-                        @(category.category_name += " ")
-                        ;
-                    }
-                </p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="row align-item-start mt-2">
-                <div class="col sugg-description">@Model.suggestion.description</div>
-            </div>
-            <div class="row justify-content-between mt-2">
-                <div class="col-4">
-                    <div class="made">Opprettet: @Model.suggestion.timestamp.createdTimestamp.ToString("dd/M/yyyy")</div>
-                </div>
-
-                <div class="col-4">
-                    <div class="due">Frist: @Model.suggestion.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</div>
-                </div>
-            </div>
-        </div>
-        <!--List alle kommentarer-->
-        <div class="row d-flex justify-content-sm-start mt-4">
-            <div class="col-md-12 col-lg-12">
-                <div class="card bg-light mb-3">
-                    <div class="card-header text-black"><h5>Kommentarer</h5></div>
-                    <div class="card-body p-2">
-                        @foreach (CommentEntity comment in Model.suggestion.comments)
-                        {
-                            if (comment != null)
-                            {
-                                <div class="d-flex justify-content-between">
-                                    <div class="d-flex flex-row align-items-center">
-                                        <h6 class="fw-bold mb-1">
-                                            @comment.poster.name
-                                        </h6>
-                                    </div>
-                                    @if (comment.poster.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin"))
-                                    {
-                                        <div class="d-flex flex-row align-items-center">
-                                            <a asp-action="Endre" asp-controller="suggestion" class="link-muted"><i class="fas fa-pencil-alt"></i></a>
-                                            &nbsp;&nbsp;&nbsp;
-                                            <a data-bs-toggle="modal" data-bs-target="#ConfirmPopup" class="link-muted"><i class="fas fa-trash-alt"></i></a>
-                                        </div>
-                                    }
-                                </div>
-                                <div class="modal" tabindex="-1" role="dialog" id="ConfirmPopup">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Modal title</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p>Er du sikker på at du vil slette kommentaren?</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <a asp-controller="Suggestion" asp-action="DeleteComment" asp-route-comment_id="@comment.comment_id" asp-route-suggestion_id = "@Model.suggestion.suggestion_id"> <button type="button" class="btn btn-primary">Slett!</button></a>
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex align-items-center mb-3">
-                                    <p class="mb-0" style="font-size:small">
-                                        <em>@comment.createdTimestamp.ToString("dd/M/yyyy")</em>
-                                    </p>
-                                </div>
-                                <div class="col align-items-center mb-3">
-                                    <p class="mb-0">@comment.description</p>
-                                </div>
-                                <hr />
-                            }
-                        }
-                    </div>
-                </div>
-            </div>
-
-            <form asp-action="CreateComment" asp-controller="suggestion" method="post">
-                <input name="suggestion_id" value="@Model.suggestion.suggestion_id" hidden />
-                <!--Lage en ny kommentar-->
-                <div class="form-group">
-                    <textarea name="description" class="form-control" id="description" placeholder="Skriv inn kommentar..." value="@Model.description"></textarea>
-
-                </div>
-                <div class="row d-flex justify-content-sm-end">
-                    <div class="mt-2 mb-5 text-right">
-                        <button class="btn btn-outline-primary btn-sm px-3 shadow-none" type="button">Avbryt</button>
-                        <button class="btn btn-primary btn-sm px-4 shadow-none" type="submit">Kommenter</button>
-
-                    </div>
-                </div>
-            </form>
+        else
+        {
+            <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" />
+        }
+        <div class="col-sm-4">
+            <h3 class="fw-bold suggtitle2">@Model.suggestion.title</h3>
         </div>
     </div>
-</body>
-</html>
+    <div class="d-flex justify-content-between">
+        <p class="mt-3 emp-name">Forfattet av: @Model.employee.name Ansvarlig: @Model.suggestion.responsible_employee.name</p>
+        <p class="mt-3 text-center emp_team">
+            @foreach (var team in Model.employee.teams)
+            {
+                @(team.team_name += " ")
+                ;
+            }
+            Team
+        </p>
 
+        <div class="d-flex flex-row align-items-center">
+            <p class="mt-3 mx-2 @Model.suggestion.status"></p>
+            <p class="mt-3 mx-2 sugg-status">@Model.suggestion.status</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <p class="mt-2 sugg-category">
+                Kategorier:
+                @foreach (var category in Model.suggestion.categories)
+                {
+                    @(category.category_name += " ")
+                    ;
+                }
+            </p>
+        </div>
+    </div>
+    @if (Model.suggestion.images.ElementAt(0) != null)
+    {
+        <img src=@Url.Content(FilePathBuilder.GetRelativeFilepath(Model.suggestion.images.ElementAt(0).image_filepath)) class="userimg" height="100px" width="100px" />
+    }
+    <div class="row">
+        <div class="row align-item-start mt-2">
+            <div class="col sugg-description">@Model.suggestion.description</div>
+        </div>
+        <div class="row justify-content-between mt-2">
+            <div class="col-4">
+                <div class="made">Opprettet: @Model.suggestion.timestamp.createdTimestamp.ToString("dd/M/yyyy")</div>
+            </div>
+
+            <div class="col-4">
+                <div class="due">Frist: @Model.suggestion.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</div>
+            </div>
+            <div class="col-4">
+                <div class="due">Sist Oppdatert: @Model.suggestion.timestamp.lastUpdatedTimestamp.ToString("dd/M/yyyy")</div>
+            </div>
+        </div>
+    </div>
+    <div class="status">
+        @if (Model.suggestion.author.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin"))
+        {
+            <a asp-action="Edit" asp-controller="Suggestion" asp-route-id="@Model.suggestion.suggestion_id">Rediger Forslag</a>
+        }
+        @if (Model.suggestion.status != STATUS.JUSTDOIT)
+        {
+            <div class="status-row">
+                <div class="status-col">
+                    <div class="PLAN BIG"></div>
+                    <p>PLAN</p>
+                    @Model.suggestion.timestamp.createdTimestamp.ToString("dd/M/yyyy")
+                </div>
+                <div class="status-col">
+                    <div class="DO BIG"></div>
+                    <p>DO</p>
+                    @if (Model.suggestion.timestamp.doTimestamp.Year != 1)
+                    {
+                        @Model.suggestion.timestamp.doTimestamp.ToString("dd/M/yyyy")
+                    }
+                    else
+                    {
+                        <p class="temp">X</p>
+                    }
+                </div>
+                <div class="status-col">
+                    <div class="STUDY BIG"></div>
+                    <p>STUDY</p>
+                    @if (Model.suggestion.timestamp.studyTimestamp.Year != 1)
+                    {
+                        @Model.suggestion.timestamp.studyTimestamp.ToString("dd/M/yyyy")
+                    }
+                    else
+                    {
+                        <p class="temp">X</p>
+                    }
+                </div>
+                <div class="status-col">
+                    <div class="ACT BIG"></div>
+                    <p>ACT</p>
+                    @if (Model.suggestion.timestamp.actTimestamp.Year != 1)
+                    {
+                        @Model.suggestion.timestamp.actTimestamp.ToString("dd/M/yyyy")
+                    }
+                    else
+                    {
+                        <p class="temp">X</p>
+                    }
+                </div>
+            </div>
+
+            @if (Model.suggestion.status != STATUS.FINISHED && (Model.suggestion.author.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin")))
+            {
+                <div class="row">
+                    <div class="col-3">
+                        <a asp-controller="suggestion" asp-action="UpdateStatus" asp-route-suggestion_id="@Model.suggestion.suggestion_id" asp-route-status="@Model.suggestion.status" class="btn btn-primary">  Neste Fase</a>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!--List alle kommentarer-->
+    <div class="row d-flex justify-content-sm-start mt-4">
+        <div class="col-md-12 col-lg-12">
+            <div class="card bg-light mb-3">
+                <div class="card-header text-black"><h5>Kommentarer</h5></div>
+                <div class="card-body p-2">
+                    @foreach (CommentEntity comment in Model.suggestion.comments)
+                    {
+                        if (comment != null)
+                        {
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-row align-items-center">
+                                    <h6 class="fw-bold mb-1">
+                                        @comment.poster.name
+                                    </h6>
+                                </div>
+                                @if (comment.poster.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin"))
+                                {
+                                    <div class="d-flex flex-row align-items-center">
+                                        <a asp-action="Endre" asp-controller="suggestion" class="link-muted"><i class="fas fa-pencil-alt">endre</i></a>
+                                        &nbsp;&nbsp;&nbsp;
+                                        <a data-bs-toggle="modal" data-bs-target="#ConfirmPopup" class="link-muted"><i class="fas fa-trash-alt">slett</i></a>
+                                    </div>
+                                }
+                            </div>
+                            <div class="modal" tabindex="-1" role="dialog" id="ConfirmPopup">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Modal title</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Er du sikker på at du vil slette kommentaren?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a asp-controller="Suggestion" asp-action="DeleteComment" asp-route-comment_id="@comment.comment_id" asp-route-suggestion_id="@Model.suggestion.suggestion_id"> <button type="button" class="btn btn-primary">Slett!</button></a>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <p class="mb-0" style="font-size:small">
+                                    <em>@comment.createdTimestamp.ToString("dd/M/yyyy")</em>
+                                </p>
+                            </div>
+                            <div class="col align-items-center mb-3">
+                                <p class="mb-0">@comment.description</p>
+                            </div>
+                            <hr />
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="CreateComment" asp-controller="suggestion" method="post">
+            <input name="suggestion_id" value="@Model.suggestion.suggestion_id" hidden />
+            <!--Lage en ny kommentar-->
+            <div class="form-group">
+                <textarea name="description" class="form-control" id="description" placeholder="Skriv inn kommentar..." value="@Model.description"></textarea>
+
+            </div>
+            <div class="row d-flex justify-content-sm-end">
+                <div class="mt-2 mb-5 text-right">
+                    <button class="btn btn-outline-primary btn-sm px-3 shadow-none" type="button">Avbryt</button>
+                    <button class="btn btn-primary btn-sm px-4 shadow-none" type="submit">Kommenter</button>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

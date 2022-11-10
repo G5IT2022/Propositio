@@ -54,7 +54,7 @@
     </div>
     <div class="tab-pane fade" id="suggestions" role="tabpanel" aria-labelledby="suggestions-tab">
         <!--foreach-loop som skriver ut forslagene til en ansatt-->
-        @Html.Partial("_FilterSortControl", new SortOrderModel{actionName = "MyAccount", controllername = "Account"})
+        @Html.Partial("_FilterSortControl", new SortOrderModel{actionName = "MyAccount", controllername = "Account", categories = Model.categories})
         @foreach (SuggestionEntity sugg in Model.suggestions)
         {
             @Html.Partial("_Suggestion", sugg)
