@@ -82,8 +82,11 @@ namespace bacit_dotnet.MVC.Repositories
             throw new NotImplementedException();
         }
 
+        //metode som sjekker om bruker finnes i systemet
+        //returnerer true/false
         public bool UserExists(int emp_id)
         {
+            //Sjekk om bruker finnes med emp_id
             var query = @"SELECT emp_id FROM Employee WHERE emp_id = @emp_id";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {

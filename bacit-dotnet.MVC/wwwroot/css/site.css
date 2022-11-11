@@ -33,7 +33,7 @@ body {
 }
 
 .sugg-info {
-    background-color: dimgrey;
+    background-color: #a9a9a9;
     color: #FFF;
     font-weight: bold;
     line-height: 30px;
@@ -128,6 +128,23 @@ body {
     text-decoration: none;
     width: 75px;    
     background-color: #1863D6;
+
+    .link-muted:hover {
+        color: #1266f1;
+    }    
+/*Show one suggestion*/
+.buttonDetails {
+    text-decoration: none;
+    width: 110px;
+    background-color: darkblue;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.buttonDetails:hover {
+    background-color: black;
+
     color: white;
     border-radius: 5px;
     padding: 5px;
@@ -145,6 +162,7 @@ body {
     width: 200px;
     height: 200px;
 }
+
 /*Ny Bruker og Nytt Team knapper*/
 .createbtn {
     width: 60px;
@@ -172,3 +190,6 @@ body {
     color: #988686;
 }
 
+.temp{
+    color:#fff;
+}
