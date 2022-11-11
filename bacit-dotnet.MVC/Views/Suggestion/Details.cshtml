@@ -1,4 +1,4 @@
-@using System.Security.Claims
+ï»¿@using System.Security.Claims
 @using bacit_dotnet.MVC.Models
 @using bacit_dotnet.MVC.DataAccess
 @using bacit_dotnet.MVC.Entities
@@ -6,6 +6,9 @@
 @{
     ViewBag.Title = "Propositio | " + Model.suggestion.title;
 }
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
 <div class="container details-container mt-5">
     @if (ViewBag.Message != "")
     {
@@ -96,7 +99,7 @@
                     }
                     else
                     {
-                        <p>X</p>
+                        <p class="temp">X</p>
                     }
                 </div>
                 <div class="status-col">
@@ -108,7 +111,7 @@
                     }
                     else
                     {
-                        <p>X</p>
+                        <p class="temp">X</p>
                     }
                 </div>
                 <div class="status-col">
@@ -120,7 +123,7 @@
                     }
                     else
                     {
-                        <p>X</p>
+                        <p class="temp">X</p>
                     }
                 </div>
             </div>
@@ -157,7 +160,7 @@
                                     <div class="d-flex flex-row align-items-center">
                                         <a asp-action="Endre" asp-controller="suggestion" class="link-muted"><i class="fas fa-pencil-alt"></i></a>
                                         &nbsp;&nbsp;&nbsp;
-                                        <a data-bs-toggle="modal" data-bs-target="#ConfirmPopup" class="link-muted"><i class="fas fa-trash-alt">slett</i></a>
+                                        <a data-bs-toggle="modal" data-bs-target="#ConfirmPopup" class="link-muted"><i class="fas fa-trash-alt"></i></a>
                                     </div>
                                 }
                             </div>
@@ -171,7 +174,7 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <p>Er du sikker på at du vil slette kommentaren?</p>
+                                            <p>Er du sikker pï¿½ at du vil slette kommentaren?</p>
                                         </div>
                                         <div class="modal-footer">
                                             <a asp-controller="Suggestion" asp-action="DeleteComment" asp-route-comment_id="@comment.comment_id" asp-route-suggestion_id="@Model.suggestion.suggestion_id"> <button type="button" class="btn btn-primary">Slett!</button></a>
