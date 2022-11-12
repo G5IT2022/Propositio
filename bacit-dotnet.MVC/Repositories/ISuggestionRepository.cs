@@ -21,6 +21,8 @@ namespace bacit_dotnet.MVC.Repositories
          * Categories
          * **/
         public List<CategoryEntity> GetAllCategories();
+        public int DeleteCategory(int category_id);
+        public int CreateCategory(CategoryEntity category);
 
 
         /**

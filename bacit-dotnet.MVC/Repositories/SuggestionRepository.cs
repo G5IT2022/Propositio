@@ -353,6 +353,8 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
+        //metoder for kategorier
+
         /**
          * Denne metoder henter alle kategoriene
          */
@@ -369,6 +371,34 @@ namespace bacit_dotnet.MVC.Repositories
                 return categories.ToList();
             }
         }
+
+        /**
+         * metode som sletter kategori
+         */
+        public int DeleteCategory(int category_id)
+        {
+            var query = @"DELETE FROM Category WHERE category_id = @category_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var result = connection.Execute(query, new { category_id = category_id });
+                return result;
+            }
+        }
+
+        /**
+         * metode som lager kategori
+         */
+
+        public int CreateCategory(CategoryEntity category)
+        {
+            var query = @"INSERT INTO Category(category_name) VALUES (@category_name)";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var result = connection.Execute(query, new { category.category_name});
+                return result;
+            }
+        }
+
         //metoder for bilder
         //Legg til bilder
         public int CreateImage(ImageEntity image)
@@ -414,7 +444,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return img;
             }
         }
-        //metode som sletter forslag ved bruk av bildeID
+        //metode som sletter bilde ved bruk av bildeID
 
 
         public int DeleteImage(int image_id)
@@ -431,6 +461,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return result;
             }
         }
+
         //Henter forslag basert på status
         public List<SuggestionEntity> GetSuggestionsByStatus(string status)
         {
