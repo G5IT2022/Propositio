@@ -27,7 +27,7 @@
             @if (Model.suggestion.favorite)
             {
                 <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" class="justify-content-center" />
-                <p class="m-0 fw-light">Månedens Forslag!</p>
+                <p class="m-0 fw-light">MÃ¥nedens Forslag!</p>
             }
 
         </div>
@@ -132,7 +132,7 @@
     {
 
         <div class="col-6">
-            <p class="m-0 fw-light">Før:</p>
+            <p class="m-0 fw-light">FÃ¸r:</p>
             <img src="@Url.Content(FilePathBuilder.GetRelativeFilepath(Model.suggestion.images.ElementAt(0).image_filepath))" class="userimg" height="100px" width="100px" />
         </div>
     }
@@ -183,7 +183,7 @@
                                 <div class="d-flex flex-row align-items-center">
                                     <a><i class="fas fa-pencil-alt smallbutton link-muted" onclick="myFunction(@comment.comment_id)"></i></a>
                                     &nbsp;&nbsp;&nbsp;
-                                    @Html.ActionLink("", "DeleteComment", "Suggestion", new {comment_id = comment.comment_id, suggestion_id = Model.suggestion.suggestion_id}, new{onclick = "return confirm('Er du sikker på at du vil slette kommentaren?')", @class="link-muted fas fa-trash"})
+                                    @Html.ActionLink("", "DeleteComment", "Suggestion", new {comment_id = comment.comment_id, suggestion_id = Model.suggestion.suggestion_id}, new{onclick = "return confirm('Er du sikker pÃ¥ at du vil slette kommentaren?')", @class="link-muted fas fa-trash"})
                                 </div>
                             }
                         </div>

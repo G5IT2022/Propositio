@@ -1,34 +1,42 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
-@media (min-width: 768px)/*minimum width on webpage*/ {
-  html {
-    font-size: 16px;
-  }
+@media (min-width: 768px) /*minimum width on webpage*/ {
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
-.sugg-container{
-   
+
+.sugg-container {
 }
-.col-2{
+
+.col-2 {
     height: 30px;
 }
 /*Design for suggestions*/
+
 .title{
     text-align: center;
+
+.suggtitle {
+    font-weight: bold; /*thick writing*/
+
 }
-.suggdiv{
+
+.suggdiv {
     display: inline-block;
 }
+
 .sugg-info {
     background-color: #a9a9a9;
     color: #FFF;
@@ -42,56 +50,69 @@ body {
     border-radius: 50%;
     margin-top: 5px;
 }
+
 .PLAN {
-    background-color: #A020F0; /*color for circle*/
+    background-color: #29B3FF; /*blue*/
 }
+
 .DO {
-    background-color: #AFEC2E; /*color for circle*/
+    background-color: #00C4B0; /*blue-green*/
 }
+
 .STUDY {
-    background-color: #F9E076; /*color for circle*/
+    background-color: #F9D876; /*freesia-yellow*/
 }
+
 .ACT {
-    background-color: #2E2EFF; /*color for circle*/
+    background-color: #FF8370; /*orange-coral*/
 }
-.JUSTDOIT{
-    background-color: #E30B5C;
+
+.JUSTDOIT {
+    background-color: #B175FF; /*Purple*/
 }
-.BIG{
+
+.BIG {
     width: 40px;
     height: 40px;
     margin-left: 40px;
 }
-.status-col{
+
+.status-col {
     display: inline-block;
 }
-.date{
+
+.date {
     margin: 0;
     font-size: 12px;
     line-height: 20px;
 }
-.due{
+
+.due {
     color: darkred;
 }
+
 .made {
     color: dimgrey;
 }
-.red{
+
+.red {
     color: red;
 }
-.username{
-    font-weight: bold;
 
+.username {
+    font-weight: bold;
 }
-.categories{
+
+.categories {
     color: dimgray;
     line-height: 30px
 }
 
 /*Design for Suggestion Details*/
-.detailsdiv{
-    display:inline-block
+.detailsdiv {
+    display: inline-block
 }
+
 .deteails-info {
     background-color: dimgrey;
     color: #FFF;
@@ -170,11 +191,19 @@ body {
 .smallbutton:hover{
     cursor:pointer;
 }
-
-/*Comment*/
 .link-muted {
     color: #808080
 }
+
+    .link-muted:hover {
+        color: #1266f1;
+    }
+/*Vis mer knappen*/
+.moreDetailsBtn {
+    text-decoration: none;
+    width: 75px;    
+    background-color: #1863D6;
+
     .link-muted:hover {
         color: #1266f1;
     }    
@@ -190,15 +219,52 @@ body {
 
 .buttonDetails:hover {
     background-color: black;
+
     color: white;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
 }
+
+    .moreDetailsBtn:hover {
+        background-color: #053bb1;
+        color: whitesmoke;
+    }
 
 
 /**Bilder**/
-.userimg{
+.userimg {
     width: 200px;
     height: 200px;
 }
+
+/*Ny Bruker og Nytt Team knapper*/
+.createbtn {
+    width: 60px;
+    height: 30px;
+    font-size: 15px;
+    text-decoration: none;
+    background-color: #1863D6;
+    border-radius: 5px;
+    color: white;
+    padding: 7px;
+}
+
+    .createbtn:hover {
+        background-color: #053bb1;
+        color: whitesmoke;
+    }
+/*Forslag*/
+.card-header {
+    background-color: #727577;
+    color: white;
+}
+
+.card-footer {
+    font-size: 14px;
+    color: #988686;
+}
+
 .temp{
     color:#fff;
 }
