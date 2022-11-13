@@ -282,6 +282,7 @@ namespace bacit_dotnet.MVC.Controllers
             return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
 
         }
+
         //Favoritter
         [HttpPost]
         public void Favorite(int id)
