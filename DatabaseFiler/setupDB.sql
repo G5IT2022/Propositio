@@ -73,7 +73,7 @@ CREATE TABLE SuggestionComment(
     suggestion_id int NOT NULL,
     description nvarchar(6000) NOT NULL,
     createdTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    lastUpdatedTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    lastUpdatedTimestamp datetime,
     CONSTRAINT EmployeeCommentFK FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE SET NULL,
     CONSTRAINT SuggestionFK FOREIGN KEY (suggestion_id) REFERENCES Suggestion(suggestion_id)
 );
@@ -217,6 +217,8 @@ INSERT INTO Employee(
     )
 VALUES (10, "Vanessa Merkel", "password9", "hei", 10, 1);
 /*GENERER TEAMS*/
+INSERT INTO Team(team_id, team_name, team_lead_id) 
+VALUES(0, 'Uten Team', 1);
 INSERT INTO Team(team_name, team_lead_id)
 VALUES ('Ledergruppe', 1);
 INSERT INTO Team(team_name, team_lead_id)
@@ -247,19 +249,19 @@ VALUES(2, 3);
 INSERT INTO TeamList(emp_id, team_id)
 VALUES(3, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(4, 1);
+VALUES(4, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(5, 1);
+VALUES(5, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(6, 1);
+VALUES(6, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(7, 1);
+VALUES(7, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(8, 1);
+VALUES(8, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(9, 1);
+VALUES(9, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(10, 1);
+VALUES(10, 2);
 INSERT INTO TeamList(emp_id, team_id)
 VALUES(2, 9);
 INSERT INTO TeamList(emp_id, team_id)

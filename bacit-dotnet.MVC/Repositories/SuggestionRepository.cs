@@ -215,6 +215,12 @@ namespace bacit_dotnet.MVC.Repositories
                     var groupedComments = fullSuggestion.comments.GroupBy(comment => comment.comment_id).Select(comment => comment.First()).ToList();
                     fullSuggestion.comments = groupedComments;
                 }
+                //Grupperer kategoriene
+                if (fullSuggestion.categories.Count > 0 && fullSuggestion.categories.ElementAt(0) != null)
+                {
+                    var groupedCategories = fullSuggestion.categories.GroupBy(category => category.category_id).Select(category => category.First()).ToList();
+                    fullSuggestion.categories = groupedCategories;
+                }
                 //returner hele forslaget
                 return fullSuggestion;
             }
@@ -330,8 +336,15 @@ namespace bacit_dotnet.MVC.Repositories
          */
         public int UpdateComment(CommentEntity comment)
         {
-            //Exception
-            throw new NotImplementedException();
+            var query = @"UPDATE SuggestionComment SET description = @description, lastUpdatedTimestamp = @lastUpdatedTimestamp WHERE comment_id = @comment_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                //kobler spørring til databasen - viser til hvilke rader som blir påvirket i databasen
+                var affectedRows = connection.Execute(query, new { description = comment.description, lastUpdatedTimestamp = comment.lastUpdatedTimestamp, comment_id = comment.comment_id });
+
+                //returnerer antall rader påvirket
+                return affectedRows;
+            }
         }
 
         /**

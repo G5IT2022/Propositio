@@ -23,8 +23,8 @@ body {
     height: 30px;
 }
 /*Design for suggestions*/
-.suggtitle{
-    font-weight: bold;/*thick writing*/
+.title{
+    text-align: center;
 }
 .suggdiv{
     display: inline-block;
@@ -60,7 +60,7 @@ body {
 .BIG{
     width: 40px;
     height: 40px;
-    margin-left: 10px;
+    margin-left: 40px;
 }
 .status-col{
     display: inline-block;
@@ -97,6 +97,78 @@ body {
     color: #FFF;
     font-weight: bold;
     line-height: 15px;
+}
+
+#circle-container {
+    width: 80px;
+    height: 80px;
+    position: relative;
+}
+.quarter {
+    width: 40px;
+    height: 40px
+}
+
+.top-left {
+    border-top-left-radius: 200px;
+    background: #2E2EFF;
+    float: left
+}
+
+.top-right {
+    border-top-right-radius: 200px;
+    background: #A020F0;
+    float: right
+}
+
+.bottom-left {
+    border-bottom-left-radius: 200px;
+    background: #F9E076;
+    float: left
+}
+
+.bottom-right {
+    border-bottom-right-radius: 200px;
+    background: #AFEC2E;
+    float: right
+}
+
+.fill-circle {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    z-index: 5;
+    background-color: #fff;
+    border-radius: 190px;
+    margin: 10px 15px 15px 10px;
+    background-image: url('https://darko.co.za/circle-fill.png');
+    background-repeat: no-repeat;
+}
+.fill-circle > p{
+    margin-top: 19px;
+}
+
+.hiddenCircle{
+    background: #fff;
+}
+.finished{
+    background: darkred;
+}
+.jdi{
+    background: purple;
+}
+.category {
+    margin: 5px;
+    background: #5bc0de;
+    color: #fff;
+    border-radius: 5px;
+    width: 75px;
+    height: 20px;
+}
+.category > p{
+}
+.smallbutton:hover{
+    cursor:pointer;
 }
 
 /*Comment*/

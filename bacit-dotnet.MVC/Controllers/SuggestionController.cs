@@ -271,7 +271,34 @@ namespace bacit_dotnet.MVC.Controllers
                 return RedirectToAction("Details", "Suggestion", new { id = comment.suggestion_id });
             }
         }
-        /**
+
+        /*
+         *Metode for å redigere kommentar 
+         * @Param comment_id og suggestion_id
+        */
+        [HttpPost]
+        public IActionResult EditComment(CommentEntity comment, int suggestion_id)
+        {
+            ModelState.Remove("poster");
+            ModelState.Remove("suggestion");
+            if (ModelState.IsValid)
+            {
+                suggestionRepository.UpdateComment(new CommentEntity
+                {
+                    comment_id = comment.comment_id,
+                    description = comment.description,
+                    lastUpdatedTimestamp = DateTime.Now
+                });
+                return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
+            }
+            else
+            {
+                return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
+            }
+           
+        }
+
+        /*
          * Denne metoden gjør at du kan slette kommentarer i forslaget
          * @Parameter comment_id og suggestion id
          * @Return Suggestion/Details/suggestion_id
