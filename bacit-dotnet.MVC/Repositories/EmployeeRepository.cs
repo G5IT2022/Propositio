@@ -31,11 +31,16 @@ namespace bacit_dotnet.MVC.Repositories
         {
             //spørring
             var query = @"INSERT INTO Employee(emp_id, name, passwordhash,salt, role_id, authorization_role_id) VALUES (@emp_id, @name, @passwordhash, @salt, @role_id, @authorization_role_id)";
-
+            var firstTeamQuery = @"INSERT INTO TeamList(emp_id, team_id) VALUES (@emp_id, 1)";
             //kobler til databasen
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 int result = connection.Execute(query, new { emp.emp_id, emp.name, emp.passwordhash, emp.salt, emp.role_id, emp.authorization_role_id });
+                //Legger til i "uten team" teamet
+                if(result == 1)
+                {
+                connection.Execute(firstTeamQuery, new { emp_id = emp.emp_id });
+                }
                 return result;
             }
         }
@@ -290,7 +295,7 @@ namespace bacit_dotnet.MVC.Repositories
             //check exist employee in Team Table
              if (CheckExistedMember(team_id, emp_id))
             {
-                var sql = $"INSERT INTO TeamList(emp_id,team_id) VALUES(@emp_id,@team_id)";
+                var sql = $"INSERT INTO TeamList(emp_id,team_id) VALUES(@emp_id, @team_id)";
                 using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
                 {
                     var result = connection.QueryFirstOrDefault(sql, new { team_id, emp_id });

@@ -1,34 +1,43 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
-@media (min-width: 768px)/*minimum width on webpage*/ {
-  html {
-    font-size: 16px;
-  }
+@media (min-width: 768px) /*minimum width on webpage*/ {
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
-.sugg-container{
-   
+
+.sugg-container {
 }
-.col-2{
+
+.col-2 {
     height: 30px;
 }
 /*Design for suggestions*/
-.suggtitle{
-    font-weight: bold;/*thick writing*/
+
+.title {
+    text-align: center;
 }
-.suggdiv{
+
+.suggtitle {
+    font-weight: bold; /*thick writing*/
+
+}
+
+.suggdiv {
     display: inline-block;
 }
+
 .sugg-info {
     background-color: #a9a9a9;
     color: #FFF;
@@ -42,56 +51,69 @@ body {
     border-radius: 50%;
     margin-top: 5px;
 }
+
 .PLAN {
-    background-color: #A020F0; /*color for circle*/
+    background-color: #29B3FF; /*blue*/
 }
+
 .DO {
-    background-color: #AFEC2E; /*color for circle*/
+    background-color: #00C4B0; /*blue-green*/
 }
+
 .STUDY {
-    background-color: #F9E076; /*color for circle*/
+    background-color: #F9D876; /*freesia-yellow*/
 }
+
 .ACT {
-    background-color: #2E2EFF; /*color for circle*/
+    background-color: #FF8370; /*orange-coral*/
 }
-.JUSTDOIT{
-    background-color: #E30B5C;
+
+.JUSTDOIT {
+    background-color: #B175FF; /*Purple*/
 }
-.BIG{
+
+.BIG {
     width: 40px;
     height: 40px;
-    margin-left: 10px;
+    margin-left: 40px;
 }
-.status-col{
+
+.status-col {
     display: inline-block;
 }
-.date{
+
+.date {
     margin: 0;
     font-size: 12px;
     line-height: 20px;
 }
-.due{
+
+.due {
     color: darkred;
 }
+
 .made {
     color: dimgrey;
 }
-.red{
+
+.red {
     color: red;
 }
-.username{
-    font-weight: bold;
 
+.username {
+    font-weight: bold;
 }
-.categories{
+
+.categories {
     color: dimgray;
     line-height: 30px
 }
 
 /*Design for Suggestion Details*/
-.detailsdiv{
-    display:inline-block
+.detailsdiv {
+    display: inline-block
 }
+
 .deteails-info {
     background-color: dimgrey;
     color: #FFF;
@@ -99,10 +121,91 @@ body {
     line-height: 15px;
 }
 
-/*Comment*/
+#circle-container {
+    width: 80px;
+    height: 80px;
+    position: relative;
+}
+.quarter {
+    width: 40px;
+    height: 40px
+}
+
+.top-left {
+    border-top-left-radius: 200px;
+    background: #2E2EFF;
+    float: left
+}
+
+.top-right {
+    border-top-right-radius: 200px;
+    background: #A020F0;
+    float: right
+}
+
+.bottom-left {
+    border-bottom-left-radius: 200px;
+    background: #F9E076;
+    float: left
+}
+
+.bottom-right {
+    border-bottom-right-radius: 200px;
+    background: #AFEC2E;
+    float: right
+}
+
+.fill-circle {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    z-index: 5;
+    background-color: #fff;
+    border-radius: 190px;
+    margin: 10px 15px 15px 10px;
+    margin-top: -70px;
+    background-image: url('https://darko.co.za/circle-fill.png');
+    background-repeat: no-repeat;
+}
+.fill-circle>p{
+    margin-top: 15px;
+}
+
+.hiddenCircle{
+    background: #fff;
+}
+.finished{
+    background: darkred;
+}
+.jdi{
+    background: purple;
+}
+.category {
+    margin: 5px;
+    background: #5bc0de;
+    color: #fff;
+    border-radius: 5px;
+    width: 75px;
+    height: 20px;
+}
+.category > p{
+}
+.smallbutton:hover{
+    cursor:pointer;
+}
 .link-muted {
     color: #808080
 }
+
+    .link-muted:hover {
+        color: #1266f1;
+    }
+/*Vis mer knappen*/
+.moreDetailsBtn {
+    text-decoration: none;
+    width: 75px;    
+    background-color: #1863D6;
+
     .link-muted:hover {
         color: #1266f1;
     }    
@@ -110,23 +213,55 @@ body {
 .buttonDetails {
     text-decoration: none;
     width: 110px;
+    height: 40px;
     background-color: darkblue;
     color: white;
     border-radius: 10px;
     padding: 10px;
+    text-align: center;
 }
 
-.buttonDetails:hover {
-    background-color: black;
-    color: white;
-}
+    .buttonDetails:hover {
+        background-color: black;
+        color: white;
+        border-radius: 5px;
+        padding: 5px;
+    }
 
 
 /**Bilder**/
-.userimg{
+.userimg {
     width: 200px;
     height: 200px;
 }
+
+/*Ny Bruker og Nytt Team knapper*/
+.createbtn {
+    width: 60px;
+    height: 30px;
+    font-size: 15px;
+    text-decoration: none;
+    background-color: #1863D6;
+    border-radius: 5px;
+    color: white;
+    padding: 7px;
+}
+
+    .createbtn:hover {
+        background-color: #053bb1;
+        color: whitesmoke;
+    }
+/*Forslag*/
+.card-header {
+    background-color: #727577;
+    color: white;
+}
+
+.card-footer {
+    font-size: 14px;
+    color: #988686;
+}
+
 .temp{
     color:#fff;
 }

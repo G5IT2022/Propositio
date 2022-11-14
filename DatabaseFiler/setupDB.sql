@@ -14,15 +14,15 @@ Category,
 AuthenticationRole,
 EmployeeAuthenticationRole;
 CREATE TABLE Role(
-    role_id  int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    role_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     role_name varchar(100) NOT NULL
 );
 CREATE TABLE AuthorizationRole(
-    authorization_role_id  int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    authorization_role_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     authorization_role_name nvarchar(100) NOT NULL
 );
 CREATE TABLE Employee(
-    emp_id  int PRIMARY KEY,
+    emp_id int PRIMARY KEY,
     name nvarchar(200) NOT NULL,
     passwordhash nvarchar(200) NOT NULL,
     salt binary(64) NOT NULL,
@@ -32,33 +32,44 @@ CREATE TABLE Employee(
     CONSTRAINT roleFK FOREIGN KEY (role_id) REFERENCES Role(role_id)
 );
 CREATE TABLE Team(
-    team_id  int PRIMARY KEY AUTO_INCREMENT,
+    team_id int PRIMARY KEY AUTO_INCREMENT,
     team_name nvarchar(100) NOT NULL,
     team_lead_id int NOT NULL
 );
 CREATE TABLE TeamList(
-	TeamList_id INT PRIMARY KEY AUTO_INCREMENT,
-    emp_id  int,
-    team_id  int,
-    CONSTRAINT EmployeeFK FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE SET NULL,
-    CONSTRAINT TeamFK FOREIGN KEY (team_id) REFERENCES Team(team_id) ON DELETE SET NULL
+    TeamList_id INT PRIMARY KEY AUTO_INCREMENT,
+    emp_id int,
+    team_id int,
+    CONSTRAINT EmployeeFK FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE
+    SET NULL,
+        CONSTRAINT TeamFK FOREIGN KEY (team_id) REFERENCES Team(team_id) ON DELETE
+    SET NULL
 );
 CREATE TABLE Suggestion(
-suggestion_id int NOT NULL PRIMARY KEY AUTO_INCREMENT, 
-title nvarchar(100) NOT NULL, 
-description nvarchar(6000) NOT NULL, 
-status enum("PLAN", "DO", "STUDY", "ACT", "FINISHED", "JUSTDOIT") NOT NULL,
-ownership_emp_id int,
-favorite boolean NOT NULL DEFAULT FALSE,
-author_emp_id int, 
-CONSTRAINT OwnershipFK FOREIGN KEY (ownership_emp_id) REFERENCES Employee(emp_id) ON DELETE SET NULL,
-CONSTRAINT PosterFK FOREIGN KEY (author_emp_id) REFERENCES Employee(emp_id) ON DELETE SET NULL
+    suggestion_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    title nvarchar(100) NOT NULL,
+    description nvarchar(6000) NOT NULL,
+    status enum(
+        "PLAN",
+        "DO",
+        "STUDY",
+        "ACT",
+        "FINISHED",
+        "JUSTDOIT"
+    ) NOT NULL,
+    ownership_emp_id int,
+    favorite boolean NOT NULL DEFAULT FALSE,
+    author_emp_id int,
+    CONSTRAINT OwnershipFK FOREIGN KEY (ownership_emp_id) REFERENCES Employee(emp_id) ON DELETE
+    SET NULL,
+        CONSTRAINT PosterFK FOREIGN KEY (author_emp_id) REFERENCES Employee(emp_id) ON DELETE
+    SET NULL
 );
 CREATE TABLE SuggestionTimestamp(
     timestamp_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     suggestion_id int NOT NULL,
     createdTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    planTimestamp datetime, 
+    planTimestamp datetime,
     doTimestamp datetime,
     studyTimestamp datetime,
     actTimestamp datetime,
@@ -73,20 +84,22 @@ CREATE TABLE SuggestionComment(
     suggestion_id int NOT NULL,
     description nvarchar(6000) NOT NULL,
     createdTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    lastUpdatedTimestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    lastUpdatedTimestamp datetime,
     CONSTRAINT EmployeeCommentFK FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE SET NULL,
     CONSTRAINT SuggestionFK FOREIGN KEY (suggestion_id) REFERENCES Suggestion(suggestion_id)
+
 );
 CREATE TABLE Image(
     image_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     emp_id int,
     suggestion_id int NOT NULL,
     image_filepath nvarchar(1000) NOT NULL,
-    CONSTRAINT EmployeeImageFK FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE SET NULL,
-    CONSTRAINT SuggestionImageFK FOREIGN KEY (suggestion_id) REFERENCES Suggestion(suggestion_id)
+    CONSTRAINT EmployeeImageFK FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE
+    SET NULL,
+        CONSTRAINT SuggestionImageFK FOREIGN KEY (suggestion_id) REFERENCES Suggestion(suggestion_id)
 );
 CREATE TABLE Category(
-    category_id int NOT NULL PRIMARY KEY AUTO_INCREMENT ,
+    category_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     category_name varchar(100) NOT NULL
 );
 CREATE TABLE SuggestionCategory(
@@ -206,7 +219,14 @@ INSERT INTO Employee(
         role_id,
         authorization_role_id
     )
-VALUES (9, "Ole Willam Erikson", "password8", "hei", 9, 1);
+VALUES (
+        9,
+        "Ole Willam Erikson",
+        "password8",
+        "hei",
+        9,
+        1
+    );
 INSERT INTO Employee(
         emp_id,
         name,
@@ -217,6 +237,8 @@ INSERT INTO Employee(
     )
 VALUES (10, "Vanessa Merkel", "password9", "hei", 10, 1);
 /*GENERER TEAMS*/
+INSERT INTO Team(team_id, team_name, team_lead_id) 
+VALUES(0, 'Uten Team', 1);
 INSERT INTO Team(team_name, team_lead_id)
 VALUES ('Ledergruppe', 1);
 INSERT INTO Team(team_name, team_lead_id)
@@ -247,19 +269,19 @@ VALUES(2, 3);
 INSERT INTO TeamList(emp_id, team_id)
 VALUES(3, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(4, 1);
+VALUES(4, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(5, 1);
+VALUES(5, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(6, 1);
+VALUES(6, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(7, 1);
+VALUES(7, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(8, 1);
+VALUES(8, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(9, 1);
+VALUES(9, 2);
 INSERT INTO TeamList(emp_id, team_id)
-VALUES(10, 1);
+VALUES(10, 2);
 INSERT INTO TeamList(emp_id, team_id)
 VALUES(2, 9);
 INSERT INTO TeamList(emp_id, team_id)
@@ -294,7 +316,6 @@ VALUES ("Bærekraft");
 INSERT INTO Category(category_name)
 VALUES ("Industri 4.0");
 /*GENERER FORSLAG*/
-
 INSERT INTO Suggestion(
         title,
         description,
@@ -539,5 +560,11 @@ VALUES (
         "Dere burde få mer informasjon fra kundene!"
     );
 INSERT INTO SuggestionComment(emp_id, suggestion_id, description)
-VALUES (10, 10, "Sjekk dette. Link: https://test.com/%22");
+
+VALUES (
+        10,
+        10,
+        "Sjekk dette. Link: https://test.com/%22"
+    );
+
 

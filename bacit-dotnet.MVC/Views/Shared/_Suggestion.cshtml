@@ -3,95 +3,143 @@
 @using bacit_dotnet.MVC.Models.Suggestion;
 @model SuggestionEntity;
 
-<div class="container sugg-container">
-    <div class="row sugg-info">
-        <div class="col-6">Forfatter: @Model.author.name Ansvarlig: @Model.responsible_employee.name</div>
-        <div class="col-2">
-            @foreach (var team in Model.author.teams)
-            {
-                @(team.team_name += " ")
-                ;
-            }
-        </div>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
 
-        <div class="col-1 @Model.status"></div>
-        <div class="col-1">@Model.status</div>
-        <!--Sjekker om brukeren er en teamlead eller admin før den viser knappen for markering av forslag-->
-        <!--Man må dele strengen og velge det andre elementet for å kun få "admin" eller "user" osv-->
-        @if (@Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin") || @Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("TeamLead"))
-        {
-            <div class="col-1">
-                @if (!Model.favorite)
-                {
-                    <a onclick="Fav(@Model.suggestion_id)">
-                        <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
-                    </a>
-                }
-                else
-                {
-                    <a onclick="Fav(@Model.suggestion_id)">
-                        <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
-                    </a>
-                }
+<div class="container">
+    <!--Card Start-->
+    <div class="card border-secondary mt-3 w-auto">
+        <!--Card-header-start-->
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="d-flex flex-row align-items-center">
+                    <!--Ikon til å vise dersom forslag har bildet-->
+                    <p class ="icon">
+                        @if (Model.images.Count > 0 && Model.images.ElementAt(0) != null)
+                        {
+                            <img src="/img/bootstrap-icons-1.9.1/paperclip.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
+                        }                       
+                    </p>
+                    <!--Forslag titel-->
+                    <p class="suggtitle" style="font-size:larger">@Model.title</p>
+                </div>
+                <div class="d-flex flex-row align-items-center">
+                    <!--Status-->
+                    <p class="@Model.status"></p> &nbsp;
+                    <p class="sugg-status mx-2"><b>@Model.status</b></p>
+                    <!--Favoritter-->
+                    <p class="favourite mx-3">
+                        @if (@Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin") || @Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("TeamLead"))
+                        {
+
+                            @if (!Model.favorite)
+                            {
+                                <a onclick="Fav(@Model.suggestion_id)">
+                                    <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
+                                </a>
+                            }
+                            else
+                            {
+                                <a onclick="Fav(@Model.suggestion_id)">
+                                    <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
+                                </a>
+                            }
+
+                        }
+                        else
+                        {
+
+                            @if (!Model.favorite)
+                            {
+                                <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
+
+                            }
+                            else
+                            {
+                                <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
+                            }
+
+                        }
+                    </p>                   
+                   
+                </div>               
+            </div>    
+            <!--Oprettet og Fristen til forslag-->
+            <div class="d-flex justify-content-between">
+                <div class="d-flex flex-row align-items-center">
+                    <p>
+                        <span class="small fw-lighter">Opprettet: @Model.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
+                        <span class="small" style="color:#900f0e"> <b>- Frist: @Model.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</b></span>
+                    </p>
+                    
+                </div>
+                <!--Kategorier-->
+                <div class="d-flex flex-row align-items-center">
+                    <p><b>Kategories: </b>
+                            @foreach (var category in Model.categories)
+                            {
+                                @(category.category_name += " ")
+                                ;
+                            }                    
+                    </p>  
+                </div>
+
             </div>
-        }
-        else
-        {
-            <div class="col-1">
-                @if (!Model.favorite)
-                {
-                    <img src="/img/bootstrap-icons-1.9.1/bookmark-star.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
-
-                }
-                else
-                {
-                    <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
-                }
-            </div>
-        }
-        <div class="col-1">
-            @if (Model.images.Count > 0 && Model.images.ElementAt(0) != null)
-            {
-                <img src="/img/bootstrap-icons-1.9.1/paperclip.svg" alt="Bootstrap" width="24" height="24" id="@Model.suggestion_id" />
-
-            }
         </div>
-    </div>
+        <!--Card-header-end-->
 
-    <!--Suggestion-info-->
-    <div class="row">
-        <div class="col-10">
-            <p class="suggtitle">@Model.title</p>
-            <p>@Model.description</p>
-        </div>
-        <div class="col-2"></div>
-    </div>
-    <hr />
-    <!--Show categories for suggestion-->
-    <div class="row test">
-        <div class="col-8 categories">
-            Kategorier:
-            @foreach (var category in Model.categories)
-            {
-                @(category.category_name += " ")
-                ;
-            }
-            <br>
-            <div class="date">
-                <span class="made">Opprettet: @Model.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
-                <br>
-                <span class="due">Frist: @Model.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
+        <!--Card-body-start-->
+        <div class="card-body">
+            <!--Forslagsbeskrivelse-->
+            @*<div class="d-flex justify-content-between">
+                <div class="d-flex flex-row align-items-center">
+                        <p>
+                        @Model.description
+                        <span>
+                            <a class="moreDetailsBtn mt-1" asp-controller="Suggestion" asp-action="Details" asp-route-id="@Model.suggestion_id">
+                                Vis mer
+                            </a>
+                        </span>
+                        </p>                          
+                </div>                
+            </div>*@
+            <p class="card-text">@Model.description</p>
+            <div class="d-flex flex-row justify-content-end">
+                <a class="buttonDetails mt-1" asp-controller="Suggestion" asp-action="Details" asp-route-id="@Model.suggestion_id">
+                    Vis mer
+                </a>
             </div>
         </div>
-        <br>
-        <!--Button for Suggestion Details-->
-        <div class="col-4">
-            <br>
-            <a class="buttonDetails" asp-controller="Suggestion" asp-action="Details" asp-route-id="@Model.suggestion_id">
-                Vis mer
-            </a>
+        <!--Card-body-end-->
 
+        <!--Card-footer-start-->
+        <div class="card-footer text-muted bg-transparent">
+             <div class="d-flex justify-content-between">
+                 <!--Forfatter-->
+                <div class="d-flex flex-row align-items-center">
+                    <p class="text-muted"><b>Forfatter: @Model.author.name</b></p>                    
+                </div>
+                <!--Ansavarlig ansatt-->
+                <div class="d-flex flex-row align-items-center mx-2">                    
+                    <p class="text-muted"><b>Ansvarlig: @Model.responsible_employee.name</b></p>
+                </div>
+            </div>
+            <!--Team-->
+            <div class="d-flex justify-content-between">
+                <div class="d-flex flex-row align-items-center">
+                    <p class="text-muted"> <b>Team:
+                    @foreach (var team in Model.author.teams)
+                    {
+                        @(team.team_name +=  "   ")
+                    }
+                        </b>
+                    </p>
+                </div>
+                
+            </div>
         </div>
+        <!--Card-footer-end-->
     </div>
+    <!--Card End-->
 </div>
-<hr />
