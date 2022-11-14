@@ -21,9 +21,10 @@
                 <input name="title" type="text" class="form-control" id="title" aria-describedby="emailHelp" placeholder="Skriv inn en tittel" value="@Model.title">
             </div>
         </div>
-        <br />
         <div class="col-sm-3"></div>
-        <div class="row">
+    </div>
+    <br />
+    <div class="row">
             <div class="col-sm-3"></div>
             <div class="col-sm-6">
                 <!--Beskrivelse-->
@@ -34,24 +35,44 @@
             </div>
             <br />
             <div class="col-sm-3"></div>
-        </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
-            <label for="dueByTimestamp">Frist:</label>
-            <input type="date" class="form-control" id="dueByTimestamp" name="dueByTimestamp" value=" @Model.dueByTimestamp" />
-        </div>
+        <div class="col-sm-3"></div>
         <div class="col-sm-6">
             <!--Is Just Do It?-->
             <div class="form-check">
+                <br />
                 @Html.CheckBoxFor(m => m.isJustDoIt, new{@class="form-check-input"})
                 @Html.LabelFor(m => m.isJustDoIt, new{@class="form-check-label"})
             </div>
         </div>
+        <div class="col-sm-3"></div>
     </div>
-    <h3>Velg Ansatt</h3>
-    @Html.DropDownListFor(m => m.responsibleEmployeeID, Model.possibleResponsibleEmployees, new {@class="form-control"})
-    <h3>Velg Kategorier: </h3>
+    <br />
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <label for="dueByTimestamp">Frist:</label>
+            <input type="date" class="form-control" id="dueByTimestamp" name="dueByTimestamp" value=" @Model.dueByTimestamp" />
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <h5>Velg ansatt</h5>
+            @Html.DropDownListFor(m => m.responsibleEmployeeID, Model.possibleResponsibleEmployees, new {@class="form-control"})
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <h5>Velg Kategorier: </h5>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
     <!--Kategorier-->
     <div class="row">
         @foreach (CategoryEntity category in Model.categories)
@@ -66,19 +87,18 @@
             </div>
         }
     </div>
+    <br />
     <div class="row">
-        <div class="col-sm-4"></div>
-        <div class="col-sm-4">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
             <input type="file" name="file" />
         </div>
-        <div class="col-sm-4"></div>
+        <div class="col-sm-3"></div>
     </div>
-    <div class="row">
-        <div class="col-sm-4">
-            <button type="submit" class="btn btn-primary">Lagre</button>
-        </div>
-        <div class="col-sm-4">
-            <button class="btn btn-danger">Avbryt</button>
-        </div>
+    <br />
+    <div class="form-group text-center">
+            <button class="btn btn-outline-danger">Avbryt</button>
+        <span>&nbsp &nbsp &nbsp</span>
+            <button type="submit" class="btn btn-outline-success mx-3">Lagre</button>
     </div>
 </form>

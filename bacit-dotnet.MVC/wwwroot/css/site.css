@@ -25,8 +25,9 @@ body {
 }
 /*Design for suggestions*/
 
-.title{
+.title {
     text-align: center;
+}
 
 .suggtitle {
     font-weight: bold; /*thick writing*/
@@ -162,11 +163,12 @@ body {
     background-color: #fff;
     border-radius: 190px;
     margin: 10px 15px 15px 10px;
+    margin-top: -70px;
     background-image: url('https://darko.co.za/circle-fill.png');
     background-repeat: no-repeat;
 }
-.fill-circle > p{
-    margin-top: 19px;
+.fill-circle>p{
+    margin-top: 15px;
 }
 
 .hiddenCircle{
@@ -211,24 +213,19 @@ body {
 .buttonDetails {
     text-decoration: none;
     width: 110px;
+    height: 40px;
     background-color: darkblue;
     color: white;
     border-radius: 10px;
     padding: 10px;
-}
-
-.buttonDetails:hover {
-    background-color: black;
-
-    color: white;
-    border-radius: 5px;
-    padding: 5px;
     text-align: center;
 }
 
-    .moreDetailsBtn:hover {
-        background-color: #053bb1;
-        color: whitesmoke;
+    .buttonDetails:hover {
+        background-color: black;
+        color: white;
+        border-radius: 5px;
+        padding: 5px;
     }
 
 
