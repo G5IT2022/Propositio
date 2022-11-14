@@ -25,8 +25,12 @@ namespace bacit_dotnet.MVC.Controllers
         public IActionResult Index()
         {
             StatisticsViewModel model = new StatisticsViewModel();
+            model.statuses = statisticsRepository.ListStatuses();
+            model.ListNumberOfSuggestionsPerStatus = statisticsRepository.ListNumberOfSuggestionsPerStatus();
             model.teams = statisticsRepository.ListTeams();
             model.ListNumberOfSuggestionPerTeam = statisticsRepository.ListNumberOfSuggestionsPerTeam();
+            model.employees = statisticsRepository.ListEmployees();
+            model.ListTopNumberOfSuggestionsOfTopThreeEmployees = statisticsRepository.ListTopNumberOfSuggestionsOfTopThreeEmployees();
             return View(model);
         }
     }
