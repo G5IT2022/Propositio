@@ -332,20 +332,7 @@ namespace bacit_dotnet.MVC.Repositories
                 var affectedRows = connection.Execute(query, new { team_id = team_id });
                 return affectedRows;
             }
-        }
-        /**
-         * Denne metoden er for å hente rollelisten.         
-         * @Return rollelisten
-         */
-         public List<RoleEntity> GetAllRoles()
-        {
-            var query = @"SELECT role_id, role_name FROM Role";
-            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
-            {
-                var roles = connection.Query<RoleEntity>(query);
-                return roles.ToList();
-            }
-        }
+        }       
                
     }           
 }
