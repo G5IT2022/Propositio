@@ -30,6 +30,7 @@ public class Program
         builder.Services.AddSingleton<IAdminRepository, AdminRepository>();
         //builder.Services.AddSingleton<IAdminRepository, AdminRepository>();
         builder.Services.AddSingleton<IFileRepository, FileRepository>();
+        builder.Services.AddSingleton<IStatisticsRepository, StatisticsRepository>();
 
         builder.Services.AddSession();
 

@@ -3,6 +3,7 @@ using bacit_dotnet.MVC.Entities;
 
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using MySqlConnector;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -54,10 +55,30 @@ namespace bacit_dotnet.MVC.Repositories
             throw new NotImplementedException();
         }
 
-        //registrer ansatt
-        public int CreateEmployee()
+
+        /**
+         * Denne metoden gjør at du kan lage en ny bruker i databasen
+         * @Parameter EmployeeEntity som består av alle nødvendige attributter om en ansatt
+         * @Return ny bruker/ansatt
+        /**
+         * Metode for å registrere ansatte 
+         */
+        public int CreateEmployee(EmployeeEntity emp)
         {
-            throw new NotImplementedException();
+            //spørring
+            var query = @"INSERT INTO Employee(emp_id, name, passwordhash,salt, role_id, authorization_role_id) VALUES (@emp_id, @name, @passwordhash, @salt, @role_id, @authorization_role_id)";
+            var firstTeamQuery = @"INSERT INTO TeamList(emp_id, team_id) VALUES (@emp_id, 1)";
+            //kobler til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                int result = connection.Execute(query, new { emp.emp_id, emp.name, emp.passwordhash, emp.salt, emp.role_id, emp.authorization_role_id });
+                //Legger til i "uten team" teamet
+                if (result == 1)
+                {
+                    connection.Execute(firstTeamQuery, new { emp_id = emp.emp_id });
+                }
+                return result;
+            }
         }
         public List<RoleEntity> GetAllRoles()
         {
@@ -105,9 +126,37 @@ namespace bacit_dotnet.MVC.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public List<SelectListItem> GetRoleSelectList()
+        {
+            //Spørring
+            var query = @"SELECT role_id, role_name FROM Role";
+            List<SelectListItem> list = new List<SelectListItem>();
+            //Kobler spørring til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = query;
+                var reader = command.ExecuteReader();
+                //Dapper mapper ikke automatisk til en SelectListItem så vi må gjøre det på gamlemåten
+                while (reader.Read())
+                {
+                    var item = new SelectListItem();
+                    item.Value = reader[0].ToString();
+                    item.Text = reader[1].ToString();
+                    list.Add(item);
+                }
+                connection.Close();
+                //Returnerer listen
+                return list;
+            }
+        }
+
         /**
-         * Metode som henter salt(tilfeldig data) basert på ansatte
-         */
+* Metode som henter salt(tilfeldig data) basert på ansatte
+*/
         public byte[] GetSalt(int emp_id)
         {
             //spørring

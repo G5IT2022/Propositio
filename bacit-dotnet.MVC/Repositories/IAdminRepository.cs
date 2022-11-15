@@ -1,4 +1,5 @@
-﻿using bacit_dotnet.MVC.Entities;
+using bacit_dotnet.MVC.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace bacit_dotnet.MVC.Repositories
 {
@@ -8,10 +9,10 @@ namespace bacit_dotnet.MVC.Repositories
      */
     public interface IAdminRepository
     {
-        string AuthorizeUser(int emp_id);
-        bool UserExists(int emp_id);
+        public string AuthorizeUser(int emp_id);
+        public bool UserExists(int emp_id);
         public byte[] GetSalt(int emp_id);
-        EmployeeEntity AuthenticateUser(int emp_id, string password);
+        public EmployeeEntity AuthenticateUser(int emp_id, string password);
 
         int CreateCategory();
         List<RoleEntity> GetAllRoles();
@@ -20,5 +21,12 @@ namespace bacit_dotnet.MVC.Repositories
         int CreateTeam();
         int CreateEmployee();
         int UpdateEmployee();
+
+        public int CreateCategory();
+        public int CreateRole();
+        public int CreateTeam();
+        public int CreateEmployee(EmployeeEntity emp);
+        public int UpdateEmployee();
+        public List<SelectListItem> GetRoleSelectList()
     }
 }

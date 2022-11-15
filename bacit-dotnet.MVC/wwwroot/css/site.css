@@ -273,3 +273,12 @@ body {
 .temp{
     color:#fff;
 }
+.textstatus{
+    position: absolute;
+    left: 0;
+}
+.box-body {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}

@@ -23,13 +23,6 @@ namespace bacit_dotnet.MVC.Repositories
             this.sqlConnector = sqlConnector;
         }
 
-        /**
-         * Denne metoden gjør at du kan lage en ny bruker i databasen
-         * @Parameter EmployeeEntity som består av alle nødvendige attributter om en ansatt
-         * @Return ny bruker/ansatt
-        /**
-         * Metode for å registrere ansatte 
-         */
         public int CreateEmployee(EmployeeEntity emp)
         {
             //spørring
@@ -46,6 +39,8 @@ namespace bacit_dotnet.MVC.Repositories
                 }
                 return result;
             }
+
+            return 1;
         }
 
         //Henter en enkelt ansatt basert på employeeid, returnerer en EmployeeEntity med en liste over team de er med i og rolle. 

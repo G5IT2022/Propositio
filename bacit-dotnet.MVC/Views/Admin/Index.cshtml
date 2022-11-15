@@ -6,15 +6,13 @@
 }
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 </head>
 
-<!--Sub-navigasjon: Ansatt-Team-Kategorier-Rolle-->
 <a href="newUser" class="createbtn">Ny Bruker <i class='fas fa-user-alt' style='font-size:16px'></i></a> &nbsp;
 <a href="CreateNewTeam" class="createbtn">Nytt Team <i class='fas fa-users' style='font-size:16px'></i></a>
-
-
+<!--Sub-navigasjon: Ansatt-Team-Kategorier-Rolle-->
 <ul class="nav nav-tabs mt-4" id="myTab" role="tablist">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employees" type="button" role="tab" aria-controls="home" aria-selected="true">Ansatte</button>
     </li>
@@ -43,7 +41,6 @@
                         <th scope="col">Rolle</th>
                         <th scope="col"></th>
                         <th scope="col"></th>
-
                     </tr>
                 </thead>
                 <tbody>
@@ -94,13 +91,31 @@
                         <div class="col-4"><b>Ansattnavn</b></div>
                         <div class="col-4"><b>Rolle</b></div>
                     </div>
-
                     @foreach (EmployeeEntity emp in team.employees)
+        <div class="row align-items-start">
+            <div class="btn-group">
+                <div class="col-sm-2">
+                    <!--Sortering-->
+                    <div class="sortDropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="~/img/bootstrap-icons-1.9.1/sort-up.svg" class="dropdown-toggle" type="button" data-bs-toggle="sortDropdown" /> Sorter
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-action="Index" asp-controller="Admin" asp-route-sortOrder="name_asc">Sorter etter navn (Stigende)</a></li>
+                            <li><a class="dropdown-item" asp-action="Index" asp-controller="Admin" asp-route-sortOrder="name_desc">Sorter etter navn (Synkende)</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-1"></div>
+                <!--Søkefelt-->
+                <div class="col-sm-4">
+                    @using (Html.BeginForm())
                     {
-                        <div class="row justify-content-center">
-                            <div class="col-4">@emp.emp_id</div>
-                            <div class="col-4">@emp.name</div>
-                            <div class="col-4">@emp.role.role_name</div>
+                        <div class="input-group mb-3">
+                            @Html.TextBox("searchString", null, new{@class="form-control", @placeholder="Søk..."} )
+                            <div class="input-group-append">
+                                <button class="btn btn-light" type="submit">Søk</button>
+                            </div>
                         </div>
                     }
                 </div>
@@ -108,30 +123,110 @@
         }
     </div>
     <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <!--Viser til ansatte-->
         <table class="table table-responsive-sm">
-            <thead>
+            <thead class="table-light">
                 <tr>
-                    <th scope="col">Kategorier for forslag</th>
-                    <th></th>
+                    <th scope="col">Ansattnr</th>
+                    <th scope="col">Ansattnavn</th>
+                    <th scope="col">Teams</th>
+                    <th scope="col">Rolle</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+
                 </tr>
             </thead>
             <tbody>
-                @foreach (CategoryEntity category in Model.categories)
+                @foreach (EmployeeEntity emp in Model.employees)
                 {
                     <tr>
-                        <td class="scope-row">@category.category_name</td>
+                        <td>@emp.emp_id</td>
+                        <td>@emp.name</td>
                         <td>
                             <a asp-controller="Admin" asp-action="DeleteCategory" asp-route-id="@category.category_id">
                                 <button type="button" class="btn btn-danger btn-sm mt-1"> Slett</button>
                             </a>
+                            @foreach (TeamEntity team in emp.teams)
+                            {
+                                @team.team_name <br />
+                            }
                         </td>
+                        <td>@emp.role.role_name</td>
+                        <td><button type="button" class="btn btn-primary btn-sm mt-1">Endre</button></td>
+                        <td><button type="button" class="btn btn-danger btn-sm mt-1">Slett</button></td>
+
                     </tr>
                 }
             </tbody>
+
         </table>
     </div>
+    
+<!--Teamlist-->
+<div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="team-tab">
+    @foreach (TeamEntity team in Model.teams)
+    {
+        <div class="card bg-light mt-3">
+            <div class="card-header">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-row align-items-center">
+                        <b>Team: @team.team_name</b> &nbsp;&nbsp;&nbsp; <b>- Teamleder:</b>
+                    </div>
+                    <div class="d-flex flex-row align-items-center">
+                        <a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit" class="link-muted"><i class="fas fa-pencil-alt"></i></a>
+                        &nbsp;&nbsp;&nbsp;
+                        <a asp-controller="admin" asp-action="deleteteam" asp-route-id="@team.team_id" type="submit" class="link-muted"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </div>
 
-    <!--Rolle-->
+            </div>
+            <div class="card-body">
+                <div class="row justify-content-center">
+                    <div class="col-4"><b>Ansattnr</b></div>
+                    <div class="col-4"><b>Ansattnavn</b></div>
+                    <div class="col-4"><b>Rolle</b></div>
+                </div>
+
+                @foreach (EmployeeEntity emp in team.employees)
+                {
+                    <div class="row justify-content-center">
+                        <div class="col-4">@emp.emp_id</div>
+                        <div class="col-4">@emp.name</div>
+                        <div class="col-4">@emp.role.role_name</div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    }
+</div>
+<div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+    <table class="table table-responsive-sm">
+        <thead>
+            <tr>
+                <th scope="col">Kategorier for forslag</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CategoryEntity category in Model.categories)
+            {
+                <tr>
+                    <td class="scope-row">@category.category_name</td>
+                    <td>
+                        <a asp-controller="Admin" asp-action="DeleteCategory" asp-route-id="@category.category_id">
+                            <button type="button" class="btn btn-danger btn-sm mt-1"> Slett</button>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<!--Rolle-->
     <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
         <h3 class="mt-3"><b>Rolle liste</b></h3>
         <!--Legg til en ny rolle-->
@@ -158,9 +253,9 @@
             <div class="row mt-2">
                 <div class="col-6 col-md-4">@role.role_name</div>
                 <div class="col-6 col-md-4">               
-                   @Html.ActionLink("","DeleteRole", new {role_id = role.role_id}, new{onclick = "return confirm('Er du sikker p� at du vil slette rollen?')", @class="link-muted fas fa-trash"})
+                   @Html.ActionLink("","DeleteRole", new {role_id = role.role_id}, new{onclick = "return confirm('Er du sikker på at du vil slette rollen?')", @class="link-muted fas fa-trash"})
                 </div>              
             </div>
         }
-    </div>
 </div>
+    </div>
