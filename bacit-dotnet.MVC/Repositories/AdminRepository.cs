@@ -80,7 +80,12 @@ namespace bacit_dotnet.MVC.Repositories
                 return result;
             }
         }
-        public List<RoleEntity> GetAllRoles()
+        
+       /**
+         * Denne metoden er for å hente rollelisten.         
+         * @Return rollelisten
+         */
+         public List<RoleEntity> GetAllRoles()
         {
             var query = @"SELECT role_id, role_name FROM Role";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
@@ -89,6 +94,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return roles.ToList();
             }
         }
+        
         /**
          * Denne metoden er for å legge til nye roller i databasen
          * @Paramter RoleEntity
