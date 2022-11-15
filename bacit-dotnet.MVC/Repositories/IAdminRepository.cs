@@ -14,13 +14,13 @@ namespace bacit_dotnet.MVC.Repositories
         public byte[] GetSalt(int emp_id);
         public EmployeeEntity AuthenticateUser(int emp_id, string password);
 
-        int CreateCategory();
+        //int CreateCategory();
         List<RoleEntity> GetAllRoles();
         string CreateNewRole(RoleEntity role);
         int DeleteRole(int role_id);
-        int CreateTeam();
-        int CreateEmployee();
-        int UpdateEmployee();
+        //int CreateTeam();
+        //int CreateEmployee();
+        //int UpdateEmployee();
 
         public int CreateCategory();
         public int CreateRole();
