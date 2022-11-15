@@ -30,7 +30,7 @@ namespace bacit_dotnet.MVC.Controllers
             model.teams = statisticsRepository.ListTeams();
             model.ListNumberOfSuggestionPerTeam = statisticsRepository.ListNumberOfSuggestionsPerTeam();
             model.employees = statisticsRepository.ListEmployees();
-            model.ListTopNumberOfSuggestionsOfTopThreeEmployees = statisticsRepository.ListTopNumberOfSuggestionsOfTopThreeEmployees();
+            model.ListTopNumberOfSuggestionsOfTopFiveEmployees = statisticsRepository.ListTopNumberOfSuggestionsOfTopFiveEmployees();
             return View(model);
         }
     }
