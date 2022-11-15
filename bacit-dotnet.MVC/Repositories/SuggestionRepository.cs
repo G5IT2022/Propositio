@@ -285,7 +285,7 @@ namespace bacit_dotnet.MVC.Repositories
         {
             //spørring
             suggestion.suggestion_id = GetNewSuggestionID();
-            var suggestionQuery = @"INSERT INTO Suggestion(title, description, status, ownership_emp_id, author_emp_id) VALUES (@title, @description, 'PLAN', @ownership_emp_id, @poster_emp_id)";
+            var suggestionQuery = @"INSERT INTO Suggestion(title, description, status, ownership_emp_id, author_emp_id) VALUES (@title, @description, @status, @ownership_emp_id, @poster_emp_id)";
             var timestampquery = @"INSERT INTO SuggestionTimestamp(suggestion_id, dueByTimestamp) VALUES (@suggestion_id, @dueByTimestamp)";
             var categoriesQuery = @"INSERT INTO SuggestionCategory(suggestion_id, category_id) VALUES (@suggestion_id, @categoryid)";
             var imageQuery = @"INSERT INTO Image(emp_id, suggestion_id, image_filepath) VALUES(@emp_id, @suggestion_id, @image_filepath)";
@@ -294,7 +294,7 @@ namespace bacit_dotnet.MVC.Repositories
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 //kobler spørring til databasen
-                connection.Execute(suggestionQuery, new { suggestion.title, suggestion.description, suggestion.ownership_emp_id, poster_emp_id = suggestion.author_emp_id });
+                connection.Execute(suggestionQuery, new { suggestion.title, suggestion.description,status = suggestion.status.ToString(), suggestion.ownership_emp_id, poster_emp_id = suggestion.author_emp_id });
                 connection.Execute(timestampquery, new { suggestion_id = suggestion.suggestion_id, dueByTimestamp = suggestion.timestamp.dueByTimestamp });
 
                 //foreach-loop for kategorier
