@@ -1,4 +1,4 @@
-﻿using bacit_dotnet.MVC.DataAccess;
+using bacit_dotnet.MVC.DataAccess;
 using bacit_dotnet.MVC.Entities;
 
 using Dapper;
