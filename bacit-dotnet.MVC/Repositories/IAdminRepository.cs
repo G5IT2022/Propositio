@@ -23,7 +23,7 @@ namespace bacit_dotnet.MVC.Repositories
         //int UpdateEmployee();
 
         public int CreateCategory();
-        public int CreateRole();
+        //public int CreateRole();
         public int CreateTeam();
         public int CreateEmployee(EmployeeEntity emp);
         public int UpdateEmployee();
