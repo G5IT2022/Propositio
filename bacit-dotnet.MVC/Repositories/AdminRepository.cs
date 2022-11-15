@@ -18,6 +18,11 @@ namespace bacit_dotnet.MVC.Repositories
             this.sqlConnector = sqlConnector;
         }
         //Sjekk bruker med emp_id og passord om brukeren er registrert
+        /**
+         * Denne metoden er for å sjekke dersom passord til brukeren er registrert
+         * @Parameter emp_id, string password
+         * @Return employee
+         */
         public EmployeeEntity AuthenticateUser(int emp_id, string password)
         {
             var query = @"SELECT emp_id, name FROM Employee WHERE emp_id = @emp_id AND passwordhash = @password";
@@ -27,8 +32,12 @@ namespace bacit_dotnet.MVC.Repositories
                 return emp;
             }
         }
-
-        //Sjekk rollen til brukeren og returner rollen
+       
+        /**
+         * Denne metoden gjør at du kan sjekke rollen til brukeren
+         * @Parameter emp_id
+         * @Return rollen
+         */
         public string AuthorizeUser(int emp_id)
         {
             var authorizeUser = @"SELECT ar.authorization_role_name FROM AuthorizationRole AS ar
@@ -50,11 +59,47 @@ namespace bacit_dotnet.MVC.Repositories
         {
             throw new NotImplementedException();
         }
-        //registrer rolle
-        public int CreateRole()
+        public List<RoleEntity> GetAllRoles()
         {
-            throw new NotImplementedException();
+            var query = @"SELECT role_id, role_name FROM Role";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var roles = connection.Query<RoleEntity>(query);
+                return roles.ToList();
+            }
         }
+        /**
+         * Denne metoden er for å legge til nye roller i databasen
+         * @Paramter RoleEntity
+         * @Return ny rolle
+         */
+        public string CreateNewRole(RoleEntity role)
+        {
+
+            var query = @"INSERT INTO Role(role_name) VALUES (@role_name)";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                string result = connection.QueryFirstOrDefault(query, new { role.role_name });
+                return result;
+            }
+        }
+
+        /**
+         * Denne metoden er for å slette rolle
+         * @Parameter role_id
+         * @Return rollen blir slettet
+         */
+        public int DeleteRole(int role_id)
+        {
+            var query = @"DELETE FROM Role WHERE role_id = @role_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var affectedRows = connection.Execute(query, new { role_id = role_id });
+                return affectedRows;
+            }
+
+        }
+        
         //registrer team
         public int CreateTeam()
         {
@@ -82,8 +127,12 @@ namespace bacit_dotnet.MVC.Repositories
             throw new NotImplementedException();
         }
 
-        //metode som sjekker om bruker finnes i systemet
-        //returnerer true/false
+       
+        /**
+         * Denne metoden er for å sjekke om bruker finnes i systemet
+         * @Parameter emp_id
+         * @Return true/false
+         */
         public bool UserExists(int emp_id)
         {
             //Sjekk om bruker finnes med emp_id

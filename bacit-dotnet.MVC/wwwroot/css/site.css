@@ -130,29 +130,30 @@ body {
     width: 40px;
     height: 40px
 }
-
+/*ACT*/
 .top-left {
     border-top-left-radius: 200px;
-    background: #2E2EFF;
+    background: #FF8370;
     float: left
 }
 
+/*PLAN*/
 .top-right {
     border-top-right-radius: 200px;
-    background: #A020F0;
+    background: #29B3FF;
     float: right
 }
-
+/*STUDY*/
 .bottom-left {
     border-bottom-left-radius: 200px;
-    background: #F9E076;
+    background: #F9D876;
     float: left
 }
-
+/*DO*/
 .bottom-right {
     border-bottom-right-radius: 200px;
-    background: #AFEC2E;
-    float: right
+    background: #00C4B0;
+    float: right;
 }
 
 .fill-circle {
@@ -174,11 +175,13 @@ body {
 .hiddenCircle{
     background: #fff;
 }
-.finished{
-    background: darkred;
+/*FINISHED*/
+.finished {
+    background: #BE0C3D; /*rose-red*/
 }
-.jdi{
-    background: purple;
+/*JUST-DO-IT*/
+.jdi {
+    background: #B175FF;
 }
 .category {
     margin: 5px;
@@ -203,14 +206,20 @@ body {
 /*Vis mer knappen*/
 .moreDetailsBtn {
     text-decoration: none;
-    width: 75px;    
-    background-color: #1863D6;
+    width: 75px;
+    background-color: #1266f1;
+    color: white;
+    border-radius: 5px;
+    text-align:center;
+    padding: 3px;
+}
 
-    .link-muted:hover {
-        color: #1266f1;
+    .moreDetailsBtn:hover {
+        background-color: #1863D6;
+        color: white;
     }    
 /*Show one suggestion*/
-.buttonDetails {
+/*.buttonDetails {
     text-decoration: none;
     width: 110px;
     height: 40px;
@@ -226,8 +235,7 @@ body {
         color: white;
         border-radius: 5px;
         padding: 5px;
-    }
-
+    }*/
 
 /**Bilder**/
 .userimg {
@@ -244,7 +252,7 @@ body {
     background-color: #1863D6;
     border-radius: 5px;
     color: white;
-    padding: 7px;
+    padding: 7px;    
 }
 
     .createbtn:hover {
@@ -253,8 +261,8 @@ body {
     }
 /*Forslag*/
 .card-header {
-    background-color: #727577;
-    color: white;
+    background-color: #ECECEB;
+    color: black;
 }
 
 .card-footer {

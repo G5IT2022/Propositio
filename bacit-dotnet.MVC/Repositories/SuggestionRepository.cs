@@ -9,7 +9,7 @@ namespace bacit_dotnet.MVC.Repositories
     /**
      * Dette repositoryet har ansvaret for alt det som Suggestion, Category, Comment og Timestamp repositoryene gjorde før
      * Den samler alt på ett sted.
-     * **/
+     */
     public class SuggestionRepository : ISuggestionRepository
     {
         private readonly ISqlConnector sqlConnector;
@@ -21,7 +21,8 @@ namespace bacit_dotnet.MVC.Repositories
 
         /**
          * Denne metoden henter alle forslagene i databasen komplett med kategorier og timestamp. 
-         * **/
+         * @Return en liste med forslag
+         */
         public List<SuggestionEntity> GetAll()
         {
             //spørring til databasen
@@ -71,7 +72,9 @@ namespace bacit_dotnet.MVC.Repositories
 
         /**
          * Denne metoden gjør at du kan oppdatere om et forslag er favoritt eller ikke i databasen. 
-         * **/
+         * @Parameter int id og bool update
+         * 
+         */
         public void Favorite(int id, bool update)
         {
             //spørring
@@ -87,7 +90,7 @@ namespace bacit_dotnet.MVC.Repositories
         /**
          * Denne metoden henter en ny forslags id. 
          * Trengs for å lage nytt forslag.
-         * **/
+         */
         private int GetNewSuggestionID()
         {
             //spørring
@@ -101,8 +104,10 @@ namespace bacit_dotnet.MVC.Repositories
         }
 
         /**
-         * Denne metoden henter et forslag basert på suggestion_id
-         * **/
+         * Denne metoden er for å hente ett forslag
+         * @Parameter suggestion_id
+         * @Return første element i forslagslisten
+         */
         public SuggestionEntity GetSuggestionBySuggestionID(int suggestion_id)
         {
             //spørring
@@ -142,9 +147,13 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ElementAt(0);
             }
         }
-
-        //metode som henter detaljer for forslag
-        //Detaljene er info, kommentarer og bilder som tilhører forslaget
+        
+        /**
+         * Denne metoden gjør at du kan hente detaljer av ett forslag
+         * Detaljene er info, bilder, kommentarer som tilhører forslaget
+         * @Parameter suggestion_id
+         * @Return forslagsdetaljert
+         */
         public SuggestionEntity GetSuggestionBySuggestionIDWithCommentsAndImages(int suggestion_id)
         {
             //spørring til databasen
@@ -228,6 +237,8 @@ namespace bacit_dotnet.MVC.Repositories
 
         /**
          * Denne metoden henter forslagene fra en forfatter
+         * @Parameter author_emp_id
+         * @Return forslagene til forfatteren
          */
         public List<SuggestionEntity> GetSuggestionsByAuthorID(int author_emp_id)
         {
@@ -279,7 +290,9 @@ namespace bacit_dotnet.MVC.Repositories
         }
 
         /**
-         * Denne metoden lager nytt forslag
+         * Denne metoden er for å lage et nytt forslag
+         * @Parameter SuggestionEntity
+         * @Return ???
          */
         public int CreateSuggestion(SuggestionEntity suggestion)
         {
@@ -315,7 +328,9 @@ namespace bacit_dotnet.MVC.Repositories
             return 1;
         }
         /**
-         * Denne metoden lager et nytt kommentar
+         * Denne metoden gjør at du kan lage en ny kommentar i ett forslag
+         * @Parameter CommentEntity
+         * @Return en ny kommentar
          */
         public int CreateComment(CommentEntity comment)
         {
@@ -348,7 +363,9 @@ namespace bacit_dotnet.MVC.Repositories
         }
 
         /**
-         * Denne metoden sletter en kommentar
+         * Denne metoden gjør at du kan slette kommentarer i ett forslag
+         * @Parameter comment_id
+         * @Return ???
          */
         public int DeleteComment(int comment_id)
         {
@@ -366,10 +383,9 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
-        //metoder for kategorier
-
         /**
-         * Denne metoder henter alle kategoriene
+         * Denne metoden henter alle kategoriene
+         * @Return List av kategorier
          */
         public List<CategoryEntity> GetAllCategories()
         {
@@ -386,7 +402,10 @@ namespace bacit_dotnet.MVC.Repositories
         }
 
         /**
-         * metode som sletter kategori
+         * Denne metoden er for å slette en kategori i databasen
+         * @Parameter category_id
+         * @Return ???
+         * 
          */
         public int DeleteCategory(int category_id)
         {
@@ -399,7 +418,9 @@ namespace bacit_dotnet.MVC.Repositories
         }
 
         /**
-         * metode som lager kategori
+         * Denne metoden er for å lage nye kategorier i databasen
+         * @Paramter CategoryEntity
+         * @Return en ny kategori
          */
 
         public int CreateCategory(CategoryEntity category)
@@ -411,9 +432,12 @@ namespace bacit_dotnet.MVC.Repositories
                 return result;
             }
         }
-
-        //metoder for bilder
-        //Legg til bilder
+                
+        /**
+         * Denne metoden gjør at du kan legge til bilder for et forslag
+         * @Parameter ImageEntity
+         * @Return tallverdi på antall rader påvirket ???
+         */
         public int CreateImage(ImageEntity image)
         {
             var query = @"INSERT INTO Image(emp_id, suggestion_id, image_file) 
@@ -428,7 +452,11 @@ namespace bacit_dotnet.MVC.Repositories
                 return result;
             }
         }
-        //metode som henter alle bilder
+        
+        /**
+         * Denne metoden gjør at du kan hente alle bilder fra databasen
+         * @Return list av bilder.
+         */
         public List<ImageEntity> GetAllImages()
         {
             var query = @"SELECT * FROM Image;";
@@ -442,7 +470,12 @@ namespace bacit_dotnet.MVC.Repositories
                 return images.ToList();
             }
         }
-        //metode som henter et bilde ved bruk av bildeID
+        
+        /**
+         * Denne metoden gjør at du kan hente et bildet fra database
+         * @Paramter image_id
+         * @Return bildet
+         */
         public ImageEntity GetImage(int image_id)
         {
             var query = @"SELECT * FROM Image WHERE image_id = @image_id;";
@@ -456,10 +489,13 @@ namespace bacit_dotnet.MVC.Repositories
                 //returnerer bildet
                 return img;
             }
-        }
-        //metode som sletter bilde ved bruk av bildeID
+        }       
 
-
+        /**
+         * Denne metoden er for å slette bildet i et forslag
+         * @Parameter image_id
+         * @Return result - bildet blir slettet
+         */
         public int DeleteImage(int image_id)
         {
             var query = @"DELETE FROM Image WHERE image_id = @image_id;";
@@ -474,8 +510,12 @@ namespace bacit_dotnet.MVC.Repositories
                 return result;
             }
         }
-
-        //Henter forslag basert på status
+       
+        /**
+         * Denne metoden gjør at du kan hente forslag basert på status.
+         * @Parameter string status
+         * @Return forslagene basert på status
+         */
         public List<SuggestionEntity> GetSuggestionsByStatus(string status)
         {
             //spørring
@@ -524,7 +564,12 @@ namespace bacit_dotnet.MVC.Repositories
                 return result.ToList();
             }
         }
-        //Oppdaterer et forslag med en suggestionentity. Returnerer antall rader som er blitt endret
+        
+        /**
+         * Denne metoden er for å oppdatere et forslag med en suggestion entity. 
+         * @Parameter SuggestionEntity 
+         * @Return antall rader som er blit endret
+         */
         public int UpdateSuggestion(SuggestionEntity suggestion)
         {
             //Query for oppdatering av beskrivelse, status og eier for ett forslag. 
@@ -545,6 +590,11 @@ namespace bacit_dotnet.MVC.Repositories
 
         //Oppdaterer status på ett forslag skal returnere 2 rader
 
+        /**
+         * Denne metoden er for å oppdatere status på ett forslag.
+         * @Parameter suggestion_id og string status
+         * @Return 2 rader???
+         */
         public int UpdateSuggestionStatus(int suggestion_id, string status)
         {
             var newTimestampName = status.ToLower() + "Timestamp";

@@ -14,7 +14,9 @@ namespace bacit_dotnet.MVC.Repositories
         EmployeeEntity AuthenticateUser(int emp_id, string password);
 
         int CreateCategory();
-        int CreateRole();
+        List<RoleEntity> GetAllRoles();
+        string CreateNewRole(RoleEntity role);
+        int DeleteRole(int role_id);
         int CreateTeam();
         int CreateEmployee();
         int UpdateEmployee();
