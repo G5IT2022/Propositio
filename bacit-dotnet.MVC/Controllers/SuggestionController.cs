@@ -123,6 +123,7 @@ namespace bacit_dotnet.MVC.Controllers
             //SuggestionRegisterModel suggestionRegisterModel = new SuggestionRegisterModel();
             suggestionRegisterModel.categories = suggestionRepository.GetAllCategories();
             suggestionRegisterModel.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
+            ModelState.Clear();
             return View(suggestionRegisterModel);
         }
 
@@ -132,12 +133,15 @@ namespace bacit_dotnet.MVC.Controllers
             ModelState.Remove("file");
             ModelState.Remove("possibleResponsibleEmployees");
             ModelState.Remove("Categories");
+
+            var tmpcat = parseCategories(collection);
+            if(tmpcat.Count <= 0)
+            {
+                ViewBag.Error = "Velg minst en kategori";
+            }
+
             if (ModelState.IsValid)
             {
-                if (file != null)
-                {
-
-                }
 
                 SuggestionEntity suggestion = new SuggestionEntity
                 {

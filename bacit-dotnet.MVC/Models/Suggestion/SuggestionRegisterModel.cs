@@ -24,6 +24,10 @@ namespace bacit_dotnet.MVC.Models.Suggestion
         public int responsibleEmployeeID { get; set; }
         public List<SelectListItem> possibleResponsibleEmployees { get; set; }
 
+        [DisplayName("Frist:")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
+        //  [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{dd.MM.yyyy}")]
         public DateTime dueByTimestamp { get; set; }
     }
 }
