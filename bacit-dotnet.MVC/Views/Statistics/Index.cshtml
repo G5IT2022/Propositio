@@ -1,0 +1,78 @@
+﻿@using bacit_dotnet.MVC.Entities;
+@using bacit_dotnet.MVC.DataAccess
+@using bacit_dotnet.MVC.Models.Statistics;
+@using System.Security.Claims
+@using System.Web.Helpers;
+@using System.Web;
+@using System.Data;
+@using System.Collections.Generic;
+@using WebMatrix.Data;
+@model StatisticsViewModel;
+
+<head></head>
+<body>
+    <!--Chart>Stolpediagram-->
+    <div class="box-body">
+        <h5>Topp 5 ansatte med flest forslag</h5>
+        <div class="chart-container p-3" style="display: flex; flex-wrap:no wrap;">
+            <div class="text p-3">
+                <!--stolper for stolpediagram, X-verdier -->
+                @foreach (EmployeeEntity emp in Model.employees)
+                {
+                    <div style="width: 150px; height: 50px; lineheight:50px;">@(emp.name)</div>
+                }
+            </div>
+            <!--text for stolpediagram, Y-verdier -->
+            <div class="numbers" style="border-left: 2px solid black; margin-left:-2px">
+                @foreach (int number in Model.ListTopNumberOfSuggestionsOfTopFiveEmployees)
+                {
+                    <div style="width:calc(200%*@number); height: 30px; background-color: pink; line-height:30px; margin-top:20px; text-align: center; ">@number</div>
+                }
+            </div>
+        </div>
+    </div>
+    <br />
+    <!--Chart>Stolpediagram-->
+    <div class="box-body">
+        <h5>Oversikt over antall forslag for status</h5>
+        <br />
+        <div class="chart-container" style="display: flex; flexwrap:no wrap; margin-left: 20px">
+            <div class="textstatus" style="display: flex; flex-wrap:no wrap; transform: rotate(180deg); border-top: 2px solid black">
+                <!--text for stolpediagram, Y-verdier -->
+                @{
+                    Model.statuses.Reverse();
+                }
+                @foreach(int n in Model.ListNumberOfSuggestionsPerStatus){
+                    <div style="height: calc(40px*@n); width: 40px; background-color: pink; margin-left: 15px;transform: rotate(180deg); text-align: center;">@n</div>
+                }
+            </div>
+        </div>
+        <div class="numbers" style="display: flex; flex-wrap:no wrap; margin-left:10px;">
+            <!--stolper for stolpediagram, X-verdier -->
+            @foreach (SuggestionEntity sugg in Model.statuses)
+            {
+                <div style="width: 45px; margin-left: 10px; font-size: 11px; text-align:center;"><b>@sugg.status</b></div>
+            }
+        </div>
+    </div>
+    <br /><br />
+    <!--Chart>Stolpediagram-->
+    <div class="box-body" style="margin-left: auto">
+        <h5>Oversikt over antall forslag per team</h5>
+        <div class="chart-container p-3" style="display: flex; flex-wrap:no wrap">
+            <div class="text p-3">
+                <!--stolper for stolpediagram, X-verdier -->
+                @foreach (TeamEntity tea in Model.teams)
+                {
+                    <div style="width: 130px; height: 50px; lineheight:50px;">@(tea.team_name)</div>
+                }
+            </div>
+            <div class="numbers" style="border-left: 2px solid black; margin-left:-2px">
+                <!--text for stolpediagram, Y-verdier -->
+                @foreach(int num in Model.ListNumberOfSuggestionPerTeam){
+                    <div style="width:calc(100%*@num); height: 30px; background-color: pink; line-height:30px; margin-top:20px; text-align: center; ">@num</div>
+                }
+            </div>
+        </div>
+    </div>
+</body>
