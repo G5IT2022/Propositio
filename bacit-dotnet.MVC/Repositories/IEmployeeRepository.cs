@@ -1,4 +1,4 @@
-﻿using bacit_dotnet.MVC.Entities;
+using bacit_dotnet.MVC.Entities;
 using bacit_dotnet.MVC.Models.AdminViewModels;
 using bacit_dotnet.MVC.Models.AdminViewModels.TeamModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -29,8 +29,7 @@ namespace bacit_dotnet.MVC.Repositories
         public TeamEntity GetTeamByName(string name);
         public bool InsertMemberToTeam(int team_id, int emp_id);
         public bool CheckExistedMember(int team_id, int employeeID);
-        public int DeleteTeam(int team_id);
-        
+        public int DeleteTeam(int team_id);       
         
 
     }
