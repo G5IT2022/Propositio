@@ -5,21 +5,18 @@
     ViewBag.Title = "Admin | Ny Bruker";
 }
 <!--Form for registrering av bruker-->
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()    
+<form asp-controller="Admin" asp-action="CreateUser" method="post">
+    @Html.AntiForgeryToken()
     <div class="container">
         <div class="row mt-5">
             <div class="col-sm-12"></div>
         </div>
         <div class="row">
             <div class="col-sm-4"></div>
-            <div class="col-sm-4 text-center">               
+            <div class="col-sm-4 text-center">
                 <h3>Registrer Ny Ansatt</h3>
-                @if (ViewBag.Created != "")
-                {
-                    @ViewBag.Created
-                }
+                    @ViewBag.Error
+               
             </div>
             <div class="col-sm-4"></div>
         </div>
@@ -31,7 +28,7 @@
                 <div class="form-group mb-2">
                     @Html.LabelFor(model => model.emp_id, htmlAttributes: new{@class = "control-label col-sm-6"})
                     <div class="col-sm-12 align-items-center">
-                        @Html.TextBoxFor(model => model.emp_id, new {@class = "form-control"})                        
+                        @Html.TextBoxFor(model => model.emp_id, new {@class = "form-control"})
                         @Html.ValidationMessageFor(model => model.emp_id, "", new {@class="text-danger"})
                     </div>
                 </div>
@@ -39,7 +36,7 @@
                 <div class="form-group mb-2">
                     @Html.LabelFor(model => model.first_name, htmlAttributes: new{@class = "control-label col-sm-6"})
                     <div class="col-sm-12 align-items-center">
-                        @Html.TextBoxFor(model => model.first_name, new {@class = "form-control"})                       
+                        @Html.TextBoxFor(model => model.first_name, new {@class = "form-control"})
                         @Html.ValidationMessageFor(model => model.first_name, "", new {@class="text-danger"})
                     </div>
                 </div>
@@ -47,7 +44,7 @@
                 <div class="form-group mb-2">
                     @Html.LabelFor(model => model.last_name, htmlAttributes: new{@class = "control-label col-sm-2"})
                     <div class="col-sm-12 align-items-center">
-                        @Html.TextBoxFor(model => model.last_name, new {@class = "form-control"})                          
+                        @Html.TextBoxFor(model => model.last_name, new {@class = "form-control"})
                         @Html.ValidationMessageFor(model => model.last_name, "", new {@class="text-danger"})
                     </div>
                 </div>
@@ -55,16 +52,29 @@
                 <div class="form-group mb-2">
                     @Html.LabelFor(model => model.password, htmlAttributes: new{@class = "control-label col-sm-2"})
                     <div class="col-sm-12 align-items-center">
-                        @Html.TextBoxFor(model => model.password, new {@class = "form-control"})                            
+                        @Html.PasswordFor(model => model.password, new {@class = "form-control"})
                         @Html.ValidationMessageFor(model => model.password, "", new {@class="text-danger"})
                     </div>
+                </div>
+                <!--Rolle-->
+                <div class="form-group mb-2">
+                    @Html.LabelFor(model => model.possibleRoles, new {@class="control-label"})
+                    @Html.DropDownListFor(m => m.role_id, Model.possibleRoles, new {@class="form-control"})
+                </div>
+                <!--Admin-->
+                <div class="form-group mb-2">
+                    @Html.LabelFor(m => m.isAdmin)
+                    @Html.CheckBoxFor(m => m.isAdmin)
                 </div>
                 <!--Lagre knappen-->
                 <div class="text-center mt-3">
                     <button type="submit" class="btn btn-outline-success">Lagre Ny Ansatt</button>
                 </div>
+                <div class="text-center mt-3">
+                    <a asp-action="Index" asp-controller="Admin" class="btn btn-outline-danger">Avbryt</a>
+                </div>
             </div>
         </div>
 
     </div>
-}
+</form>

@@ -19,61 +19,91 @@ namespace bacit_dotnet.MVC.Controllers
     {
         private readonly IEmployeeRepository employeeRepository;
         private readonly ISuggestionRepository suggestionRepository;
-        public AdminController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository)
+        private readonly IAdminRepository adminRepository;
+        public AdminController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository, IAdminRepository adminRepository)
         {
             this.employeeRepository = employeeRepository;
             this.suggestionRepository = suggestionRepository;
+            this.adminRepository = adminRepository; 
         }
-
-        public IActionResult Index()
+        //Get: /Admin/Index
+        [HttpGet]
+        public IActionResult Index(string sortOrder, string searchString)
         {
-            AdminIndexViewModel aivm = new AdminIndexViewModel();
-            aivm.employees = employeeRepository.GetEmployees();
-            aivm.teams = employeeRepository.GetTeams();
-            aivm.categories = suggestionRepository.GetAllCategories();
-            aivm.roles = employeeRepository.GetAllRoles();
+            AdminIndexViewModel model = new AdminIndexViewModel();
+            model.employees = employeeRepository.GetEmployees();
 
-            return View(aivm);
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                //Søker på navnet/rollen til den ansatte
+                var searched = model.employees.Where(
+                   e => e.name.Contains(searchString) ||
+                   e.role.role_name.Contains(searchString));
+                //Setter listen med ansatte til det brukeren har søkt etter
+                model.employees = searched.ToList();
+            }
+            //Switch statement som sjekker hva du sorterer på, switch er basically en if/elseif/else
+            switch (sortOrder)
+            {
+                case "name_asc":
+                    var sortedNameAsc = model.employees.OrderBy(e => e.name);
+                    model.employees = sortedNameAsc.ToList();
+                    break;
+                case "name_desc":
+                    var sortedNameDesc = model.employees.OrderByDescending(e => e.name);
+                    model.employees = sortedNameDesc.ToList();
+                    break;
+                default:
+                    break;
+            }
+            model.teams = employeeRepository.GetTeams();
+            model.categories = suggestionRepository.GetAllCategories();
+            model.roles = employeeRepository.GetAllRoles();
+
+            return View(model);
         }
+      
         //Get: /Admin/newUser
         [HttpGet]
-        public IActionResult NewUser()
+        public IActionResult NewUser(AdminNewUserModel model)
         {
             ViewBag.Message = "Registrer ny ansatt";
-            return View();
+            model.possibleRoles = adminRepository.GetRoleSelectList();
+            ModelState.Clear();
+            return View(model);
         }
 
-        //registrere ny bruker
+        //Post: /Admin/CreateUser
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult NewUser(AdminNewUserModel model, IFormCollection coll)
+        public IActionResult CreateUser(AdminNewUserModel model)
         {
-            int result = 0;
+            AdminNewUserModel newModel = new AdminNewUserModel();
+            newModel.possibleRoles = adminRepository.GetRoleSelectList();
+            ModelState.Remove("possibleRoles");
             if (ModelState.IsValid)
             {
-                EmployeeEntity newEmp = new EmployeeEntity
+                if (!adminRepository.UserExists(model.emp_id))
                 {
-                    emp_id = model.emp_id,
-                    name = model.first_name + " " + model.last_name,
-                    salt = PassHash.GenerateSalt(),
-                    passwordhash = model.password,
-                    authorization_role_id = 1,
-                    role_id = 1
-                };
-                var tmp = PassHash.ComputeHMAC_SHA256(Encoding.UTF8.GetBytes(newEmp.passwordhash), newEmp.salt);
-                newEmp.passwordhash = Convert.ToBase64String(tmp);
-                result = employeeRepository.CreateEmployee(newEmp);
+                    var salt = PassHash.GenerateSalt();
+                    EmployeeEntity newEmp = new EmployeeEntity
+                    {
+                        emp_id = model.emp_id,
+                        name = model.first_name + " " + model.last_name,
+                        salt = salt,
+                        passwordhash = Convert.ToBase64String(PassHash.ComputeHMAC_SHA256(Encoding.UTF8.GetBytes(model.password), salt)),
+                        authorization_role_id = model.isAdmin ? 2 : 1,
+                        role_id = model.role_id
+                    };
+                    ViewBag.Error = $"Ansatt {model.first_name + " " + model.last_name} ble opprettet!";
+                    adminRepository.CreateEmployee(newEmp);
+                }
+                else
+                {
+                    ViewBag.Error = $"Brukeren med ansattnummer {model.emp_id} finnes allerede!";
+                }
             }
-            if (result != 1)
-            {
-                ViewBag.Created = "Noe gikk galt, prøv igjen.";
-            }
-            else
-            {
-                ViewBag.Created = $"Ansatt {model.first_name + " " + model.last_name} ble opprettet!";
-            }
-            return View("NewUser");
-
+            return View("NewUser", newModel);
         }
         //Get: /admin/editteam/team_id
         [HttpGet]
@@ -124,7 +154,7 @@ namespace bacit_dotnet.MVC.Controllers
          */
         [HttpPost]
         public IActionResult CreateNewTeam(AddTeamMemberModel model)
-        {           
+        {
             //Sjekk dersom Teamnavn allerede har eksistert i databasen
             var team = employeeRepository.GetTeamByName(model.team_name);
             //model henter team_name, team_lead_id, for i Team tabellen har vi både team_name og team_lead_id.

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using bacit_dotnet.MVC.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -27,5 +29,11 @@ namespace bacit_dotnet.MVC.Models.AdminViewModels
         [MaxLength(200, ErrorMessage = "Et nytt navn kan være maks 200 karakterer.")]
         [DataType(DataType.Password)]
         public string password { get; set; }
+        [DisplayName("Velg Rolle: ")]
+        public List<SelectListItem> possibleRoles { get; set; }
+        public int role_id { get; set; }
+
+        [DisplayName("Admin: ")]
+        public bool isAdmin { get; set; } 
     }
 }
