@@ -11,6 +11,7 @@ using bacit_dotnet.MVC.Helpers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Web.WebPages.Html;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -31,8 +32,8 @@ namespace bacit_dotnet.MVC.Controllers
             this.fileRepository = fileRepository;
         }
 
-
-        [Authorize]
+        //Get: /Suggestion/Index
+        [HttpGet]
         public IActionResult Index(string sortOrder, string searchString, string filterParameter)
         {
             //Vi måtte bruke en annen modell enn den vi hadde før fordi vi må filtrere alle forslagene så vi må bruke en modell med kun listen over forslag
@@ -118,81 +119,114 @@ namespace bacit_dotnet.MVC.Controllers
             return View(model);
         }
 
-        public IActionResult Register(SuggestionRegisterModel suggestionRegisterModel)
+        //Get: /Suggestion/Register
+        [HttpGet]
+        public IActionResult Register(SuggestionRegisterModel model)
         {
-            //SuggestionRegisterModel suggestionRegisterModel = new SuggestionRegisterModel();
-            suggestionRegisterModel.categories = suggestionRepository.GetAllCategories();
-            suggestionRegisterModel.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
-            return View(suggestionRegisterModel);
+            if (model.possibleResponsibleEmployees == null)
+            {
+               model = prepareSuggestionRegisterModel();
+               ModelState.Clear();
+            }
+            return View(model);
         }
 
+        //Post: /Suggestion/Create
         [HttpPost]
-        public IActionResult Create(SuggestionRegisterModel model, IFormCollection collection, IFormFile file = null)
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateSuggestion(SuggestionEntity model, IFormCollection collection, IFormFile file = null)
         {
+
+            //Klargjør en ny modell til etter verifisering/registrering, man kan ikke bare returnere et view uten modell. 
+            SuggestionRegisterModel newModel = prepareSuggestionRegisterModel();
+
+            //Vi må fjerne noen ting fra modellen fordi de er irrelevante for å lage et forslag
+            //timestamp og fil blir verifisert utenom
+            ModelState.Remove("author");
+            ModelState.Remove("responsible_employee");
             ModelState.Remove("file");
-            ModelState.Remove("possibleResponsibleEmployees");
-            ModelState.Remove("Categories");
-            if (ModelState.IsValid)
+            ModelState.Remove("timestamp");
+
+            //Hvis modellen ikke er gyldig returner feilmelding, denne sjekken er her på starten så vi slipper å gjøre en hel del andre sjekker først. 
+            if (!ModelState.IsValid)
             {
-                if (file != null)
-                {
+                return View("Register", newModel);
+            }
 
-                }
+            //Sett statusen på forslaget basert på om justdoit er true eller false, hvis man ikke har .Contains("true") så fungerer det ikke av en eller annen merkelig grunn
+            Console.WriteLine(collection["isJustDoIt"]);
+            model.status = collection["isJustDoIt"].Contains("true") == true ? STATUS.JUSTDOIT : STATUS.PLAN;
 
-                SuggestionEntity suggestion = new SuggestionEntity
-                {
-                    title = model.title,
-                    description = model.description,
-                    status = STATUS.PLAN,
-                    categories = parseCategories(collection),
-                    ownership_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)),
-                    timestamp = new TimestampEntity
-                    {
-                        dueByTimestamp = model.dueByTimestamp
-                    },
-                    author_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData))
-                };
-                if (model.isJustDoIt == true)
-                {
-                    suggestion.status = STATUS.JUSTDOIT;
-                }
-                else
-                {
-                    suggestion.status = STATUS.PLAN;
-                }
+            //Henter ansattnr til forfatteren
+            model.author_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData));
 
-                if (file != null)
-                {
-                    try
-                    {
-                        if (fileRepository.UploadFile(file))
-                        {
-                            ImageEntity imageEntity = new ImageEntity()
-                            {
-                                image_filepath = file.FileName
-                            };
-                            suggestion.images.Add(imageEntity);
-                            ViewBag.Message = "File Upload Successful";
-                        }
-                        else
-                        {
-                            ViewBag.Message = "File Upload Failed";
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        //Log ex
-                        ViewBag.Message = "File Upload Failed";
-                    }
-                }
-                suggestionRepository.CreateSuggestion(suggestion);
-                return RedirectToAction("Index");
+            if (collection["dueByTimestamp"].Equals("")) {
+                ViewBag.TimestampError = "Legg til en frist";
+                return View("Register", newModel);
+            }
+            model.timestamp = new TimestampEntity { dueByTimestamp = Convert.ToDateTime(collection["dueByTimestamp"]) };
+            
+
+            //Hjemmelaget verifisering for kategorier, dette sikrer at man har valgt minst en kategori
+            var categories = parseCategories(collection);
+            if (categories.Count < 1)
+            {
+                ViewBag.CategoryError = "Velg minst en kategori";
+                return View("Register", newModel);
             }
             else
             {
-                return RedirectToAction("Register");
+                model.categories = categories;
             }
+
+            //Hvis brukeren har lastet opp en fil prøver vi å laste den opp til mappen/lagre filstien i databasen
+            if (file != null)
+            {
+                try
+                {
+                    //Hvis filen ble lastet opp i mappen legger man til bildet i modellen så filstien kan bli lastet opp i databasen. 
+                    if (fileRepository.UploadFile(file))
+                    {
+                        ImageEntity imageEntity = new ImageEntity()
+                        {
+                            image_filepath = file.FileName
+                        };
+                        model.images.Add(imageEntity);
+                        ViewBag.Message = "File Upload Successful";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //Log ex
+                    ViewBag.Error = "File Upload Failed";
+                }
+            }
+
+            //Sjekker en siste gang at alt er good to go
+            if (ModelState.IsValid)
+            {
+                suggestionRepository.CreateSuggestion(model);
+                ViewBag.Message = "Forslaget ble postet!";
+            }
+            return View("Register", newModel);
+
         }
+
+        /// <summary>
+        /// Denne metoden klargjør nytt forslag modellen med å hente kategorier og de ansatte
+        /// @Return: SuggestionRegisterModel full av data
+        /// </summary>
+       private SuggestionRegisterModel prepareSuggestionRegisterModel()
+        {
+            SuggestionRegisterModel model = new SuggestionRegisterModel();
+            model.categories = suggestionRepository.GetAllCategories();
+            model.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
+
+            return model;
+        }
+
+
+
         /**
          * Denne private metoden gjør at:
          * 1. du kan hente list av katergorier
@@ -222,6 +256,8 @@ namespace bacit_dotnet.MVC.Controllers
          * @Parameter suggestion_id
          * @Return informasjon av et forslag i Details Viewet
          */
+        // Get: /Suggestion/Details/id
+        [HttpGet]
         public IActionResult Details(int id)
         {
             SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
@@ -245,7 +281,7 @@ namespace bacit_dotnet.MVC.Controllers
             return View(detailsModel);
         }
 
-        //Suggestion/Details/suggestion_id
+        //Post: /Suggestion/CreateComment
         [HttpPost]
         public IActionResult CreateComment(SuggestionDetailsModel model, IFormCollection collections)
         {
@@ -275,6 +311,7 @@ namespace bacit_dotnet.MVC.Controllers
          *Metode for å redigere kommentar 
          * @Param comment_id og suggestion_id
         */
+        //Post: /Suggestion/EditComment
         [HttpPost]
         public IActionResult EditComment(CommentEntity comment, int suggestion_id)
         {
@@ -294,7 +331,7 @@ namespace bacit_dotnet.MVC.Controllers
             {
                 return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
             }
-           
+
         }
 
         /*
@@ -302,6 +339,7 @@ namespace bacit_dotnet.MVC.Controllers
          * @Parameter comment_id og suggestion id
          * @Return Suggestion/Details/suggestion_id
          */
+        //Post: /Suggestion/Deletecomment
         public IActionResult DeleteComment(int comment_id, int suggestion_id)
         {
             var result = suggestionRepository.DeleteComment(comment_id);
@@ -310,6 +348,7 @@ namespace bacit_dotnet.MVC.Controllers
         }
 
         //Favoritter
+        //Post: /Suggestion/Favorite/id
         [HttpPost]
         public void Favorite(int id)
         {
@@ -317,7 +356,7 @@ namespace bacit_dotnet.MVC.Controllers
             suggestion.favorite = !suggestion.favorite;
             suggestionRepository.Favorite(id, suggestion.favorite);
         }
-        //Suggestion/Edit/id
+        //Get: /Suggestion/Edit/id
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -329,6 +368,8 @@ namespace bacit_dotnet.MVC.Controllers
 
             return View(model);
         }
+
+        //Post: /Suggestion/EditSuggestion
         [ValidateAntiForgeryToken]
         [HttpPost]
         public IActionResult EditSuggestion(SuggestionEditModel model)
@@ -371,6 +412,7 @@ namespace bacit_dotnet.MVC.Controllers
         }
 
         //Oppdaterer status på et forslag
+        //Suggestion/UpdateStatus
         public IActionResult UpdateStatus(int suggestion_id, STATUS status)
         {
             switch (status)

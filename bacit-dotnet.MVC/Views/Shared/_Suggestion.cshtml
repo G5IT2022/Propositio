@@ -69,8 +69,8 @@
             <div class="d-flex justify-content-between">
                 <div class="d-flex flex-row align-items-center">
                     <p>
-                        <span class="small fw-lighter">Opprettet: @Model.timestamp.createdTimestamp.ToString("dd/M/yyyy")</span>
-                        <span class="small" style="color:#900f0e"> <b>- Frist: @Model.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</b></span>
+                        <span class="fw-light">Opprettet: <b>@Model.timestamp.createdTimestamp.ToString("dd/M/yyyy")</b></span>
+                        <span class="fw-light" style="color:#900f0e"> - Frist: <b> @Model.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</b></span>
                     </p>
                     
                 </div>
@@ -91,22 +91,10 @@
 
         <!--Card-body-start-->
         <div class="card-body">
-            <!--Forslagsbeskrivelse-->
-            @*<div class="d-flex justify-content-between">
-                <div class="d-flex flex-row align-items-center">
-                        <p>
-                        @Model.description
-                        <span>
-                            <a class="moreDetailsBtn mt-1" asp-controller="Suggestion" asp-action="Details" asp-route-id="@Model.suggestion_id">
-                                Vis mer
-                            </a>
-                        </span>
-                        </p>                          
-                </div>                
-            </div>*@
+            <!--Forslagsbeskrivelse-->           
             <p class="card-text">@Model.description</p>
             <div class="d-flex flex-row justify-content-end">
-                <a class="buttonDetails mt-1" asp-controller="Suggestion" asp-action="Details" asp-route-id="@Model.suggestion_id">
+                <a class="moreDetailsBtn mt-1" asp-controller="Suggestion" asp-action="Details" asp-route-id="@Model.suggestion_id">
                     Vis mer
                 </a>
             </div>

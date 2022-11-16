@@ -8,5 +8,8 @@ namespace bacit_dotnet.MVC.Models.AdminViewModels
         public List<TeamEntity> teams;
         public List<CategoryEntity> categories;
         public List<RoleEntity> roles;
+        public string role_name { get; set; }
+        public int role_id { get; set; }       
+
     }
 }
