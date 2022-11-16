@@ -1,12 +1,15 @@
 using bacit_dotnet.MVC.DataAccess;
 using bacit_dotnet.MVC.Entities;
+using bacit_dotnet.MVC.Models.AdminViewModels;
 using bacit_dotnet.MVC.Models.AdminViewModels.TeamModels;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using MySqlConnector;
+using System.Data;
 using System.Xml.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace bacit_dotnet.MVC.Repositories
 {
@@ -22,6 +25,21 @@ namespace bacit_dotnet.MVC.Repositories
 
         public int CreateEmployee(EmployeeEntity emp)
         {
+            //spørring
+            var query = @"INSERT INTO Employee(emp_id, name, passwordhash,salt, role_id, authorization_role_id) VALUES (@emp_id, @name, @passwordhash, @salt, @role_id, @authorization_role_id)";
+            var firstTeamQuery = @"INSERT INTO TeamList(emp_id, team_id) VALUES (@emp_id, 1)";
+            //kobler til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                int result = connection.Execute(query, new { emp.emp_id, emp.name, emp.passwordhash, emp.salt, emp.role_id, emp.authorization_role_id });
+                //Legger til i "uten team" teamet
+                if (result == 1)
+                {
+                    connection.Execute(firstTeamQuery, new { emp_id = emp.emp_id });
+                }
+                return result;
+            }
+
             return 1;
         }
 
@@ -114,11 +132,11 @@ namespace bacit_dotnet.MVC.Repositories
          * Denne metoden gjør at du kan hente list av ansatte fra databasen
          * @Return List av ansatte.
          */
-         
+
         //Metode som henter en liste over ansatte som SelectListItem så de fungerer med checkbox 
         public List<SelectListItem> GetEmployeeSelectList()
         {
-         //Spørring
+            //Spørring
             var query = @"SELECT emp_id, name FROM Employee";
             List<SelectListItem> list = new List<SelectListItem>();
             //Kobler spørring til databasen
@@ -235,7 +253,7 @@ namespace bacit_dotnet.MVC.Repositories
             var query = $"INSERT INTO Team(team_name,team_lead_id) VALUES(@team_name,@team_lead_id)";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                var result = connection.QueryFirstOrDefault(query, new {model.team_name, model.team_lead_id });               
+                var result = connection.QueryFirstOrDefault(query, new { model.team_name, model.team_lead_id });
             }
             return GetTeamByName(model.team_name);
         }
@@ -262,7 +280,7 @@ namespace bacit_dotnet.MVC.Repositories
                 }
                 return result;
             }
-        }        
+        }
         /**
          * Denne metoden med boolean datatype som fungerer sammen med metoden CheckExistedMember
          * Metoden gjør at når du velger noen ansatte fra checkbox, går det til CheckExistedMember
@@ -273,12 +291,12 @@ namespace bacit_dotnet.MVC.Repositories
         public bool InsertMemberToTeam(int team_id, int emp_id)
         {
             //check exist employee in Team Table
-             if (CheckExistedMember(team_id, emp_id))
+            if (CheckExistedMember(team_id, emp_id))
             {
-                var sql = $"INSERT INTO TeamList(emp_id,team_id) VALUES(@emp_id, @team_id)";
+                var query = $"INSERT INTO TeamList(emp_id,team_id) VALUES(@emp_id, @team_id)";
                 using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
                 {
-                    var result = connection.QueryFirstOrDefault(sql, new { team_id, emp_id });
+                    var result = connection.QueryFirstOrDefault(query, new { team_id, emp_id });
                     //return result;
                 }
             }
@@ -299,11 +317,12 @@ namespace bacit_dotnet.MVC.Repositories
                     return false;
                 }
             }
-        }          
-        
+        }
+
         /**
          * Denne metoden er for å slette Team fra databasen.
          * @Parameter team_id
+         * @Return 
          */
         public int DeleteTeam(int team_id)
         {
@@ -313,16 +332,7 @@ namespace bacit_dotnet.MVC.Repositories
                 var affectedRows = connection.Execute(query, new { team_id = team_id });
                 return affectedRows;
             }
-        }
-
-        public List<RoleEntity> GetAllRoles()
-        {
-            var query = @"SELECT role_id, role_name FROM Role";
-            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
-            {
-                var roles = connection.Query<RoleEntity>(query);
-                return roles.ToList();
-            }
-        }
-    }
+        }       
+               
+    }           
 }
