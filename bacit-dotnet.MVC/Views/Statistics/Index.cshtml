@@ -40,15 +40,20 @@
             <div class="textstatus" style="display: flex; flex-wrap:no wrap; transform: rotate(180deg); border-top: 2px solid black">
                 <!--text for stolpediagram, Y-verdier -->
                 @{
+                    var zip = Model.ListNumberOfSuggestionsPerStatus.Zip(Model.statuses, (i, j) => (i, j));
                     Model.statuses.Reverse();
                 }
-                @foreach(int n in Model.ListNumberOfSuggestionsPerStatus){
-                    <div style="height: calc(40px*@n); width: 40px; background-color: pink; margin-left: 15px;transform: rotate(180deg); text-align: center;">@n</div>
+                @foreach ((int n, SuggestionEntity s) in zip)
+                {
+                    <div class="_@s.status" style="height: calc(40px*@n); width: 40px; margin-left: 15px;transform: rotate(180deg); text-align: center;">@n</div>
                 }
             </div>
         </div>
-        <div class="numbers" style="display: flex; flex-wrap:no wrap; margin-left:10px;">
+        <div class="numbers" style="display: flex; flex-wrap:no wrap;">
             <!--stolper for stolpediagram, X-verdier -->
+            @{
+                Model.statuses.Reverse();
+            }
             @foreach (SuggestionEntity sugg in Model.statuses)
             {
                 <div style="width: 45px; margin-left: 10px; font-size: 11px; text-align:center;"><b>@sugg.status</b></div>
