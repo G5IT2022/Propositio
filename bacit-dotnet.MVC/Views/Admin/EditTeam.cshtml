@@ -7,92 +7,60 @@
 @{
     ViewBag.Title = "Admin | Rediger Team";
 }
-<!--  Usikker på om vi trenger noe av dette videre?-->
-@using (Html.BeginForm())
-{
-
-    @Html.AntiForgeryToken()
-    <div class="form-horizontal">
-        <h4>Rediger et team</h4>
-        @if (ViewBag.Created != "")
-        {
-            @ViewBag.Created
-        }
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.team_navn, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.team_navn, new { @class = "form-control", @placeholder = Model.team.team_name })
-                @Html.ValidationMessageFor(model => model.team_navn, "", new { @class = "text-danger" })
-            </div>
-        </div>
-    </div>
-}
-<button type="button" class="btn btn-outline-secondary btn-sm">Legg til medlemmer</button>
-<!--Skriver ut ansatt i teamet-->
-@foreach (EmployeeEntity emp in Model.team.employees)
-{
-    <div class="row">
-        <div class="col-sm-2">
-            @emp.name
-        </div>
-        <div class="col-sm-2">
-            @emp.emp_id
-            <input type="checkbox" />
-        </div>
-    </div>
-
-
-}
--->
 <body>
-    <div class="containter newteam-container mt-5">
+    <div class="container editteam-container t-5">
         <div class="row">
-            <div class="col"></div>
-            <div class="col text-center">
-                <h3>Rediger Team</h3>
+            <div class="col">
+                <div />
+                <div class="col text-center">
+                    <h3>Rediger Team</h3>
+                </div>
+                <div class="col></div>
             </div>
-            <div class="col"></div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <input name="team_navn" type="text" class="form-control" id="team_navn" placeholder="Navn på team">
-                </div><br />
-
-                      <div class="form-group text-center">
-                          <style>
-                          </style>
-                          <a class="btn-link" asp-controller="Admin" asp-action="AddTeamMember">Legg til medlemmer</a>
-                      </div>
-
-            </div>
-        </div>
-        <form asp-action="EditTeam" asp-controller="Admin" method="post">
-
-            <div class="row text-center mt-4">
-                <div class="col"><b>Ansattnummer</b></div>
-                <div class="col"><b>Navn</b></div>
-                <div class="col"><b>Team</b></div>
-                <div class="col"><b>Rolle</b></div>
-            </div><hr />
-            <div class="row text-center mt-3">
-
-            </div>
-
-            <div class="row">
-                <div class="col-xs-12 mt-5">
-                    <!--Knapper-->
-                    <div class="text-center mt-xxl-5">
-                        <button type="submit" class="btn btn-outline-danger px-4">Avbryt</button>
-                        &nbsp;&nbsp;
-                        <button type="submit" class="btn btn-outline-success px-4">Lagre</button>
-                    </div>
+            <div class="row-mt-3">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4">
+                    <div class="form-group text-center">
+                        <input @Html.TextBoxFor(aetm => aetm.team.team_name, new { @class = "form-control" })
+                    </div><br />
                 </div>
             </div>
-        </form>
-    </div>
-</body>
+            <form asp-action="EditTeam" asp-controller="Admin" method="post">
+                <div class="riw text-center mt-4">
+                    <div class="col">
+                        <b>Ansattnummer</b><div />
+                        <div class="col">
+                            <b>Navn</b><div />
+                            <div class="col"><b>Rolle</b></div>
+                            <div /><hr />
+                            <div class="row text-center mt-3">
 
+                                @foreach (EmployeeEntity emp in Model.team.employees)
+                                {
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            @emp.emp_id
+                                        </div>
+                                        <div class="col-sm-3">
+                                            @emp.name
+                                        </div>
+                                        <div class="col-sm-3">
+                                            @emp.role.role_name
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 mt-5">
+                                    <div class="text-center mt-xxl-5">
+                                        <button type="submit" class="btn btn-outline-danger px-4">Avbryt</button>
+                                        <button type="submit" class="btn btn-outline-success px-4">Lagre</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+            </form>
+</body>
