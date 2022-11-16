@@ -111,6 +111,7 @@ namespace bacit_dotnet.MVC.Controllers
         {
             AdminEditTeamModel aetm = new AdminEditTeamModel();
             aetm.team = employeeRepository.GetTeam(id);
+           // aetm.team = employeeRepository.GetEmployee(id);
             return View(aetm);
         }
         
@@ -235,5 +236,12 @@ namespace bacit_dotnet.MVC.Controllers
         //    return RedirectToAction("CreateNewTeam");
         //}
 
+      //  public IActionResult EditTeams(int id)
+      //  {
+        //    AdminEditTeamModel model = new AdminEditTeamModel();
+          //  model.team = adminRepository.GetTeamByTeamIDWithName(id);
+
+            //return View(model);
+      //  }
     }
 }

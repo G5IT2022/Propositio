@@ -150,5 +150,9 @@ namespace bacit_dotnet.MVC.Repositories
                 }
             }
         }
+        public int EditTeam(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
