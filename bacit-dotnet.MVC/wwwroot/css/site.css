@@ -45,31 +45,35 @@ body {
     line-height: 30px;
 }
 /*Make circle for status*/
-.PLAN, .DO, .STUDY, .ACT, .JUSTDOIT {
+.PLAN, .DO, .STUDY, .ACT, .JUSTDOIT, .FINISHED {
     width: 20px;
     height: 20px;
     border-radius: 50%;
     margin-top: 5px;
 }
 
-.PLAN {
+.PLAN, ._PLAN {
     background-color: #29B3FF; /*blue*/
 }
 
-.DO {
+.DO, ._DO {
     background-color: #00C4B0; /*blue-green*/
 }
 
-.STUDY {
+.STUDY, ._STUDY {
     background-color: #F9D876; /*freesia-yellow*/
 }
 
-.ACT {
+.ACT, ._ACT {
     background-color: #FF8370; /*orange-coral*/
 }
 
-.JUSTDOIT {
+.JUSTDOIT, ._JUSTDOIT {
     background-color: #B175FF; /*Purple*/
+}
+
+.FINISHED, ._FINISHED {
+    background-color: darkred;
 }
 
 .BIG {
@@ -273,12 +277,8 @@ body {
 .temp{
     color:#fff;
 }
-.textstatus{
-    position: absolute;
-    left: 0;
-}
 .box-body {
     margin: auto;
-    width: 50%;
+    width: 90%;
     padding: 10px;
 }

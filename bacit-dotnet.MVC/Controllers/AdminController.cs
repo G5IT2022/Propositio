@@ -69,7 +69,7 @@ namespace bacit_dotnet.MVC.Controllers
             }
             model.teams = employeeRepository.GetTeams();
             model.categories = suggestionRepository.GetAllCategories();
-            model.roles = employeeRepository.GetAllRoles();
+            model.roles = adminRepository.GetAllRoles();
 
             return View(model);
         }
