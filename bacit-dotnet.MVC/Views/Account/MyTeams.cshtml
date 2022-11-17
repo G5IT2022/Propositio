@@ -1,0 +1,13 @@
+﻿@using bacit_dotnet.MVC.Entities
+@using bacit_dotnet.MVC.Models;
+@model MyTeamsViewModel;
+
+@foreach(TeamEntity team in Model.teams){
+    <h1>@team.team_name</h1>
+    <hr />
+    @foreach(EmployeeEntity employee in team.employees){
+        @foreach(SuggestionEntity suggestion in employee.suggestions){
+            @Html.Partial("_Suggestion", suggestion);
+        }
+    }
+}
