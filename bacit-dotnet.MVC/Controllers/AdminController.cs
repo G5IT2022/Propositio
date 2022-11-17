@@ -277,5 +277,16 @@ namespace bacit_dotnet.MVC.Controllers
             var result = adminRepository.DeleteRole(role_id);
             return RedirectToAction("Index");
         }
+
+        
+        //Get: /admin/edituser/emp_id
+        [HttpGet]
+        public IActionResult EditUser(int id)
+        {
+            AdminEditUserModel aeum = new AdminEditUserModel();
+            aeum.user = employeeRepository.GetEmployee(id);
+            return View(aeum);
+        }
+        
     }
 }
