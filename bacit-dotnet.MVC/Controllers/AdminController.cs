@@ -84,6 +84,19 @@ namespace bacit_dotnet.MVC.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public IActionResult CreateCategory(string category_name)
+        {
+            adminRepository.CreateNewCategory(category_name);
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult DeleteCategory(int category_id)
+        {
+            adminRepository.DeleteCategory(category_id);
+            return RedirectToAction("Index");
+        }
+
         /**
          * Denne metoden er for å registrere en ny bruker
          * @Parameter AdminNewUserModel og en Collection

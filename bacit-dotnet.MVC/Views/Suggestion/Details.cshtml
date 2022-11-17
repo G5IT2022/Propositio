@@ -102,6 +102,7 @@
                             </div>
                             break;
                     }
+                </div>
             </a>
             @if (Model.suggestion.status != STATUS.FINISHED && (Model.suggestion.author.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin")))
             {

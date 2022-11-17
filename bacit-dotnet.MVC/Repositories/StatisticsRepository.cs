@@ -75,6 +75,47 @@ INNER JOIN Employee AS e ON s.author_emp_id=e.emp_id GROUP BY e.emp_id ORDER BY 
             }
         }
 
+        public List<int> ListNumberOfSuggestionsPerCategory()
+        {
+            var query = @"SELECT COUNT(c.category_name) FROM Category AS c 
+INNER JOIN SuggestionCategory AS sc ON c.category_id=sc.category_id
+INNER JOIN Suggestion AS s ON sc.suggestion_id=s.suggestion_id
+GROUP BY c.category_id ORDER BY COUNT(c.category_name) DESC;";
+
+            using(var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var numbers = connection.Query<int>(query);
+                return numbers.ToList();
+            }
+        }
+
+        public List<CategoryEntity> ListCategories()
+        {
+            var query = @"SELECT c.category_name FROM Category AS c 
+INNER JOIN SuggestionCategory AS sc ON c.category_id=sc.category_id
+INNER JOIN Suggestion AS s ON sc.suggestion_id=s.suggestion_id
+GROUP BY c.category_id ORDER BY COUNT(c.category_name) DESC;";
+
+            using(var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var categories = connection.Query<CategoryEntity>(query);
+                return categories.ToList();
+            }
+        }
+
+        public int TotalNumberCategoriesFromSuggestions()
+        {
+            var query = @"SELECT COUNT(c.category_name) FROM Suggestion AS s 
+INNER JOIN SuggestionCategory AS sc ON sc.suggestion_id=s.suggestion_id
+INNER JOIN Category AS c ON c.category_id=sc.category_id;";
+
+            using(var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                int number = connection.QueryFirst<int>(query);
+                return number;
+            }
+        }
+
         /**
          * Metode som henter en liste med navn på teams
          * Returnerer en liste med team_name
