@@ -205,5 +205,36 @@ namespace bacit_dotnet.MVC.Repositories
                 }
             }
         }
+        /**
+         * Denne metoden er for å slette en kategori i databasen
+         * @Parameter category_id
+         * @Return ???
+         * 
+         */
+        public int DeleteCategory(int category_id)
+        {
+            var query = @"DELETE FROM Category WHERE category_id = @category_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var numberOfRowsAffected = connection.Execute(query, new { category_id = category_id });
+                return numberOfRowsAffected;
+            }
+        }
+
+        /**
+         * Denne metoden er for å lage nye kategorier i databasen
+         * @Paramter CategoryEntity
+         * @Return en ny kategori
+         */
+
+        public string CreateNewCategory(string category_name)
+        {
+            var query = @"INSERT INTO Category(category_name) VALUES (@category_name);";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                string result = connection.QueryFirstOrDefault(query, new { category_name});
+                return result;
+            }
+        }
     }
 }

@@ -13,7 +13,6 @@
     @Html.AntiForgeryToken()
     <!--Tittel-->
     <div class="row">
-        <!--Nytt Ansattnummer-->
         <span class="text-danger">@ViewBag.Error</span>
         @ViewBag.Message
         <div class="form-group mb-2">
@@ -25,7 +24,7 @@
         </div>
         <br />
 
-        <!--Nytt Ansattnummer-->
+        <!--Beskrivelse-->
         <div class="form-group mb-2">
             @Html.LabelFor(model => model.description, htmlAttributes: new{@class = "control-label col-sm-6"})
             <div class="col-sm-12 align-items-center">
