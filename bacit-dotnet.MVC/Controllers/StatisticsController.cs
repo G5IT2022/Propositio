@@ -31,6 +31,9 @@ namespace bacit_dotnet.MVC.Controllers
             model.ListNumberOfSuggestionPerTeam = statisticsRepository.ListNumberOfSuggestionsPerTeam();
             model.employees = statisticsRepository.ListEmployees();
             model.ListTopNumberOfSuggestionsOfTopFiveEmployees = statisticsRepository.ListTopNumberOfSuggestionsOfTopFiveEmployees();
+            model.categories = statisticsRepository.ListCategories();
+            model.ListNumberOfSuggestionsPerCategory = statisticsRepository.ListNumberOfSuggestionsPerCategory();
+            model.totalNumberOfcategoriesForSuggestions = statisticsRepository.TotalNumberCategoriesFromSuggestions();
             return View(model);
         }
     }

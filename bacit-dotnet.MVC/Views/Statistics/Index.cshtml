@@ -7,6 +7,7 @@
 @using System.Data;
 @using System.Collections.Generic;
 @using WebMatrix.Data;
+@using System.Threading;
 @model StatisticsViewModel;
 
 <head></head>
@@ -80,4 +81,26 @@
             </div>
         </div>
     </div>
+    <br />
+    <br />
+    <!--Chart>Stolpediagram-->
+    <div class="box-body" style="margin-left: auto">
+        <h5>Oversikt over antall forslag per kategori</h5>
+        <div class="chart-container p-3" style="display: flex; flex-wrap:no wrap">
+            <div class="text p-3">
+                <!--stolper for stolpediagram, X-verdier -->
+                @foreach (CategoryEntity cat in Model.categories)
+                {
+                    <div style="width: 130px; height: 50px; lineheight:50px;">@(cat.category_name)</div>
+                }
+            </div>
+            <div class="numbers" style="border-left: 2px solid black; margin-left:-2px">
+                <!--text for stolpediagram, Y-verdier -->
+                @foreach (int numb in Model.ListNumberOfSuggestionsPerCategory)
+                {
+                    <div style="width:calc(100%*@numb); height: 30px; background-color: pink; line-height:30px; margin-top:20px; text-align: center; ">@numb</div>
+                }
+            </div>
+        </div>
+    </div>   
 </body>
