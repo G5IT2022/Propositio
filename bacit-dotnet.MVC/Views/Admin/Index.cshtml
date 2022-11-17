@@ -33,6 +33,36 @@
     <div class="tab-pane fade show active" id="employees" role="tabpanel" aria-labelledby="employee-tab">
         <div class="table-responsive">
             <!--Viser til ansatte-->
+            <div class="row align-items-start">
+                <div class="btn-group">
+                    <div class="col-sm-2">
+                        <!--Sortering-->
+                        <div class="sortDropdown">
+                            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="~/img/bootstrap-icons-1.9.1/sort-up.svg" class="dropdown-toggle" type="button" data-bs-toggle="sortDropdown" /> Sorter
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-action="Index" asp-controller="Admin" asp-route-sortOrder="name_asc">Sorter etter navn (Stigende)</a></li>
+                                <li><a class="dropdown-item" asp-action="Index" asp-controller="Admin" asp-route-sortOrder="name_desc">Sorter etter navn (Synkende)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-1"></div>
+                    <!--Søkefelt-->
+                    <div class="col-sm-4">
+                        @using (Html.BeginForm())
+                        {
+                            <div class="input-group mb-3">
+                                @Html.TextBox("searchString", null, new{@class="form-control", @placeholder="Søk..."} )
+                                <div class="input-group-append">
+                                    <button class="btn btn-light" type="submit">Søk</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
             <table class="table table-responsive-sm">
                 <thead class="table-light">
                     <tr>
@@ -202,7 +232,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    }
+                                   
                                     <div class="col-sm-1"></div>
                                     <!--Søkefelt-->
                                     <div class="col-sm-4">

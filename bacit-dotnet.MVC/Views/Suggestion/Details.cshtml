@@ -6,112 +6,112 @@
 @{
     ViewBag.Title = "Propositio | " + Model.suggestion.title;
 }
-<div class="container details-container mt-5">
-    @if (ViewBag.Message != "")
+
+@if (ViewBag.Message != "")
+{
+    @ViewBag.Message
+}
+<div class="row d-flex justify-content-end">
+    @if (Model.suggestion.author.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin"))
     {
-        @ViewBag.Message
+        <a asp-action="Edit" asp-controller="Suggestion" asp-route-id="@Model.suggestion.suggestion_id" class="fw-light text-end">Rediger Forslag</a>
     }
-    <div class="row d-flex justify-content-end">
-        @if (Model.suggestion.author.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin"))
+</div>
+<!--Topprad (Tittel, Markert)-->
+
+<div class="row d-flex justify-content-center">
+    <div class="col-9">
+        <h4 class="fw-bold text-start">@Model.suggestion.title</h4>
+    </div>
+    <div class="col-3 d-flex">
+        @if (Model.suggestion.favorite)
         {
-            <a asp-action="Edit" asp-controller="Suggestion" asp-route-id="@Model.suggestion.suggestion_id" class="fw-light text-end">Rediger Forslag</a>
+            <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" class="justify-content-center" />
+            <p class="m-0 fw-light">Månedens Forslag!</p>
         }
-    </div>
-    <!--Topprad (Tittel, Markert)-->
 
-    <div class="row d-flex justify-content-center">
-        <div class="col-9">
-            <h4 class="fw-bold text-start">@Model.suggestion.title</h4>
-        </div>
-        <div class="col-3 d-flex">
-            @if (Model.suggestion.favorite)
-            {
-                <img src="/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg" alt="Bootstrap" width="24" height="24" class="justify-content-center" />
-                <p class="m-0 fw-light">Månedens Forslag!</p>
-            }
-
-        </div>
-    </div>
-    <!--Mellomrad (Info om forfatter/ansvarlig/dato og status)-->
-    <div class="row d-flex justify-content-left">
-        <div class="col-8">
-            <p class="m-0 fw-light">Skrevet Av:</p>
-            <p class="m-0">@Model.employee.name</p>
-            <p class="m-0 fw-light">Ansvarlig:</p>
-            <p class="m-0">@Model.suggestion.responsible_employee.name</p>
-        </div>
-
-        <div class="col-4 justify-content-end">
-            <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                <div id="circle-container">
-
-                    @switch (Model.suggestion.status)
-                    {
-                        case STATUS.PLAN:
-                            <div class="quarter top-left hiddenCircle"></div>
-                            <div class="quarter top-right"></div>
-                            <div class="quarter bottom-left hiddenCircle"></div>
-                            <div class="quarter bottom-right hiddenCircle"></div>
-                            <div class="fill-circle">
-                                <p class="text-center">@Model.suggestion.status.ToString()</p>
-                            </div>
-                            break;
-                        case STATUS.DO:
-                            <div class="quarter top-left hiddenCircle"></div>
-                            <div class="quarter top-right"></div>
-                            <div class="quarter bottom-left hiddenCircle"></div>
-                            <div class="quarter bottom-right"></div>
-                            <div class="fill-circle">
-                                <p class="text-center">@Model.suggestion.status.ToString()</p>
-                            </div>
-                            break;
-                        case STATUS.STUDY:
-                            <div class="quarter top-left hiddenCircle"></div>
-                            <div class="quarter top-right"></div>
-                            <div class="quarter bottom-left"></div>
-                            <div class="quarter bottom-right"></div>
-                            <div class="fill-circle">
-                                <p class="text-center">@Model.suggestion.status.ToString()</p>
-                            </div>
-                            break;
-                        case STATUS.ACT:
-                            <div class="quarter top-left"></div>
-                            <div class="quarter top-right"></div>
-                            <div class="quarter bottom-left"></div>
-                            <div class="quarter bottom-right"></div>
-                            <div class="fill-circle">
-                                <p class="text-center">@Model.suggestion.status.ToString()</p>
-                            </div>
-                            break;
-                        case STATUS.FINISHED:
-                            <div class="quarter top-left finished"></div>
-                            <div class="quarter top-right finished"></div>
-                            <div class="quarter bottom-left finished"></div>
-                            <div class="quarter bottom-right finished"></div>
-                            <div class="fill-circle">
-                                <p class="text-center">Ferdig!</p>
-                            </div>
-                            break;
-                        case STATUS.JUSTDOIT:
-                            <div class="quarter top-left jdi"></div>
-                            <div class="quarter top-right jdi"></div>
-                            <div class="quarter bottom-left jdi"></div>
-                            <div class="quarter bottom-right jdi"></div>
-                            <div class="fill-circle">
-                                <p class="text-center">Just Do It</p>
-                            </div>
-                            break;
-                    }
-            </a>
-            @if (Model.suggestion.status != STATUS.FINISHED && (Model.suggestion.author.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin")))
-            {
-                <a asp-controller="suggestion" asp-action="UpdateStatus" asp-route-suggestion_id="@Model.suggestion.suggestion_id" asp-route-status="@Model.suggestion.status" class="btn btn-primary btn-sm mt-1">  Neste Fase</a>
-            }
-        </div>
-    </div>
-    <div class="col-4">
     </div>
 </div>
+<!--Mellomrad (Info om forfatter/ansvarlig/dato og status)-->
+<div class="row d-flex justify-content-left">
+    <div class="col-8">
+        <p class="m-0 fw-light">Skrevet Av:</p>
+        <p class="m-0">@Model.employee.name</p>
+        <p class="m-0 fw-light">Ansvarlig:</p>
+        <p class="m-0">@Model.suggestion.responsible_employee.name</p>
+    </div>
+
+    <div class="col-4 justify-content-end">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <div id="circle-container">
+                @switch (Model.suggestion.status)
+                {
+                    case STATUS.PLAN:
+                        <div class="quarter top-left hiddenCircle"></div>
+                        <div class="quarter top-right _PLAN"></div>
+                        <div class="quarter bottom-left hiddenCircle"></div>
+                        <div class="quarter bottom-right hiddenCircle"></div>
+                        <div class="fill-circle">
+                            <p class="text-center">@Model.suggestion.status.ToString()</p>
+                        </div>
+                        break;
+                    case STATUS.DO:
+                        <div class="quarter top-left hiddenCircle"></div>
+                        <div class="quarter top-right _PLAN"></div>
+                        <div class="quarter bottom-left hiddenCircle"></div>
+                        <div class="quarter bottom-right _DO"></div>
+                        <div class="fill-circle">
+                            <p class="text-center">@Model.suggestion.status.ToString()</p>
+                        </div>
+                        break;
+                    case STATUS.STUDY:
+                        <div class="quarter top-left hiddenCircle"></div>
+                        <div class="quarter top-right _PLAN"></div>
+                        <div class="quarter bottom-left _STUDY"></div>
+                        <div class="quarter bottom-right _DO"></div>
+                        <div class="fill-circle">
+                            <p class="text-center">@Model.suggestion.status.ToString()</p>
+                        </div>
+                        break;
+                    case STATUS.ACT:
+                        <div class="quarter top-left _ACT"></div>
+                        <div class="quarter top-right _PLAN"></div>
+                        <div class="quarter bottom-left _STUDY"></div>
+                        <div class="_DO quarter bottom-right _DO"></div>
+                        <div class="fill-circle">
+                            <p class="text-center">@Model.suggestion.status.ToString()</p>
+                        </div>
+                        break;
+                    case STATUS.FINISHED:
+                        <div class="quarter top-left finished"></div>
+                        <div class="quarter top-right finished"></div>
+                        <div class="quarter bottom-left finished"></div>
+                        <div class="quarter bottom-right finished"></div>
+                        <div class="fill-circle">
+                            <p class="text-center">Ferdig!</p>
+                        </div>
+                        break;
+                    case STATUS.JUSTDOIT:
+                        <div class="quarter top-left jdi"></div>
+                        <div class="quarter top-right jdi"></div>
+                        <div class="quarter bottom-left jdi"></div>
+                        <div class="quarter bottom-right jdi"></div>
+                        <div class="fill-circle">
+                            <p class="text-center">Just Do It</p>
+                        </div>
+                        break;
+                }
+            </div>
+        </a>
+        @if (Model.suggestion.status != STATUS.FINISHED && (Model.suggestion.author.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin")))
+        {
+            <a asp-controller="suggestion" asp-action="UpdateStatus" asp-route-suggestion_id="@Model.suggestion.suggestion_id" asp-route-status="@Model.suggestion.status" class="btn btn-primary btn-sm mt-1">  Neste Fase</a>
+        }
+    </div>
+</div>
+<div class="col-4">
+</div>
+
 <div class="row d-flex justify-content-center">
     <div class="col-12 mt-1  justify-content-end">
         <p class="m-0"><span class="fw-light">Opprettet: </span> @Model.suggestion.timestamp.createdTimestamp.ToString("dd/M/yyyy")<span class="fw-light due">  Frist: </span><span class="due"> @Model.suggestion.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span></p>
@@ -160,7 +160,7 @@
     </div>
 </div>
 <div>
-<p class="due m-0"><span class="fw-light">Oppdatert: </span>@Model.suggestion.timestamp.lastUpdatedTimestamp.ToString("dd/M/yyyy")</p>
+    <p class="due m-0"><span class="fw-light">Oppdatert: </span>@Model.suggestion.timestamp.lastUpdatedTimestamp.ToString("dd/M/yyyy")</p>
 </div>
 
 <!--List alle kommentarer-->

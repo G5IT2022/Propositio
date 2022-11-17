@@ -13,6 +13,7 @@ using System.Text;
 using System.Security.Claims;
 using System.Web.WebPages;
 using bacit_dotnet.MVC.Helpers;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -178,5 +179,34 @@ namespace bacit_dotnet.MVC.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult MyTeams()
+        {
+            MyTeamsViewModel model = new MyTeamsViewModel();
+            model.teams = new List<TeamEntity>();
+            //Henter den ansatte
+            model.employee = employeeRepository.GetEmployee(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)));
+            
+            foreach(TeamEntity team in model.employee.teams)
+            {
+                //Vi trenger mer utfyllende informasjon om teamene så vi må bruke getteam metoden
+                model.teams.Add(employeeRepository.GetTeam(team.team_id));
+            }
+
+            foreach(TeamEntity team in model.teams)
+            {
+                //Vi trenger også all informasjon om de ansatte
+                foreach(EmployeeEntity emp in team.employees)
+                {
+                    emp.suggestions = suggestionRepository.GetSuggestionsByAuthorID(emp.emp_id);
+                    foreach(SuggestionEntity suggestion in emp.suggestions)
+                    {
+                        suggestion.author = employeeRepository.GetEmployee(suggestion.author_emp_id);
+                        suggestion.responsible_employee = employeeRepository.GetEmployee(suggestion.ownership_emp_id);
+                    }
+                }
+            }
+            return View(model);
+        }
     }
 }
