@@ -13,7 +13,7 @@ namespace bacit_dotnet.MVC.Models.AdminViewModels
 {
     public class AdminEditUserModel
     {
-        internal EmployeeEntity user;
+        public EmployeeEntity user { get; set; }
 
         [DisplayName("Fornavn:")]
         [Required(ErrorMessage = "Vennligst legg inn fornavn på den ansatte.")]

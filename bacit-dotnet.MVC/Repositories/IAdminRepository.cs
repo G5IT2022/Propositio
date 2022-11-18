@@ -28,7 +28,7 @@ namespace bacit_dotnet.MVC.Repositories
         //public int CreateRole();
         public int CreateTeam();
         public int CreateEmployee(EmployeeEntity emp);
-        public int UpdateEmployee();
+        public int UpdateEmployee(EmployeeEntity emp);
         public List<SelectListItem> GetRoleSelectList();
     }
 }

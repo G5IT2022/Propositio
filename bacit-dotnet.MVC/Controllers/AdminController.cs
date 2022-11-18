@@ -297,8 +297,29 @@ namespace bacit_dotnet.MVC.Controllers
         public IActionResult EditUser(int id)
         {
             AdminEditUserModel aeum = new AdminEditUserModel();
+            aeum.possibleRoles = adminRepository.GetRoleSelectList();
             aeum.user = employeeRepository.GetEmployee(id);
             return View(aeum);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateUser(EmployeeEntity emp)
+        {
+            
+            if (ModelState.IsValid)
+            {
+                adminRepository.UpdateEmployee(new EmployeeEntity
+                {
+                    name = emp.name,
+                    passwordhash = emp.passwordhash,
+                    role_id = emp.role_id
+                });
+                return RedirectToAction("Index", "Admin", new {id = emp.emp_id});
+            }
+            else
+            {
+                return RedirectToAction("Index", "Admin", new {id = emp.emp_id});
+            }
         }
         
     }

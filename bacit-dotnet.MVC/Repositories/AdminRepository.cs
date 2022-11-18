@@ -177,9 +177,13 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
-        public int UpdateEmployee()
+        public int UpdateEmployee(EmployeeEntity emp)
         {
-            throw new NotImplementedException();
+            var query = @"UPDATE Employee SET name = @name, passwordhash = @passwordhash, role_id = @role_id WHERE emp_id = @emp_id";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection) { 
+                var affectedRows = connection.Execute(query, new {name = emp.name, passwordhash = emp.passwordhash, role_id = emp.role_id, emp_id = emp.emp_id });
+                return affectedRows;
+            }
         }
 
        
