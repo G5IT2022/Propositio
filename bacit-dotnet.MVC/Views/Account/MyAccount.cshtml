@@ -16,23 +16,33 @@
         <button class="nav-link" id="suggestions-tab" data-bs-toggle="tab" data-bs-target="#suggestions" type="button" role="tab" aria-controls="profile" aria-selected="false">Mine Forslag</button>
     </li>
 </ul>
-<!--Informasjon om brukeren-->
-<div class="tab-content" id="myTabContent">
+<!--Taben for mine opplysninger-->
+<div class="tab-content align-items-center" id="myTabContent">
     <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
-        <div class="col-12">Navn: @Model.employee.name</div>
-        <div class="col-12">Ansattnummer: @Model.employee.emp_id</div>
-        <div class="col-12">Rolle: @Model.employee.role.role_name</div>
-        <div class="col-12">Team</div>
-        @foreach (TeamEntity team in Model.employee.teams)
-        {
-            <div class="col-12">@team.team_name</div>
-        }
+        <!--Her er informasjonen om brukeren-->
+        <table class="table table-striped table-bordered">
+            &nbsp;
+            <h5 align="center"><b>Oversikt over mine opplysninger</b></h5>
+            &nbsp;
+            <!--Her ligger overskriften i tabellene-->
+            <tr>
+                <th scope="col">Navn</th>
+                <th scope="col">Rolle</th>
+                <th scope="col">Ansattnummer</th>
+            </tr>
+            <!--Her henter man navnet, rollen, og IDen basert på employee modellen-->
+            <tr>
+                <td>@Model.employee.name</td>
+                <td>@Model.employee.role.role_name</td>
+                <td>@Model.employee.emp_id</td>
+            </tr>
+        </table>
     </div>
     <!--Informasjon om hvem som er i team med brukeren-->
     <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="team-tab">
         <br />
         <!--foreach-loop som skriver ut alle medlemmene i teamet ditt-->
-        <h5><b>Oversikt over mine team</b></h5>
+        <h5 align="center"><b>Oversikt over mine team</b></h5>
         @foreach (TeamEntity team in Model.teams)
         {
             <br />
@@ -58,8 +68,11 @@
         }
     </div>
     <div class="tab-pane fade" id="suggestions" role="tabpanel" aria-labelledby="suggestions-tab">
+        &nbsp;
+        <h5 align="center"><b>Oversikt over mine forslag</b></h5>
+        &nbsp;
         <!--foreach-loop som skriver ut forslagene til en ansatt-->
-        @Html.Partial("_FilterSortControl", new SortOrderModel{actionName = "MyAccount", controllername = "Account", categories = Model.categories})
+        @Html.Partial("_FilterSortControl", new SortOrderModel { actionName = "MyAccount", controllername = "Account", categories = Model.categories })
         @foreach (SuggestionEntity sugg in Model.suggestions)
         {
             @Html.Partial("_Suggestion", sugg)
