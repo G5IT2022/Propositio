@@ -290,7 +290,19 @@ namespace bacit_dotnet.MVC.Controllers
         }
         public IActionResult DeleteTeamMember(int emp_id, int team_id)
         {
-            var result = adminRepository.DeleteTeamMember(emp_id);
+            var employee = employeeRepository.GetEmployee(emp_id);
+
+            //Hvis den ansatte er medlem i flere team, slett fra teamet
+            if(employee.teams.Count > 1)
+            {
+                var result = adminRepository.DeleteTeamMember(emp_id, team_id);
+            }
+            else
+            {
+                //Hvis ikke må vi sørge for at den ansatte er med i minst ett team så vi legger de til i "Uten Team" teamet
+                employeeRepository.InsertMemberToTeam(1, emp_id);
+                adminRepository.DeleteTeamMember(emp_id, team_id);
+            }
             return RedirectToAction("EditTeam", "Admin", new { id = team_id });
         }
 

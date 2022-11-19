@@ -17,7 +17,7 @@ namespace bacit_dotnet.MVC.Repositories
         public int UpdateEmployee(EmployeeEntity emp);
         public int CreateTeam();
         public int UpdateTeam(TeamEntity team);
-        public int DeleteTeamMember(int emp_id);
+        public int DeleteTeamMember(int emp_id, int team_id);
         public string CreateNewCategory(string category);
         public int DeleteCategory(int category_id);      
         public string CreateNewRole(RoleEntity role);

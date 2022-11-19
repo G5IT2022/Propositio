@@ -160,13 +160,14 @@ namespace bacit_dotnet.MVC.Repositories
          * @Parameter emp_id
          * @Return emp_id i teamet blir slettet
          */
-        public int DeleteTeamMember(int emp_id)
+        public int DeleteTeamMember(int emp_id, int team_id)
         {
-            var query = @"DELETE FROM TeamList WHERE emp_id = @emp_id";
+            var query = @"DELETE FROM TeamList WHERE emp_id = @emp_id AND team_id = @team_id";
+
             //var query3 = @"Update TeamList Set status=0 WHERE emp_id = @emp_id";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                var affectedRows = connection.Execute(query, new { emp_id = emp_id });
+                var affectedRows = connection.Execute(query, new { emp_id = emp_id, team_id = team_id });
                 return affectedRows;
             }
         }
