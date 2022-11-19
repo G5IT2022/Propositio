@@ -1,17 +1,10 @@
-﻿using bacit_dotnet.MVC.Authentication;
-using bacit_dotnet.MVC.Entities;
-using bacit_dotnet.MVC.Models;
+﻿using bacit_dotnet.MVC.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Web;
 using bacit_dotnet.MVC.Models.Suggestion;
 using bacit_dotnet.MVC.Repositories;
 using bacit_dotnet.MVC.Helpers;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Web.WebPages.Html;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.EntityFrameworkCore.Update.Internal;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -19,12 +12,11 @@ namespace bacit_dotnet.MVC.Controllers
     [Authorize]
     public class SuggestionController : Controller
     {
-
         private readonly IEmployeeRepository employeeRepository;
         private readonly ISuggestionRepository suggestionRepository;
         private readonly IFileRepository fileRepository;
 
-
+        //Constructor
         public SuggestionController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository, IFileRepository fileRepository)
         {
             this.suggestionRepository = suggestionRepository;
@@ -32,14 +24,14 @@ namespace bacit_dotnet.MVC.Controllers
             this.fileRepository = fileRepository;
         }
 
-        //Get: /Suggestion/Index
+        //GET: /Suggestion/Index
         [HttpGet]
         public IActionResult Index(string sortOrder, string searchString, string filterParameter)
         {
             //Vi måtte bruke en annen modell enn den vi hadde før fordi vi må filtrere alle forslagene så vi må bruke en modell med kun listen over forslag
             SuggestionViewModel model = new SuggestionViewModel();
-
             model.suggestions = suggestionRepository.GetAll();
+
             //Henter kategoriene for filtrering
             model.categories = suggestionRepository.GetAllCategories();
             foreach (SuggestionEntity suggestion in model.suggestions)
@@ -119,19 +111,20 @@ namespace bacit_dotnet.MVC.Controllers
             return View(model);
         }
 
-        //Get: /Suggestion/Register
+        //GET: /Suggestion/Register
         [HttpGet]
         public IActionResult Register(SuggestionRegisterModel model)
         {
+            //Sjekker om modellen allerede er preparert, hvis den ikke er det så prepares den. 
             if (model.possibleResponsibleEmployees == null)
             {
-               model = prepareSuggestionRegisterModel();
-               ModelState.Clear();
+                model = prepareSuggestionRegisterModel();
+                ModelState.Clear();
             }
             return View(model);
         }
 
-        //Post: /Suggestion/Create
+        //POST: /Suggestion/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateSuggestion(SuggestionEntity model, IFormCollection collection, IFormFile file = null)
@@ -154,18 +147,28 @@ namespace bacit_dotnet.MVC.Controllers
             }
 
             //Sett statusen på forslaget basert på om justdoit er true eller false, hvis man ikke har .Contains("true") så fungerer det ikke av en eller annen merkelig grunn
-            Console.WriteLine(collection["isJustDoIt"]);
             model.status = collection["isJustDoIt"].Contains("true") == true ? STATUS.JUSTDOIT : STATUS.PLAN;
 
             //Henter ansattnr til forfatteren
             model.author_emp_id = Int32.Parse(User.FindFirstValue(ClaimTypes.UserData));
 
-            if (collection["dueByTimestamp"].Equals("")) {
+
+            //Sjekker om det er satt en frist
+            if (collection["dueByTimestamp"].Equals("")){
                 ViewBag.TimestampError = "Legg til en frist";
                 return View("Register", newModel);
             }
+
+            //Sjekker om fristen er satt i fremtiden
+            DateTime newTime = Convert.ToDateTime(collection["dueByTimestamp"]);
+            if (newTime.CompareTo(DateTime.Now) < 1)
+            {
+                ViewBag.TimestampError = "Fristen du har valgt har gått ut, vennligst velg en annen frist.";
+                return View("Register", newModel);
+
+            }
             model.timestamp = new TimestampEntity { dueByTimestamp = Convert.ToDateTime(collection["dueByTimestamp"]) };
-            
+
 
             //Hjemmelaget verifisering for kategorier, dette sikrer at man har valgt minst en kategori
             var categories = parseCategories(collection);
@@ -208,80 +211,25 @@ namespace bacit_dotnet.MVC.Controllers
                 suggestionRepository.CreateSuggestion(model);
                 ViewBag.Message = "Forslaget ble postet!";
             }
-            return View("Register", newModel);
-
+            return RedirectToAction("Index");
         }
 
-        /// <summary>
-        /// Denne metoden klargjør nytt forslag modellen med å hente kategorier og de ansatte
-        /// @Return: SuggestionRegisterModel full av data
-        /// </summary>
-       private SuggestionRegisterModel prepareSuggestionRegisterModel()
-        {
-            SuggestionRegisterModel model = new SuggestionRegisterModel();
-            model.categories = suggestionRepository.GetAllCategories();
-            model.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
-
-            return model;
-        }
-
-
-
-        /**
-         * Denne private metoden gjør at:
-         * 1. du kan hente list av katergorier
-         * 2. du kan legge til kategorier som du velger fra checkbox til forslaget.
-         * @Paramter collection - en samling av kategorier
-         * @Return utvaglte kategorier listen
-         */
-        private List<CategoryEntity> parseCategories(IFormCollection collection)
-        {
-            List<CategoryEntity> availableCategories = suggestionRepository.GetAllCategories();
-            List<CategoryEntity> categories = new List<CategoryEntity>();
-            foreach (var item in collection.Keys)
-            {
-                foreach (var category in availableCategories)
-                {
-                    if (category.category_name.Equals(item))
-                    {
-                        categories.Add(category);
-                    }
-                }
-            }
-            return categories;
-        }
-
-        /**
-         * Dette er en metode for å hente info til ett forslag og alle kommentarer som tilhører til forslaget.
-         * @Parameter suggestion_id
-         * @Return informasjon av et forslag i Details Viewet
-         */
-        // Get: /Suggestion/Details/id
+        //GET: /Suggestion/Details/id
         [HttpGet]
         public IActionResult Details(int id)
         {
-            SuggestionDetailsModel detailsModel = new SuggestionDetailsModel();
-            detailsModel.suggestion = suggestionRepository.GetSuggestionBySuggestionIDWithCommentsAndImages(id);
-            detailsModel.employee = employeeRepository.GetEmployee(detailsModel.suggestion.author_emp_id);
-            detailsModel.suggestion.author = employeeRepository.GetEmployee(detailsModel.suggestion.author_emp_id);
-            detailsModel.suggestion.responsible_employee = employeeRepository.GetEmployee(detailsModel.suggestion.ownership_emp_id);
-            foreach (CommentEntity comment in detailsModel.suggestion.comments)
+            SuggestionDetailsModel model = prepareSuggestionDetailsModel(id);
+            foreach (CommentEntity comment in model.suggestion.comments)
             {
                 if (comment != null)
                 {
                     comment.poster = employeeRepository.GetEmployee(comment.emp_id);
                 }
             }
-
-
-            if (detailsModel.suggestion == null)
-            {
-                return RedirectToAction("Index");
-            }
-            return View(detailsModel);
+            return View(model);
         }
 
-        //Post: /Suggestion/CreateComment
+        //POST: /Suggestion/CreateComment
         [HttpPost]
         public IActionResult CreateComment(SuggestionDetailsModel model, IFormCollection collections)
         {
@@ -307,11 +255,7 @@ namespace bacit_dotnet.MVC.Controllers
             }
         }
 
-        /*
-         *Metode for å redigere kommentar 
-         * @Param comment_id og suggestion_id
-        */
-        //Post: /Suggestion/EditComment
+        //POST: /Suggestion/EditComment
         [HttpPost]
         public IActionResult EditComment(CommentEntity comment, int suggestion_id)
         {
@@ -334,12 +278,7 @@ namespace bacit_dotnet.MVC.Controllers
 
         }
 
-        /*
-         * Denne metoden gjør at du kan slette kommentarer i forslaget
-         * @Parameter comment_id og suggestion id
-         * @Return Suggestion/Details/suggestion_id
-         */
-        //Post: /Suggestion/Deletecomment
+        //POST: /Suggestion/Deletecomment/id
         public IActionResult DeleteComment(int comment_id, int suggestion_id)
         {
             var result = suggestionRepository.DeleteComment(comment_id);
@@ -347,41 +286,53 @@ namespace bacit_dotnet.MVC.Controllers
 
         }
 
-        //Favoritter
-        //Post: /Suggestion/Favorite/id
+        //POST: /Suggestion/Favorite/id
         [HttpPost]
-        public void Favorite(int id)
+        public void Favorite(int id, bool isFavorite)
         {
-            SuggestionEntity suggestion = suggestionRepository.GetSuggestionBySuggestionID(id);
-            suggestion.favorite = !suggestion.favorite;
-            suggestionRepository.Favorite(id, suggestion.favorite);
+            isFavorite = !isFavorite;
+            suggestionRepository.Favorite(id, isFavorite);
         }
-        //Get: /Suggestion/Edit/id
+
+        //GET: /Suggestion/Edit/id
         [HttpGet]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int id, SuggestionEditModel model = null)
         {
-            SuggestionEditModel model = new SuggestionEditModel();
-            model.suggestion = suggestionRepository.GetSuggestionBySuggestionIDWithCommentsAndImages(id);
-            model.suggestion.responsible_employee = employeeRepository.GetEmployee(model.suggestion.ownership_emp_id);
-            model.suggestion.author = employeeRepository.GetEmployee(model.suggestion.author_emp_id);
-            model.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
+            //Hvis vi kommer til denne metoden fra detaljersiden vil forslaget i modellen være null, ellers vil den ha en verdi. 
+            if (model.suggestion == null)
+            {
+                model = prepareSuggestionEditModel(id);
+            }
 
             return View(model);
         }
 
-        //Post: /Suggestion/EditSuggestion
+        //POST: /Suggestion/EditSuggestion
         [ValidateAntiForgeryToken]
         [HttpPost]
         public IActionResult EditSuggestion(SuggestionEditModel model)
         {
+            //Model 
+            //Fjerner overflødig data som ikke skal med i verifiseringen. 
             ModelState.Remove("possibleResponsibleEmployees");
             ModelState.Remove("suggestion.author");
             ModelState.Remove("suggestion.responsible_employee");
+
+            SuggestionEditModel newModel = prepareSuggestionEditModel(model.suggestion.suggestion_id);
             //Denne sjekker om året ikke er 1 som er default året på en DateTime, dvs at ny dato er satt. 
             //Finnes sikkert en mer sikker måte å gjøre dette på men det fungerer. 
-            if (model.newDueByDate == null)
+            if (model.newDueByDate.Year != 1)
             {
-                model.suggestion.timestamp.dueByTimestamp = model.newDueByDate;
+                //Sjekker om man har satt en dato i fremtiden
+                if (model.newDueByDate.CompareTo(DateTime.Now) > 0)
+                {
+                    model.suggestion.timestamp.dueByTimestamp = model.newDueByDate;
+                }
+                else
+                {
+                    ViewBag.Message = "Fristen du har valgt har gått ut, vennligst velg en annen frist.";
+                    return View("Edit", newModel);
+                }
             }
             //Sjekker om ansvaret er oppdatert
             if (model.responsibleEmployeeID != model.suggestion.ownership_emp_id)
@@ -402,17 +353,22 @@ namespace bacit_dotnet.MVC.Controllers
             };
 
             int result = suggestionRepository.UpdateSuggestion(suggestion);
-            if (result == 0)
+            if (result != 0)
             {
-                //Noe gikk galt
-                ViewBag.Message = "";
+                //Det funket, returner brukeren til detaljer siden
+                return RedirectToAction("Details", new { id = model.suggestion.suggestion_id });
             }
-            return RedirectToAction("Edit", new { id = model.suggestion.suggestion_id });
-
+            //Hvis metoden kommer så langt har noe gått galt, send brukeren tilbake til redigersiden med feilmelding. 
+            ViewBag.Message = "Forslaget kunne ikke bli oppdatert, prøv igjen.";
+            return View("Edit", new { id = model.suggestion.suggestion_id, model = newModel });
         }
 
-        //Oppdaterer status på et forslag
-        //Suggestion/UpdateStatus
+        /// <summary>
+        /// Denne metoden oppdaterer statusen på ett forslag
+        /// </summary>
+        /// <param name="suggestion_id">En suggestion id</param>
+        /// <param name="status">En status i fra STATUS enum i suggestionEntity</param>
+        /// <returns>IActionResult Suggestion/Details/id</returns>
         public IActionResult UpdateStatus(int suggestion_id, STATUS status)
         {
             switch (status)
@@ -434,6 +390,74 @@ namespace bacit_dotnet.MVC.Controllers
                     break;
             }
             return RedirectToAction("Details", new { id = suggestion_id });
+        }
+
+
+        /// <summary>
+        /// Denne metoden gjør en IFormCollection om til en liste med categryEntities så vi kan legge de inn i db
+        /// </summary>
+        /// <param name="collection">En IFormCollection</param>
+        /// <returns>En liste med CategoryEntity</returns>
+        private List<CategoryEntity> parseCategories(IFormCollection collection)
+        {
+            List<CategoryEntity> availableCategories = suggestionRepository.GetAllCategories();
+            List<CategoryEntity> categories = new List<CategoryEntity>();
+            foreach (var item in collection.Keys)
+            {
+                foreach (var category in availableCategories)
+                {
+                    if (category.category_name.Equals(item))
+                    {
+                        categories.Add(category);
+                    }
+                }
+            }
+            return categories;
+        }
+
+
+        /// <summary>
+        /// Denne metoden klargjør en ny SuggestionRegisterModel full av data
+        /// </summary>
+        /// <returns>SuggestionRegisterModel</returns>
+        private SuggestionRegisterModel prepareSuggestionRegisterModel()
+        {
+            SuggestionRegisterModel model = new SuggestionRegisterModel();
+            model.categories = suggestionRepository.GetAllCategories();
+            model.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
+
+            return model;
+        }
+
+        /// <summary>
+        /// Denne metoden klargjør en ny SuggestionDetailsModel full av data
+        /// </summary>
+        /// <param name="suggestion_id">En suggestion id</param>
+        /// <returns>SuggestionDetailsModel</returns>
+        private SuggestionDetailsModel prepareSuggestionDetailsModel(int suggestion_id)
+        {
+            SuggestionDetailsModel model = new SuggestionDetailsModel();
+            model.suggestion = suggestionRepository.GetSuggestionBySuggestionID(suggestion_id);
+            model.employee = employeeRepository.GetEmployee(model.suggestion.author_emp_id);
+            model.suggestion.author = employeeRepository.GetEmployee(model.suggestion.author_emp_id);
+            model.suggestion.responsible_employee = employeeRepository.GetEmployee(model.suggestion.ownership_emp_id);
+
+            return model;
+        }
+
+        /// <summary>
+        /// Denne metoden klargjør en ny SuggestionEditModel full av data
+        /// </summary>
+        /// <param name="suggestion_id">En suggestion id</param>
+        /// <returns>SuggestionEditModel</returns>
+        private SuggestionEditModel prepareSuggestionEditModel(int suggestion_id)
+        {
+            SuggestionEditModel model = new SuggestionEditModel();
+            model.suggestion = suggestionRepository.GetSuggestionBySuggestionID(suggestion_id);
+            model.suggestion.responsible_employee = employeeRepository.GetEmployee(model.suggestion.ownership_emp_id);
+            model.suggestion.author = employeeRepository.GetEmployee(model.suggestion.author_emp_id);
+            model.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
+            return model;
         }
     }
 }

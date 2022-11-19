@@ -23,20 +23,21 @@
 }
 
 <script type="text/javascript">
-    function Fav(id) {
+    function Fav(id, isFavorite) {
 
         var url = '@Url.Action("Favorite", "Suggestion")';
         var element = document.getElementById(id);
         var fav = "https://localhost:4000/img/bootstrap-icons-1.9.1/bookmark-star-fill.svg"
         var unfav = "https://localhost:4000/img/bootstrap-icons-1.9.1/bookmark-star.svg"
         var src = element.src;
-
+        
 
         $.ajax({
             url: url,
             type: 'POST',
             data: {
-                id: id
+                id: id,
+                isFavorite: isFavorite
             },
             success: function (data) {
                 if (data.length == 0) {
