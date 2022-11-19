@@ -42,7 +42,7 @@
                 <!--text for stolpediagram, Y-verdier -->
                 @{
                     var zip = Model.ListNumberOfSuggestionsPerStatus.Zip(Model.statuses, (i, j) => (i, j));
-                    Model.statuses.Reverse();
+                    
                 }
                 @foreach ((int n, SuggestionEntity s) in zip)
                 {
