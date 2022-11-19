@@ -9,10 +9,7 @@
 }
 
 <div class="container details-container mt-5">
-    @if (ViewBag.Message != "")
-    {
-        @ViewBag.Message
-    }
+   <span class="text-danger m-2">@ViewBag.Message</span>
     <div class="row">
         <div class="col-sm-4">
             <h3 class="fw-bold suggtitle2">@Model.suggestion.title</h3>
@@ -56,8 +53,10 @@
                 <input type="date" class="form-control" id="newDueByDate" name="newDueByDate" value="@Model.newDueByDate" />
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Lagre endringer</button>
-        <button class="btn btn-danger" asp-action="index" asp-controller="suggestion">Avbryt</button>
+        <div class="btn-group mt-2">
+            <button type="submit" class="btn btn-primary m-2">Lagre endringer</button>
+            <a class="btn btn-danger m-2" asp-action="Index" asp-controller="Suggestion">Avbryt</a>
+        </div>
     </form>
 </div>
 
