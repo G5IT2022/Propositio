@@ -7,60 +7,75 @@
 @{
     ViewBag.Title = "Admin | Rediger Team";
 }
-<body>
-    <div class="container editteam-container t-5">
+<form asp-controller="Admin" asp-action="EditTeam" method="post">
+
+    <div class="container edit-team-container mt-3">
         <div class="row">
-            <div class="col">
-                <div />
-                <div class="col text-center">
-                    <h3>Rediger Team</h3>
-                </div>
-                <div class="col></div>
+            <div class="col-12">
+                <h4>Redigere Team</h4>
+                <hr />
             </div>
-            <div class="row-mt-3">
+        </div>
+        <input name="team_id" value="@Model.team.team_id" hidden />
+        <!--Textbox for å redigere Teamnavn-->
+        <div class="form-group text-center">
+            @Html.LabelFor(model =>model.team_name, htmlAttributes: new { @class = "control-label col-sm-4 fw-bold" })
+            <div class="row text-center">
                 <div class="col-sm-4"></div>
-                <div class="col-sm-4">
-                    <div class="form-group text-center">
-                        <input @Html.TextBoxFor(aetm => aetm.team.team_name, new { @class = "form-control" })
-                    </div><br />
+                <div class="col-sm-4 mb-2">
+                    @Html.EditorFor(model => model.team.team_name, new {htmlAttributes = new {@class = "form-control" }})
                 </div>
             </div>
-            <form asp-action="EditTeam" asp-controller="Admin" method="post">
-                <div class="riw text-center mt-4">
-                    <div class="col">
-                        <b>Ansattnummer</b><div />
-                        <div class="col">
-                            <b>Navn</b><div />
-                            <div class="col"><b>Rolle</b></div>
-                            <div /><hr />
-                            <div class="row text-center mt-3">
+            <div class="col"></div>
+        </div>
+        <!--Ansatteliste Box for å legge til medlemmer i teamet-->
+        <div class="row text-center">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <p>
+                    <b>Legg til ansatte</b>
+                    @Html.ListBoxFor(model => model.selectedMemberTeamIDs, new MultiSelectList(Model.selectListEmployees, "Value", "Text"), new {@class="form-control", multiple = "multiple"})
+                </p>
+            </div>
+        </div>
+        <!--Ansatteliste Box for å velge ett Teamleder-->
+        <div class="row text-center">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <b>Velg Teamleder</b> &nbsp;&nbsp;&nbsp;
+                @Html.DropDownListFor(m => m.team_lead_id, Model.selectListForTeamLeader)
+            </div>
+        </div>
+        <!--List av existerende medlemmer i teamet-->
+        <div class="table-responsive mt-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ansattnavn</th>
+                        <th scope="col">Rolle</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (EmployeeEntity employee in Model.team.employees)
+                    {
+                        <tr>
+                            <td>@employee.name</td>
+                            <td>@employee.role.role_name</td>
+                            <td>
+                                <!--Slett teammedlemmer-->
+                            @Html.ActionLink("","DeleteTeamMember", "Admin", new {emp_id = employee.emp_id, team_id = Model.team.team_id}, new{onclick = "return confirm('Er du sikker på at du vil slette denne ansatt?')", @class="link-muted fas fa-trash"})
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!--Avbryt og Lagre knapper-->
+        <div class="form-group text-center">
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-danger">Avbryt</a>
+            <button type="submit" class="btn btn-outline-success mx-3">Lagre</button>
 
-                                @foreach (EmployeeEntity emp in Model.team.employees)
-                                {
-                                    <div class="row">
-                                        <div class="col-sm-3">
-                                            @emp.emp_id
-                                        </div>
-                                        <div class="col-sm-3">
-                                            @emp.name
-                                        </div>
-                                        <div class="col-sm-3">
-                                            @emp.role.role_name
-                                        </div>
-                                    </div>
-                                }
-
-                            </div>
-
-                            <div class="row">
-                                <div class="col-xs-12 mt-5">
-                                    <div class="text-center mt-xxl-5">
-                                        <button type="submit" class="btn btn-outline-danger px-4">Avbryt</button>
-                                        <button type="submit" class="btn btn-outline-success px-4">Lagre</button>
-                                    </div>
-                                </div>
-                            </div>
-
-
-            </form>
-</body>
+        </div>
+    </div>
+</form>

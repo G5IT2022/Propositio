@@ -11,6 +11,7 @@ using bacit_dotnet.MVC.Repositories;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using MySqlX.XDevAPI;
 using bacit_dotnet.MVC.Models.AdminViewModels.TeamModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -33,12 +34,12 @@ namespace bacit_dotnet.MVC.Controllers
         {
             AdminIndexViewModel aivm = new AdminIndexViewModel();
             aivm.employees = employeeRepository.GetEmployees();
-            aivm.teams = employeeRepository.GetTeams();
-            foreach(TeamEntity team in aivm.teams)
-            {
-                team.teamleader = employeeRepository.GetEmployee(team.team_lead_id);
-                
-            }
+            //aivm.teams = employeeRepository.GetTeams();
+            //foreach (TeamEntity team in aivm.teams)
+            //{
+            //    team.teamleader = employeeRepository.GetEmployee(team.team_lead_id);
+
+            //}
             aivm.categories = suggestionRepository.GetAllCategories();
             aivm.roles = adminRepository.GetAllRoles();
             AdminIndexViewModel model = new AdminIndexViewModel();
@@ -68,6 +69,11 @@ namespace bacit_dotnet.MVC.Controllers
                     break;
             }
             model.teams = employeeRepository.GetTeams();
+            foreach (TeamEntity team in model.teams)
+            {
+                team.teamleader = employeeRepository.GetEmployee(team.team_lead_id);
+
+            }
             model.categories = suggestionRepository.GetAllCategories();
             model.roles = adminRepository.GetAllRoles();
 
@@ -84,18 +90,6 @@ namespace bacit_dotnet.MVC.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public IActionResult CreateCategory(string category_name)
-        {
-            adminRepository.CreateNewCategory(category_name);
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult DeleteCategory(int category_id)
-        {
-            adminRepository.DeleteCategory(category_id);
-            return RedirectToAction("Index");
-        }
 
         /**
          * Denne metoden er for å registrere en ny bruker
@@ -134,14 +128,38 @@ namespace bacit_dotnet.MVC.Controllers
             }
             return View("NewUser", newModel);
         }
-        //Get: /admin/editteam/team_id
+
+        //Get: /admin/edituser/emp_id
         [HttpGet]
-        public IActionResult EditTeam(int id)
+        public IActionResult EditUser(int id)
         {
-            AdminEditTeamModel aetm = new AdminEditTeamModel();
-            aetm.team = employeeRepository.GetTeam(id);
-            return View(aetm);
+            AdminEditUserModel aeum = new AdminEditUserModel();
+            aeum.possibleRoles = adminRepository.GetRoleSelectList();
+            aeum.user = employeeRepository.GetEmployee(id);
+            return View(aeum);
         }
+
+
+        [HttpPost]
+        public IActionResult UpdateUser(EmployeeEntity emp)
+        {
+
+            if (ModelState.IsValid)
+            {
+                adminRepository.UpdateEmployee(new EmployeeEntity
+                {
+                    name = emp.name,
+                    passwordhash = emp.passwordhash,
+                    role_id = emp.role_id
+                });
+                return RedirectToAction("Index", "Admin", new { id = emp.emp_id });
+            }
+            else
+            {
+                return RedirectToAction("Index", "Admin", new { id = emp.emp_id });
+            }
+        }
+        
 
         //Get: Admin/CreateNewTeam
         [HttpGet]
@@ -216,6 +234,66 @@ namespace bacit_dotnet.MVC.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        //Get: /admin/editteam/team_id
+        [HttpGet]
+        public IActionResult EditTeam(int id)
+        {
+            AdminEditTeamModel adminEditTeamModel= new AdminEditTeamModel();
+            adminEditTeamModel.team = employeeRepository.GetTeam(id);
+            //Henter alle ansatte i listen fra databasen for employeeList
+            var employeeList = employeeRepository.GetEmployeeSelectList();
+            //selectListEmployees (i selectBox) inneholder ansatte som ikke inkludere de eksisterende ansatte i teamet
+            adminEditTeamModel.selectListEmployees = returnEmployeeNotInTeam(adminEditTeamModel.team, employeeList);
+            //Dette betyr at du kan hente den nående teamlederen av teamet, og sette den teamlederen å vises først i "velg teamleder dropdownlist"
+            adminEditTeamModel.team_lead_id = adminEditTeamModel.team.team_lead_id;
+            adminEditTeamModel.selectListForTeamLeader = new SelectList(employeeList, "Value", "Text", adminEditTeamModel.team.team_lead_id.ToString());
+            
+            return View(adminEditTeamModel);
+        }
+        public List<SelectListItem> returnEmployeeNotInTeam(TeamEntity team, List<SelectListItem> employeeList)
+        {
+            //Henter en liste av emp_id som eksisterer i teamet
+            var employeeIDs = team.employees.Select(e => e.emp_id.ToString()).ToArray();
+            //Henter alle ansatte for employeeList, men ikke inkluderer de eksisterende ansatte i teamet fra employeeIDs
+            var result = employeeList.Where(e => !employeeIDs.Contains(e.Value.ToString())).ToList();
+            return result;
+        }
+
+        [HttpPost]
+        public IActionResult EditTeam(AdminEditTeamModel model)
+        {
+            TeamEntity team = new TeamEntity()
+            {
+                team_id = model.team_id,
+                team_lead_id = model.team_lead_id,
+                team_name = model.team.team_name,
+                employees = new List<EmployeeEntity>()
+
+            };
+
+            if (model.selectedMemberTeamIDs != null)
+            {
+                foreach (int i in model.selectedMemberTeamIDs)
+                {
+                    var emp = employeeRepository.GetEmployee(i);
+                    team.employees.Add(employeeRepository.GetEmployee(i));
+                }
+            }
+
+            int result = adminRepository.UpdateTeam(team);
+            if (result == 0)
+            {
+                ViewBag.Message = "";
+            }
+            return RedirectToAction("EditTeam", new { id = team.team_id });
+        }
+        public IActionResult DeleteTeamMember(int emp_id, int team_id)
+        {
+            var result = adminRepository.DeleteTeamMember(emp_id);
+            return RedirectToAction("EditTeam", "Admin", new { id = team_id });
+        }
+
         /**
          * Slett Team
          * @Parameter team_id
@@ -226,6 +304,20 @@ namespace bacit_dotnet.MVC.Controllers
             var result = employeeRepository.DeleteTeam(team_id);
             return RedirectToAction("Index");
 
+        }
+
+
+        [HttpPost]
+        public IActionResult CreateCategory(string category_name)
+        {
+            adminRepository.CreateNewCategory(category_name);
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult DeleteCategory(int category_id)
+        {
+            adminRepository.DeleteCategory(category_id);
+            return RedirectToAction("Index");
         }
 
         /**
@@ -289,38 +381,8 @@ namespace bacit_dotnet.MVC.Controllers
         {
             var result = adminRepository.DeleteRole(role_id);
             return RedirectToAction("Index");
-        }
-
-        
-        //Get: /admin/edituser/emp_id
-        [HttpGet]
-        public IActionResult EditUser(int id)
-        {
-            AdminEditUserModel aeum = new AdminEditUserModel();
-            aeum.possibleRoles = adminRepository.GetRoleSelectList();
-            aeum.user = employeeRepository.GetEmployee(id);
-            return View(aeum);
-        }
-
-        [HttpPost]
-        public IActionResult UpdateUser(EmployeeEntity emp)
-        {
-            
-            if (ModelState.IsValid)
-            {
-                adminRepository.UpdateEmployee(new EmployeeEntity
-                {
-                    name = emp.name,
-                    passwordhash = emp.passwordhash,
-                    role_id = emp.role_id
-                });
-                return RedirectToAction("Index", "Admin", new {id = emp.emp_id});
-            }
-            else
-            {
-                return RedirectToAction("Index", "Admin", new {id = emp.emp_id});
-            }
-        }
+        }      
+       
         
     }
 }

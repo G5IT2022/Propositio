@@ -2,17 +2,23 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using bacit_dotnet.MVC.Entities;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace bacit_dotnet.MVC.Models.AdminViewModels.TeamModels
 {
     public class AdminEditTeamModel
     {
-        public TeamEntity team { get; set; }
-        public string team_lead { get; set; }
-        public string employee { get; set; }
+        public int team_id { get; set; }        
+        //public string team_lead { get; set; }
+        //public string employee { get; set; }
+        [Display(Name = "Teamnavn")]
         public string team_name { get; set; }
         public int team_lead_id { get; set; }
+        public TeamEntity team { get; set; }
+        public List<SelectListItem> selectListEmployees { get; set; }
+        public List<int> selectedMemberTeamIDs { get; set; }
+
+        public SelectList selectListForTeamLeader { get; set; }
     }
 }
 
