@@ -208,7 +208,7 @@ namespace bacit_dotnet.MVC.Controllers
                 suggestionRepository.CreateSuggestion(model);
                 ViewBag.Message = "Forslaget ble postet!";
             }
-            return View("Register", newModel);
+            return RedirectToAction("Index", "Suggestion", new {sortOrder="date_new"});
 
         }
 
@@ -277,6 +277,7 @@ namespace bacit_dotnet.MVC.Controllers
             if (detailsModel.suggestion == null)
             {
                 return RedirectToAction("Index");
+
             }
             return View(detailsModel);
         }
