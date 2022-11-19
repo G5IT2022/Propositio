@@ -211,9 +211,11 @@ namespace bacit_dotnet.MVC.Controllers
                 suggestionRepository.CreateSuggestion(model);
                 ViewBag.Message = "Forslaget ble postet!";
             }
-            return RedirectToAction("Index");
-        }
 
+            return RedirectToAction("Index", "Suggestion", new {sortOrder="date_new"});
+
+        }
+        
         //GET: /Suggestion/Details/id
         [HttpGet]
         public IActionResult Details(int id)
