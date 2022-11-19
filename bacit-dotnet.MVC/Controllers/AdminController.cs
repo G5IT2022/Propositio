@@ -132,7 +132,7 @@ namespace bacit_dotnet.MVC.Controllers
                     ViewBag.Error = $"Brukeren med ansattnummer {model.emp_id} finnes allerede!";
                 }
             }
-            return View("NewUser", newModel);
+            return RedirectToAction("Index");
         }
         //Get: /admin/editteam/team_id
         [HttpGet]
