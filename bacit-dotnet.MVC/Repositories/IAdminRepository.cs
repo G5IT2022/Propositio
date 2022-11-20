@@ -1,4 +1,5 @@
 using bacit_dotnet.MVC.Entities;
+using bacit_dotnet.MVC.Models.AdminViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace bacit_dotnet.MVC.Repositories
@@ -13,22 +14,18 @@ namespace bacit_dotnet.MVC.Repositories
         public bool UserExists(int emp_id);
         public byte[] GetSalt(int emp_id);
         public EmployeeEntity AuthenticateUser(int emp_id, string password);
-
-        //int CreateCategory();
-        List<RoleEntity> GetAllRoles();
-        string CreateNewRole(RoleEntity role);
-        int DeleteRole(int role_id);
-        //int CreateTeam();
-        //int CreateEmployee();
-        //int UpdateEmployee();
-
-        public int DeleteCategory(int category_id);
-        public string CreateNewCategory(string category);
-        public int CreateCategory();
-        //public int CreateRole();
-        public int CreateTeam();
         public int CreateEmployee(EmployeeEntity emp);
         public int UpdateEmployee(EmployeeEntity emp);
+        public int CreateTeam();
+        public int UpdateTeam(TeamEntity team);
+        public int DeleteTeamMember(int emp_id, int team_id);      
+        public string CreateNewCategory(string category);
+        public int DeleteCategory(int category_id);       
+        public RoleEntity CreateNewRole(AdminIndexViewModel model);
+        public int DeleteRole(int role_id);
+        public RoleEntity GetRoleByName (string name);
+        public List<RoleEntity> GetAllRoles();
         public List<SelectListItem> GetRoleSelectList();
+
     }
 }

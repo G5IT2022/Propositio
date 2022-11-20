@@ -14,6 +14,7 @@
             </div>
             <div class="col"></div>
         </div>
+        <!--Teamnavn-->
         <div class="row mt-3">
             <div class="col-sm-4"></div>
             <div class="col-sm-4">
@@ -21,11 +22,27 @@
                     @Html.TextBoxFor(a=>a.team_name,new {placeholder = "Teamnavn", @class= "form-control"})
                     
                 </div><br />
-                <div class="text-danger text-center">
+                @*<div class="text-danger text-center">
                     <p><b>@ViewBag.ErrorMessage</b></p>
-                </div>
+                </div>*@
             </div>
         </div>
+        <!--Velg Teamleder dropdownlist-->
+        <div class="row text-center mb-2">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <b>Velg Teamleder</b> &nbsp;&nbsp;&nbsp;
+                @Html.DropDownListFor(m => m.team_lead_id, Model.selectTeamleader)
+            </div>
+        </div>
+        <!--Feil melding ViewBag-->
+        <div class="row text-center mb-4">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 text-danger text-center">
+                <p><b>@ViewBag.ErrorMessage</b></p>
+            </div>
+        </div>
+        <!--Legg til medlemmer-->
         <h4 class="header text-center"><b>Legg til medlemmer</b></h4>
         <div class="table-responsive">
             <table class="table">
@@ -35,7 +52,7 @@
                         <th scope="col">Navn</th>
                         <th scope="col">Rolle</th>
                         <th scope="col">Velg Ansatt</th>
-                        <th scope="col">Velg Teamleder</th>
+                       @* <th scope="col">Velg Teamleder</th>*@
                     </tr>
                 </thead>
 
@@ -44,28 +61,24 @@
                     {
                         <tr>
                             <td>@Model.selectEmployeesForNewTeam[i].employee.name</td>
-                            <td>@Model.selectEmployeesForNewTeam[i].employee.role.role_name</td>
-
-                            @* <td><input type="hidden" name="emp_id" value="@Model.selectEmployeesForNewTeam[i].employee.emp_id" /></td>
-
-                        <td><input id="check@(Model.selectEmployeesForNewTeam[i].employee.emp_id)" type="hidden" value="@Model.selectEmployeesForNewTeam[i].employee.emp_id"
-                        name="@Model.selectEmployeesForNewTeam[i].selected" checked="@Model.selectEmployeesForNewTeam[i].selected" /></td>*@
+                            <td>@Model.selectEmployeesForNewTeam[i].employee.role.role_name</td>                            
                             <td>
                                 @*binding values emp_id in SelectEmployeesForNewTeam *@
                                 @Html.HiddenFor(a=>a.selectEmployeesForNewTeam[i].emp_id)
                                 @Html.CheckBoxFor(a=>a.selectEmployeesForNewTeam[i].selected)
                             </td>
-                            <td>
+                            @*<td>
                                 @Html.RadioButtonFor(a=>a.team_lead_id,Model.selectEmployeesForNewTeam[i].employee.emp_id,new{@name="teamlead"})
-                            </td>
+                            </td>*@
                         </tr>
                     }
                 </tbody>
 
             </table>
         </div>
+        <!--Abryt og Lagre knapper-->
         <div class="form-group text-center">
-            <button type="submit" class="btn btn-outline-danger">Avbryt</button>
+            <a asp-action="Index" asp-controller="Admin" class="btn btn-outline-danger">Avbryt</a>
             <button type="submit" class="btn btn-outline-success mx-3">Lagre</button>
         </div>
     </div>
