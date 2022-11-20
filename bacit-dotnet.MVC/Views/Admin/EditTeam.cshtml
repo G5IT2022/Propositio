@@ -11,11 +11,11 @@
 
     <div class="container edit-team-container mt-3">
         <div class="row">
-            <div class="col-12">
-                <h4>Redigere Team</h4>
-                <hr />
+            <div class="col-6">
+                <h2>Redigere Team</h2>                
             </div>
-        </div>
+            <hr />
+        </div>       
         <input name="team_id" value="@Model.team.team_id" hidden />
         <!--Textbox for å redigere Teamnavn-->
         <div class="form-group text-center">
@@ -42,8 +42,14 @@
         <div class="row text-center">
             <div class="col-sm-4"></div>
             <div class="col-sm-4">
-                <b>Velg Teamleder</b> &nbsp;&nbsp;&nbsp;
+                <b>Endre Teamleder</b> &nbsp;&nbsp;&nbsp;
                 @Html.DropDownListFor(m => m.team_lead_id, Model.selectListForTeamLeader)
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 text-danger fw-bold">
+                <p>@ViewBag.Error</p>
             </div>
         </div>
         <!--List av existerende medlemmer i teamet-->

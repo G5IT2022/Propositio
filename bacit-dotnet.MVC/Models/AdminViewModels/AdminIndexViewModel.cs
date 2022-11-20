@@ -13,6 +13,7 @@ namespace bacit_dotnet.MVC.Models.AdminViewModels
         public int role_id { get; set; }
         public int category_id { get; set; }
         public string category_name { get; set; }
+        public EmployeeEntity teamleader { get; set; }
 
     }
 }

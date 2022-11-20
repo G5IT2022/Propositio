@@ -16,59 +16,61 @@
         <span class="text-danger">@ViewBag.Error</span>
         @ViewBag.Message
         <div class="form-group mb-2">
-            @Html.LabelFor(model => model.title, htmlAttributes: new{@class = "control-label col-sm-6"})
+            <h6>
+                @Html.LabelFor(model => model.title, htmlAttributes: new{@class = "control-label col-sm-6"})
+            </h6>
             <div class="col-sm-12 align-items-center">
-                @Html.TextBoxFor(model => model.title, new {@class = "form-control"})
+                @Html.TextBoxFor(model => model.title, new {@class = "form-control", @placeholder = "Skriv inn tittel..."})
                 @Html.ValidationMessageFor(model => model.title, null, new {@class="text-danger"})
             </div>
         </div>
         <br />
 
         <!--Beskrivelse-->
-        <div class="form-group mb-2">
-            @Html.LabelFor(model => model.description, htmlAttributes: new{@class = "control-label col-sm-6"})
+        <div class="form-group mb-2 mt-2">
+            <h6>
+                @Html.LabelFor(model => model.description, htmlAttributes: new{@class = "control-label col-sm-6"})
+            </h6>           
             <div class="col-sm-12 align-items-center">
-                @Html.TextBoxFor(model => model.description, new {@class = "form-control"})
+                @Html.TextAreaFor(model => model.description, new {@class = "form-control textbox-description", @placeholder = "Skriv inn forslagsbeskrivelse...", @style = "height: 150px"})
                 @Html.ValidationMessageFor(model => model.description, null, new {@class="text-danger"})
+                
             </div>
         </div>
         <br />
-        <div class="row">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6">
-                <!--Is Just Do It?-->
-                <div class="form-check">
-                    <br />
-                    @Html.CheckBoxFor(m => m.isJustDoIt, new{@class="form-check-input"})
-                    @Html.LabelFor(m => m.isJustDoIt, new{@class="form-check-label"})
-                </div>
+        <!--Just Do It-->
+        <div class="row mt-2">
+            <div class="col form-check ms-3">
+                @Html.CheckBoxFor(m => m.isJustDoIt, new{@class="form-check-input"})
+                @Html.LabelFor(m => m.isJustDoIt, new{@class="form-check-label"})
             </div>
-            <div class="col-sm-3"></div>
-        </div>
+            <!--Frist-->
+            <div class="col mt-2">
+                 @Html.LabelFor(model => model.dueByTimestamp, new {@class="form-label"})
+                @Html.EditorFor(model => model.dueByTimestamp, new {@class="form-label", type="date"})
+                <span class="text-danger">@ViewBag.TimestampError</span>
+            </div>
+        </div>        
         <br />
-        <div class="row">
-            @Html.LabelFor(model => model.dueByTimestamp, new {@class="form-label"})
-            @Html.EditorFor(model => model.dueByTimestamp, new {@class="form-label", type="date"})
-            <span class="text-danger">@ViewBag.TimestampError</span>
+        <!--Velg ansatte-->
+        <div class="row mt-2">
+            <div class="col-sm-8">
+                <h6>Velg ansatt</h6>
+            </div>
         </div>
-        <br />
         <div class="row">
-            <div class="col-sm-3"></div>
             <div class="col-sm-6">
-                <h5>Velg ansatt</h5>
                 @Html.DropDownListFor(m => m.ownership_emp_id, Model.possibleResponsibleEmployees, new {@class="form-control"})
             </div>
-        </div>
+        </div>        
         <br />
-        <div class="row">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6">
-                <h5>Velg Kategorier: </h5>
-            </div>
-            <div class="col-sm-3"></div>
-        </div>
         <!--Kategorier-->
-        <div class="row">
+        <div class="row mt-4">
+            <div class="col-sm-8">
+                <h6>Velg kategorier: </h6>
+            </div>
+        </div>      
+        <div class="row mt-1">
             <span class="text-danger">@ViewBag.CategoryError</span>
             @foreach (CategoryEntity category in Model.categories)
             {
@@ -83,17 +85,16 @@
             }
         </div>
         <br />
-        <div class="row">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6">
+        <!--Legg til filer/bilder-->
+        <div class="row mt-3">
+            <div class="col-sm-8">
                 <input type="file" name="file" />
             </div>
-            <div class="col-sm-3"></div>
-        </div>
+        </div>        
         <br />
-        <div class="form-group text-center">
-            <button class="btn btn-outline-danger">Avbryt</button>
-            <span>&nbsp &nbsp &nbsp</span>
+        <!--Abryt og Lagre knapper-->
+        <div class="form-group text-center mt-2">
+            <button class="btn btn-outline-danger">Avbryt</button>            
             <button type="submit" class="btn btn-outline-success mx-3">Lagre</button>
         </div>
 </form>

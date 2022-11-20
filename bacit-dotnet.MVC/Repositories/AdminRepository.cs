@@ -1,11 +1,13 @@
 using bacit_dotnet.MVC.DataAccess;
 using bacit_dotnet.MVC.Entities;
-
+using bacit_dotnet.MVC.Models.AdminViewModels;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using MySqlConnector;
+using MySqlX.XDevAPI.Common;
+using System.Data;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace bacit_dotnet.MVC.Repositories
@@ -171,7 +173,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return affectedRows;
             }
         }
-
+        
         /**
          * Denne metoden er for å lage nye kategorier i databasen
          * @Parameter category_name
@@ -207,17 +209,33 @@ namespace bacit_dotnet.MVC.Repositories
         * @Paramter RoleEntity
         * @Return ny rolle
         */
-        public string CreateNewRole(RoleEntity role)
+        public RoleEntity CreateNewRole(AdminIndexViewModel model)
         {
 
             var query = @"INSERT INTO Role(role_name) VALUES (@role_name)";
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
-                string result = connection.QueryFirstOrDefault(query, new { role.role_name });
+                var result = connection.QueryFirstOrDefault(query, new { model.role_name });
+                
+            }
+            return GetRoleByName(model.role_name);
+        }
+        public RoleEntity GetRoleByName(string name)
+        {
+            var query = @"SELECT * FROM Role WHERE role_name = @role_name";
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                var result = connection.QueryFirstOrDefault(query, new { role_name = name });
+                if (result != null)
+                {
+                    RoleEntity role = new RoleEntity();
+                    role.role_id = result.role_id;
+                    role.role_name = result.role_name;
+                    return role;
+                }
                 return result;
             }
-        }
-
+        }        
         /**
          * Denne metoden er for å slette rolle
          * @Parameter role_id
@@ -233,6 +251,7 @@ namespace bacit_dotnet.MVC.Repositories
             }
 
         }
+       
         /**
           * Denne metoden er for å hente rollelisten.         
           * @Return rollelisten
@@ -246,6 +265,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return roles.ToList();
             }
         }
+        
 
         /**
         * Denne metoden er for å hente utvalgte rolle listen

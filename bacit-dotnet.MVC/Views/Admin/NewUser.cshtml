@@ -66,12 +66,10 @@
                     @Html.LabelFor(m => m.isAdmin)
                     @Html.CheckBoxFor(m => m.isAdmin)
                 </div>
-                <!--Lagre knappen-->
-                <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-outline-success">Lagre Ny Ansatt</button>
-                </div>
-                <div class="text-center mt-3">
+                <!--Lagre knappen-->                
+                <div class="form-group text-center">
                     <a asp-action="Index" asp-controller="Admin" class="btn btn-outline-danger">Avbryt</a>
+                    <button type="submit" class="btn btn-outline-success mx-3">Lagre</button>
                 </div>
             </div>
         </div>

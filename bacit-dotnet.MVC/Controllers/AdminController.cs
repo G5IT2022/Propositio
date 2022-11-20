@@ -32,19 +32,10 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpGet]
         public IActionResult Index(string sortOrder, string searchString)
         {
-            AdminIndexViewModel aivm = new AdminIndexViewModel();
-            aivm.employees = employeeRepository.GetEmployees();
-            //aivm.teams = employeeRepository.GetTeams();
-            //foreach (TeamEntity team in aivm.teams)
-            //{
-            //    team.teamleader = employeeRepository.GetEmployee(team.team_lead_id);
-
-            //}
-            aivm.categories = suggestionRepository.GetAllCategories();
-            aivm.roles = adminRepository.GetAllRoles();
+            AdminIndexViewModel aivm = prepareAdminIndexViewModel();            
             AdminIndexViewModel model = new AdminIndexViewModel();
             model.employees = employeeRepository.GetEmployees();
-
+            
             if (!String.IsNullOrEmpty(searchString))
             {
                 //Søker på navnet/rollen til den ansatte
@@ -79,7 +70,27 @@ namespace bacit_dotnet.MVC.Controllers
 
             return View(model);
         }
-      
+
+        /**
+         * Denne private metoden er brukt for å lage en ny model av AdminIndexViewModel
+         * slik at du kan hente alle Employees, Teams, Categories, Roles
+         * @Return model
+         */
+        private AdminIndexViewModel prepareAdminIndexViewModel()
+        {
+            AdminIndexViewModel model = new AdminIndexViewModel();
+            model.employees = employeeRepository.GetEmployees();
+            model.teams = employeeRepository.GetTeams();
+            foreach (TeamEntity team in model.teams)
+            {
+                team.teamleader = employeeRepository.GetEmployee(team.team_lead_id);
+            }
+            model.categories = suggestionRepository.GetAllCategories();
+            model.roles = adminRepository.GetAllRoles();
+
+            return model;
+        }
+
         //Get: /Admin/newUser
         [HttpGet]
         public IActionResult NewUser(AdminNewUserModel model)
@@ -89,7 +100,6 @@ namespace bacit_dotnet.MVC.Controllers
             ModelState.Clear();
             return View(model);
         }
-
 
         /**
          * Denne metoden er for å registrere en ny bruker
@@ -138,8 +148,11 @@ namespace bacit_dotnet.MVC.Controllers
             aeum.user = employeeRepository.GetEmployee(id);
             return View(aeum);
         }
-
-
+        /**
+         * Denne metoden er for å oppdatere informasjon av en ansatt
+         * @Parameter EmployeeEntity
+         * @Return Admin/Index Den ansatte blir oppdatert.
+         */
         [HttpPost]
         public IActionResult UpdateUser(EmployeeEntity emp)
         {
@@ -160,7 +173,10 @@ namespace bacit_dotnet.MVC.Controllers
             }
         }
         
-
+        /**
+         * Denne metoden er for å hente CreateNewTeam Viewet.
+         * @Return CreateNewTeam Viewet
+         */
         //Get: Admin/CreateNewTeam
         [HttpGet]
         public IActionResult CreateNewTeam()
@@ -191,6 +207,8 @@ namespace bacit_dotnet.MVC.Controllers
                     selected = false
                 });
             }
+            //Get ansatteliste for å velge teamleder
+            memberModel.selectTeamleader = temp.Select(ld => new SelectListItem { Value = ld.emp_id.ToString(), Text = ld.name }).ToList();
             return memberModel;
         }
 
@@ -205,8 +223,22 @@ namespace bacit_dotnet.MVC.Controllers
             //Sjekk dersom Teamnavn allerede har eksistert i databasen
             var team = employeeRepository.GetTeamByName(model.team_name);
             //model henter team_name, team_lead_id, for i Team tabellen har vi både team_name og team_lead_id.
-            //Det nye team_name skal bli sjekket gjennom GetTeamByName metoden i EmployeeRepository:             
-            //1. Hvis det nye teamnavnet ikke har blitt brukt, blir det godkjent, samt generer det et nytt team_id og binding det nye teamnavnet og team_lead_id til AdminNewTeamModel.
+            //Det nye team_name skal bli sjekket gjennom GetTeamByName metoden i EmployeeRepository          
+            //Sjekker dersom du bruker samme teamnavn som allerede har eksistert i databasen, får du ErrorMessage om dette
+            //Returnerer GetMembers private metoden. NB! Du trenger ikke å velge ansatte og teamleder på nytt,
+            //fordi det returnerer GetMembers metoden som returnerer AddTeamMemberModel.
+            if (team != null)
+            {
+                ViewBag.ErrorMessage = $"{model.team_name} har brukt. Vennligst prøv et nytt navn!";
+                return View(GetMembers());
+            }
+            //Sjekker dersom ansatte har valgt fra selectbox
+            if (!model.selectEmployeesForNewTeam.Any(a => a.selected))
+            {
+                ViewBag.ErrorMessage = $"Vennligst, velg ansatte!";
+                return View(GetMembers());
+            }
+            //Sjekker hvis det nye teamnavnet ikke har blitt brukt, blir det godkjent, samt generer det et nytt team_id og binding det nye teamnavnet og team_lead_id til AdminNewTeamModel.
             if (team == null)
             {
                 team = employeeRepository.CreateNewTeam(new AdminNewTeamModel
@@ -224,17 +256,11 @@ namespace bacit_dotnet.MVC.Controllers
                     employeeRepository.InsertMemberToTeam(team.team_id, teamMember.emp_id);
                 }
             }
-            //2. Dersom du bruker samme teamnavn som allerede har eksistert i databasen, får du ErrorMessage om dette
-            //Returnerer GetMembers orivate metoden. NB! Du trenger ikke å velge ansatte og teamleder på nytt,
-            //fordi det returnerer GetMembers metoden som returnerer AddTeamMemberModel.
-            else
-            {
-                ViewBag.ErrorMessage = $"{model.team_name} har brukt. Vennligst prøv et nytt navn!";
-                return View(GetMembers());
-            }
+            
             return RedirectToAction("Index");
         }
 
+        
         //Get: /admin/editteam/team_id
         [HttpGet]
         public IActionResult EditTeam(int id)
@@ -259,7 +285,11 @@ namespace bacit_dotnet.MVC.Controllers
             var result = employeeList.Where(e => !employeeIDs.Contains(e.Value.ToString())).ToList();
             return result;
         }
-
+        /**
+         * Denne metoden gjør at du kan redigere teamnavn, legge til medlemmer og endre teamleder.
+         * @Parameter AdminEditTeamModel
+         * @Return Admin/Editteam teamet blir oppdatert. 
+         */
         [HttpPost]
         public IActionResult EditTeam(AdminEditTeamModel model)
         {
@@ -282,12 +312,18 @@ namespace bacit_dotnet.MVC.Controllers
             }
 
             int result = adminRepository.UpdateTeam(team);
-            if (result == 0)
+            if (result != 1)
             {
-                ViewBag.Message = "";
+                ViewBag.Message = $"{model.team.team_name} har blitt oppdatert!";
             }
+            //ViewBag.Message = $"abc";
             return RedirectToAction("EditTeam", new { id = team.team_id });
         }
+        /**
+         * Denne metoden er for å slette ett eksisterende medlem i teamet
+         * @Parameter emp_id, team_id
+         * @Return Admin/Editteam - det medlemmet blir slettet.
+         */
         public IActionResult DeleteTeamMember(int emp_id, int team_id)
         {
             var employee = employeeRepository.GetEmployee(emp_id);
@@ -295,7 +331,7 @@ namespace bacit_dotnet.MVC.Controllers
             //Hvis den ansatte er medlem i flere team, slett fra teamet
             if(employee.teams.Count > 1)
             {
-                var result = adminRepository.DeleteTeamMember(emp_id, team_id);
+                var result = adminRepository.DeleteTeamMember(emp_id, team_id);               
             }
             else
             {
@@ -307,9 +343,9 @@ namespace bacit_dotnet.MVC.Controllers
         }
 
         /**
-         * Slett Team
+         * Denne metoden er for å slette et team basert på team_id
          * @Parameter team_id
-         * @Return Admin/Index
+         * @Return Admin/Index - det teamet blir slettet.
          */
         public IActionResult DeleteTeam(int team_id)
         {
@@ -318,7 +354,11 @@ namespace bacit_dotnet.MVC.Controllers
 
         }
 
-
+        /**
+         * Denne metoden er for å lage en ny kategori
+         * @Parameter category_name
+         * @Return  Admin/Index en ny kategori blir opprettet i databasen.
+         */
         [HttpPost]
         public IActionResult CreateCategory(string category_name)
         {
@@ -326,6 +366,11 @@ namespace bacit_dotnet.MVC.Controllers
             return RedirectToAction("Index");
         }
 
+        /**
+         * Denne metoden er for å slette en kategori
+         * @Parameter category_id
+         * @Return Admin/Index den kategorien blir slettet.
+         */
         public IActionResult DeleteCategory(int category_id)
         {
             adminRepository.DeleteCategory(category_id);
@@ -336,65 +381,49 @@ namespace bacit_dotnet.MVC.Controllers
          * Denne metoden gjør at du kan legge til en ny rolle i databasen.
          * @Parameter AdminIndexViewModel
          * @Return Admin/Index - nye roller skal bli lagt til rollelisten.
-         */
+         */       
         [HttpPost]
         public IActionResult CreateNewRole(AdminIndexViewModel model)
         {
-            AdminIndexViewModel aivm = new AdminIndexViewModel();
-            aivm.employees = employeeRepository.GetEmployees();
-            aivm.teams = employeeRepository.GetTeams();
-            aivm.categories = suggestionRepository.GetAllCategories();
-            aivm.roles = adminRepository.GetAllRoles();
+            AdminIndexViewModel adminIndexViewModel = prepareAdminIndexViewModel();
+            //adminIndexViewModel.employees = employeeRepository.GetEmployees();
+            //adminIndexViewModel.teams = employeeRepository.GetTeams();
+            //adminIndexViewModel.categories = suggestionRepository.GetAllCategories();
+            //adminIndexViewModel.roles = adminRepository.GetAllRoles();
 
-            ModelState.Remove("role_id");
-            //Første sjekker dersom rollen har eksistert i databasen
-            //Return fale hvis den nye rollen ikke har eksistert i databasen
-            //Return true når rollen har eksistert i databasen
-            if (ModelState.IsValid)
+            //Sjekker dersom det nye rollenavnet eksisterte allerede i databasen
+            var role = adminRepository.GetRoleByName(model.role_name.ToLower());
+            if (role!= null)
             {
-                var roles = adminRepository.GetAllRoles();
-                var roleExists = false;                             
+                ViewBag.ErrorMessage = $"{model.role_name} eksisterer allerede i databasen. Vennligst, prøv å legge til en ny rolle!";
+                return View("Index", adminIndexViewModel);
+            }    
+            //Hvis det er en ny rolle og ikke har eksistert i database, blir en ny rolle laget i databasen.
+            else
+            {
+                
+                role = adminRepository.CreateNewRole(new AdminIndexViewModel
+                {
+                   
+                    role_name = model.role_name,
+                   
+                });
+                ViewBag.ErrorMessage = @"Rollen blir opprettet!";
 
-                foreach (RoleEntity role in roles)
-                {
-                    if (role.role_name.ToLower().Equals(model.role_name.ToLower()))
-                    {
-                        roleExists = true;
-                    }
-                }
-              
-                {
-                    if (roleExists)
-                    {                      
-                        ViewBag.ErrorMessage = "Rollen eksisterer allerede i databasen.";
-                        return View("Index", aivm);
-                    }
-                    else
-                    {
-                        RoleEntity role = new RoleEntity
-                        {
-                            role_name = model.role_name,
-                        };
-                        adminRepository.CreateNewRole(role);
-                        ViewBag.ErrorMessage = "Rollen ble opprettet.";
-                        aivm.roles = adminRepository.GetAllRoles();
-                    }
-                }
             }
-            return View("Index", aivm);
+            return RedirectToAction("Index", new { role.role_id });
         }
-
+       
         /**
          * Denne metoden er for å slette rolle
          * @Parameter role_id 
-         * @Return Admin/Index side
+         * @Return Admin/Index - den rollen blir slettet.
          */
         public IActionResult DeleteRole(int role_id)
         {
             var result = adminRepository.DeleteRole(role_id);
             return RedirectToAction("Index");
-        }      
-       
-        
+        }            
+     
     }
 }

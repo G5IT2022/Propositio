@@ -15,6 +15,7 @@ namespace bacit_dotnet.MVC.Models.AdminViewModels.TeamModels
         public string team_name { get; set; }
         public int team_lead_id { get; set; }
         public TeamEntity team { get; set; }
+        public EmployeeEntity teamleader { get; set; }
         public List<SelectListItem> selectListEmployees { get; set; }
         public List<int> selectedMemberTeamIDs { get; set; }
 
