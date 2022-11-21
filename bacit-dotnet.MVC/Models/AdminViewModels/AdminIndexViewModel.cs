@@ -2,6 +2,11 @@
 
 namespace bacit_dotnet.MVC.Models.AdminViewModels
 {
+    /**
+    * Klasse for å vise informasjon om ansatte på adminsiden.
+    * @Parameter get, set
+    * @Return Admin/Index View.
+    */
     public class AdminIndexViewModel
     {
         public SuggestionEntity suggestion { get; set; }

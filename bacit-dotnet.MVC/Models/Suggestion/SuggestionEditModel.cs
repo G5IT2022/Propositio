@@ -3,6 +3,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace bacit_dotnet.MVC.Models.Suggestion
 {
+    /**
+    * Klasse/Modell for å redigere forslag
+    * @Parameter get, set
+    * @Return
+    */
     public class SuggestionEditModel
     {
         public SuggestionEntity suggestion { get; set; }

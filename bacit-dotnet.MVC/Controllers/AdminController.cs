@@ -139,6 +139,11 @@ namespace bacit_dotnet.MVC.Controllers
             return RedirectToAction("Index");
         }
 
+        /**
+         * Denne metoden er for å hente EditUser View
+         * @Parameter int id
+         * @Return EditUser View.
+         */
         //Get: /admin/edituser/emp_id
         [HttpGet]
         public IActionResult EditUser(int id)
@@ -398,6 +403,7 @@ namespace bacit_dotnet.MVC.Controllers
                 ViewBag.ErrorMessage = $"{model.role_name} eksisterer allerede i databasen. Vennligst, prøv å legge til en ny rolle!";
                 return View("Index", adminIndexViewModel);
             }    
+
             //Hvis det er en ny rolle og ikke har eksistert i database, blir en ny rolle laget i databasen.
             else
             {

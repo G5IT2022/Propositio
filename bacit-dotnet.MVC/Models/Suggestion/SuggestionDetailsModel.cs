@@ -3,6 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace bacit_dotnet.MVC.Models.Suggestion
 {
+    /**
+    * Klasse/modell for å vise forslag
+    * @Parameter get, set
+    * @Return Details.cshtml
+    */
     public class SuggestionDetailsModel
     {
         public SuggestionEntity suggestion { get; set; }

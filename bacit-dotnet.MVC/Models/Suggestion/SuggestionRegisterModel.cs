@@ -6,6 +6,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace bacit_dotnet.MVC.Models.Suggestion
 {
+    /**
+    * Klasse/Modell for å registrere ett forslag
+    * @Parameter get, set
+    * 
+    */
     public class SuggestionRegisterModel
     {
         [DisplayName("Tittel: ")]
