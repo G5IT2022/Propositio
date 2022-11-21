@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace bacit_dotnet.MVC.Models
 {
-    public class AccountViewModel
+    public class LogInViewModel
     {
         [Required(ErrorMessage = "Du glemte å skrive inn ansattnr.")]
         public int emp_id { get; set; }

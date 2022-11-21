@@ -1,4 +1,5 @@
 @using System.Security.Claims
+@using bacit_dotnet.MVC.Helpers
 @using bacit_dotnet.MVC.Models
 @using bacit_dotnet.MVC.DataAccess
 @using bacit_dotnet.MVC.Entities
@@ -7,12 +8,9 @@
     ViewBag.Title = "Propositio | " + Model.suggestion.title;
 }
 
-@if (ViewBag.Message != "")
-{
-    @ViewBag.Message
-}
+@ViewBag.Message
 <div class="row d-flex justify-content-end">
-    @if (Model.suggestion.author.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin"))
+    @if (AuthorizationHelper.UserIsAny(Model.suggestion.author.emp_id, Context) || AuthorizationHelper.UserIsAny(Model.suggestion.responsible_employee.emp_id, Context))
     {
         <a asp-action="Edit" asp-controller="Suggestion" asp-route-id="@Model.suggestion.suggestion_id" class="fw-light text-end">Rediger Forslag</a>
     }
@@ -103,7 +101,7 @@
                 }
             </div>
         </a>
-        @if (Model.suggestion.status != STATUS.FINISHED && (Model.suggestion.author.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin")))
+        @if (Model.suggestion.status != STATUS.FINISHED && (AuthorizationHelper.UserIsAny(Model.suggestion.author.emp_id, Context) || AuthorizationHelper.UserIsAny(Model.suggestion.responsible_employee.emp_id, Context)))
         {
             <a asp-controller="suggestion" asp-action="UpdateStatus" asp-route-suggestion_id="@Model.suggestion.suggestion_id" asp-route-status="@Model.suggestion.status" class="btn btn-primary btn-sm mt-1">  Neste Fase</a>
         }
@@ -114,8 +112,9 @@
 
 <div class="row d-flex justify-content-center">
     <div class="col-12 mt-1  justify-content-end">
-        <p class="m-0"><span class="fw-light">Opprettet: </span>
-        @Model.suggestion.timestamp.createdTimestamp.ToString("dd/M/yyyy")
+        <p class="m-0">
+            <span class="fw-light">Opprettet: </span>
+            @Model.suggestion.timestamp.createdTimestamp.ToString("dd/M/yyyy")
         <p>
             <span class="fw-light due">  Frist: </span>
             <span class="due"> @Model.suggestion.timestamp.dueByTimestamp.ToString("dd/M/yyyy")</span>
@@ -146,7 +145,7 @@
     {
         <div class="col-6">
             <p class="m-0 fw-light">Etter:</p>
-            <img src="@Url.Content(FilePathBuilder.GetRelativeFilepath(Model.suggestion.images.ElementAt(0).image_filepath))" class="userimg" height="100px" width="100px" />
+            <img src="@Url.Content(FilePathBuilder.GetRelativeFilepath(Model.suggestion.images.ElementAt(1).image_filepath))" class="userimg" height="100px" width="100px" />
         </div>
     }
 </div>
@@ -183,7 +182,7 @@
                                     @comment.poster.name
                                 </h6>
                             </div>
-                            @if (comment.poster.emp_id == Int32.Parse(Context.User.FindFirstValue(ClaimTypes.UserData)) || Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin"))
+                            @if (AuthorizationHelper.UserIsAny(comment.poster.emp_id, Context))
                             {
                                 <div class="d-flex flex-row align-items-center">
                                     <a><i class="fas fa-pencil-alt smallbutton link-muted" onclick="myFunction(@comment.comment_id)"></i></a>
@@ -202,8 +201,8 @@
                                     <input name="description" type="text" class="form-control" value="@comment.description" />
                                     <button class="btn btn-outline-danger" onclick="myFunction(@comment.comment_id)" style="display: inline; margin-top:10px">Avbryt</button>
                                     <button type="submit" class="btn btn-outline-success" style="margin-top:10px">Lagre endringer</button>
-                           </form> 
-                           </div>
+                                </form>
+                            </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <p class="mb-0" style="font-size:small">
@@ -239,6 +238,8 @@
         </div>
     </form>
 </div>
+
+<!--Modal for timestamps-->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -288,7 +289,10 @@
         </div>
     </div>
 </div>
+
+
 <script type="text/javascript">
+    //Funksjon for å skjule og vise redigerformen på kommentar
     function myFunction(id) {
         var form = document.getElementById("editcommentForm " + id);
         var comment = document.getElementById("comment " + id);
