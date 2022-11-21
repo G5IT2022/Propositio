@@ -6,6 +6,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace bacit_dotnet.MVC.Models.AdminViewModels
 {
+    /**
+    * Klasse/Modell for å registrere ny bruker
+    * @Parameter get, set
+    * .
+    */
     public class AdminNewUserModel
     {
         [DisplayName("Nytt ansattnummer:")]

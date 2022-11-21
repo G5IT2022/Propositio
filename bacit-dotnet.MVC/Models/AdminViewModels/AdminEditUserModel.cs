@@ -1,5 +1,5 @@
 ﻿//modell for å redigere ansatte
-//
+
 using bacit_dotnet.MVC.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,11 +8,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace bacit_dotnet.MVC.Models.AdminViewModels
 
-// Modell for redigere ansatte
+
 
 {
+    /**
+    * Denne klassen/modellen er for å redigete en ansatt
+    * @Parameter get, set
+    */
     public class AdminEditUserModel
     {
+
         public EmployeeEntity user { get; set; }
 
         [DisplayName("Fornavn:")]

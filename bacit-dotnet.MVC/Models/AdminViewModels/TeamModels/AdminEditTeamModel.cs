@@ -6,6 +6,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace bacit_dotnet.MVC.Models.AdminViewModels.TeamModels
 {
+    /**
+    * Klasse/Modell for å redigere Team (Admin)
+    * @Parameter get, set
+    * 
+    */
     public class AdminEditTeamModel
     {
         public int team_id { get; set; }        
