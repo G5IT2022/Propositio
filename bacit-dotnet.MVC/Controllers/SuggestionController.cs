@@ -290,12 +290,12 @@ namespace bacit_dotnet.MVC.Controllers
                     description = comment.description,
                     lastUpdatedTimestamp = DateTime.Now
                 });
-                logger.LogInformation(LoggingHelper.EntityUpdatedSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
+                logger.LogInformation(LoggingHelper.EntityUpdatedLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
                 return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
             }
             else
             {
-                logger.LogInformation(LoggingHelper.EntityUpdatedFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
+                logger.LogInformation(LoggingHelper.EntityUpdatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
                 return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
             }
 
@@ -308,11 +308,11 @@ namespace bacit_dotnet.MVC.Controllers
             var result = suggestionRepository.DeleteComment(comment_id);
             if(result != 1)
             {
-                logger.LogInformation(LoggingHelper.EntityDeleteFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
+                logger.LogInformation(LoggingHelper.EntityDeleteLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
             }
             else
             {
-                logger.LogInformation(LoggingHelper.EntityDeleteSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
+                logger.LogInformation(LoggingHelper.EntityDeleteLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
             }
             return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
 
@@ -366,7 +366,7 @@ namespace bacit_dotnet.MVC.Controllers
                 else
                 {
 
-                    logger.LogInformation(LoggingHelper.EntityUpdatedFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity, "expired date input"));
+                    logger.LogInformation(LoggingHelper.EntityUpdatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity, "expired date input"));
                     ViewBag.Message = "Fristen du har valgt har gått ut, vennligst velg en annen frist.";
                     return View("Edit", newModel);
                 }
@@ -393,12 +393,12 @@ namespace bacit_dotnet.MVC.Controllers
             if (result != 0)
             {
                 //Det funket, returner brukeren til detaljer siden
-                logger.LogInformation(LoggingHelper.EntityUpdatedSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
+                logger.LogInformation(LoggingHelper.EntityUpdatedLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
                 return RedirectToAction("Details", new { id = model.suggestion.suggestion_id });
             }
             //Hvis metoden kommer så langt har noe gått galt, send brukeren tilbake til redigersiden med feilmelding. 
             ViewBag.Message = "Forslaget kunne ikke bli oppdatert, prøv igjen.";
-            logger.LogInformation(LoggingHelper.EntityUpdatedFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
+            logger.LogInformation(LoggingHelper.EntityUpdatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
             return View("Edit", new { id = model.suggestion.suggestion_id, model = newModel });
         }
 
@@ -428,7 +428,7 @@ namespace bacit_dotnet.MVC.Controllers
                     suggestionRepository.UpdateSuggestionStatus(suggestion_id, "FINISHED");
                     break;
             }
-            logger.LogInformation(LoggingHelper.EntityUpdatedSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "suggestionStatus"));
+            logger.LogInformation(LoggingHelper.EntityUpdatedLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "suggestionStatus"));
             return RedirectToAction("Details", new { id = suggestion_id });
         }
 
