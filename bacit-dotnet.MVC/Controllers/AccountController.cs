@@ -1,19 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using bacit_dotnet.MVC.Models;
-using System.Data.SqlClient;
-using bacit_dotnet.MVC.DataAccess;
-using MySql.Data.MySqlClient;
 using bacit_dotnet.MVC.Repositories;
 using bacit_dotnet.MVC.Entities;
-using System.Web;
-using Microsoft.AspNetCore.Components.Authorization;
 using bacit_dotnet.MVC.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using System.Security.Claims;
 using System.Web.WebPages;
 using bacit_dotnet.MVC.Helpers;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using Microsoft.AspNetCore.Authentication;
 
 namespace bacit_dotnet.MVC.Controllers
 {
@@ -38,15 +33,16 @@ namespace bacit_dotnet.MVC.Controllers
 
         //Get account
         [HttpGet]
-        public IActionResult LogIn(AccountViewModel model)
+        public IActionResult LogIn(LogInViewModel model)
         {
+           
             return View(model);
         }
 
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult Verify(AccountViewModel model)
+        public IActionResult Verify(LogInViewModel model)
         {
             if (model.password.IsEmpty())
             {
@@ -74,7 +70,7 @@ namespace bacit_dotnet.MVC.Controllers
                 if (emp == null)
                 {
                     ViewBag.ErrorMessage += " Passordet er feil, prøv igjen.";
-                    return View("LogIn", new AccountViewModel());
+                    return View("LogIn", new LogInViewModel());
                 }
 
                 emp.authorizationRole = adminRepository.AuthorizeUser(emp.emp_id);
@@ -87,7 +83,7 @@ namespace bacit_dotnet.MVC.Controllers
                 else
                 {
                     ViewBag.ErrorMessage = "Login feilet, vennligst prøv igjen.";
-                    return View("LogIn", new AccountViewModel());
+                    return View("LogIn", new LogInViewModel());
                 }
             }
             else
@@ -98,7 +94,7 @@ namespace bacit_dotnet.MVC.Controllers
                 {
                     ViewBag.ErrorMessage = "Vennligst skriv inn et passord";
                 }
-                return View("LogIn", new AccountViewModel());
+                return View("LogIn", new LogInViewModel());
             }
 
         }
