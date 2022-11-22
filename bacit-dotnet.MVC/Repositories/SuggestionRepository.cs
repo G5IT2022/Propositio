@@ -385,22 +385,6 @@ namespace bacit_dotnet.MVC.Repositories
             }
         }
 
-        /**
-         * Denne metoden henter alle kategoriene
-         * @Return List av kategorier
-         */
-        public List<CategoryEntity> GetAllCategories()
-        {
-            //spørring
-            var query = @"SELECT Category.category_id, Category.category_name FROM Category";
-            //kobler til databasen
-            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
-            {
-                //kobler spørring til databasen
-                var categories = connection.Query<CategoryEntity>(query);
-                //returnerer alle kategorier --> kategoriliste
-                return categories.ToList();
-            }
-        }
+    
     }
 }

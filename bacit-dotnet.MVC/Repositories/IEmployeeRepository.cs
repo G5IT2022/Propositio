@@ -6,13 +6,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace bacit_dotnet.MVC.Repositories
 {
     /**
-     * Dette repositoryet har ansvar for ALT som har med ansatte å gjøre. 
-     * I det vi hadde før tilsvarer dette repositoryet
-     * - Employeerepository
-     * - Teamrepository
-     * - Rolerepository
-     * 
-     * Forskjellen fra dette og det gamle er at det "fyller" alle objektene inn i de andre objektene.
+     * Employeerepository
+     * Dette repositoryet har ansvaret for alle read funskjoner om employee og team.
      * **/
     public interface IEmployeeRepository
     {
@@ -29,8 +24,9 @@ namespace bacit_dotnet.MVC.Repositories
         public TeamEntity GetTeamByName(string name);
         public bool InsertMemberToTeam(int team_id, int emp_id);
         public bool CheckExistedMember(int team_id, int employeeID);
-        public int DeleteTeam(int team_id);       
-        
+        public int DeleteTeam(int team_id);
+
+
 
     }
     

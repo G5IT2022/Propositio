@@ -35,7 +35,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return emp;
             }
         }
-       
+
         /**
          * Denne metoden gjør at du kan sjekke rollen til brukeren
          * @Parameter emp_id
@@ -92,7 +92,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return result;
             }
         }
-        
+
         /**
          * Denne metoden gjør at du kan lage en ny bruker i databasen
          * @Parameter EmployeeEntity som består av alle nødvendige attributter om en ansatt
@@ -173,7 +173,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return affectedRows;
             }
         }
-        
+
         /**
          * Denne metoden er for å lage nye kategorier i databasen
          * @Parameter category_name
@@ -216,7 +216,7 @@ namespace bacit_dotnet.MVC.Repositories
             using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
             {
                 var result = connection.QueryFirstOrDefault(query, new { model.role_name });
-                
+
             }
             return GetRoleByName(model.role_name);
         }
@@ -235,7 +235,7 @@ namespace bacit_dotnet.MVC.Repositories
                 }
                 return result;
             }
-        }        
+        }
         /**
          * Denne metoden er for å slette rolle
          * @Parameter role_id
@@ -251,7 +251,7 @@ namespace bacit_dotnet.MVC.Repositories
             }
 
         }
-       
+
         /**
           * Denne metoden er for å hente rollelisten.         
           * @Return rollelisten
@@ -265,7 +265,7 @@ namespace bacit_dotnet.MVC.Repositories
                 return roles.ToList();
             }
         }
-        
+
 
         /**
         * Denne metoden er for å hente utvalgte rolle listen
@@ -295,6 +295,24 @@ namespace bacit_dotnet.MVC.Repositories
                 connection.Close();
                 //Returnerer listen
                 return list;
+            }
+        }
+
+        /**
+     * Denne metoden henter alle kategoriene
+     * @Return List av kategorier
+     */
+        public List<CategoryEntity> GetAllCategories()
+        {
+            //spørring
+            var query = @"SELECT Category.category_id, Category.category_name FROM Category";
+            //kobler til databasen
+            using (var connection = sqlConnector.GetDbConnection() as MySqlConnection)
+            {
+                //kobler spørring til databasen
+                var categories = connection.Query<CategoryEntity>(query);
+                //returnerer alle kategorier --> kategoriliste
+                return categories.ToList();
             }
         }
     }

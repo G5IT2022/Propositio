@@ -6,7 +6,7 @@ namespace bacit_dotnet.MVC.Repositories
 {
     /**
      * Repositository for admin
-     * ansvar for lagring av employees
+     * Ansvar for Create, Update og Delete av alle entiteter
      */
     public interface IAdminRepository
     {
@@ -18,14 +18,25 @@ namespace bacit_dotnet.MVC.Repositories
         public int UpdateEmployee(EmployeeEntity emp);
         public int CreateTeam();
         public int UpdateTeam(TeamEntity team);
-        public int DeleteTeamMember(int emp_id, int team_id);      
+        public int DeleteTeamMember(int emp_id, int team_id);
         public string CreateNewCategory(string category);
-        public int DeleteCategory(int category_id);       
+        public int DeleteCategory(int category_id);
         public RoleEntity CreateNewRole(AdminIndexViewModel model);
         public int DeleteRole(int role_id);
-        public RoleEntity GetRoleByName (string name);
+        public RoleEntity GetRoleByName(string name);
         public List<RoleEntity> GetAllRoles();
         public List<SelectListItem> GetRoleSelectList();
+        /*
+* Categories
+*/
+
+        //Read
+
+        /// <summary>
+        /// Returns a list of all categories in the db, mapped to Categoryentities
+        /// </summary>
+        /// <returns>A list of CategoryEntity<returns>
+        public List<CategoryEntity> GetAllCategories();
 
     }
 }

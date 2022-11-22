@@ -68,17 +68,7 @@ namespace bacit_dotnet.MVC.Repositories
         /// <returns>An int representing the number of rows affected<returns>
         public void Favorite(int suggestion_id, bool update);
 
-        /*
-         * Categories
-         */
-
-        //Read
-
-        /// <summary>
-        /// Returns a list of all categories in the db, mapped to Categoryentities
-        /// </summary>
-        /// <returns>A list of CategoryEntity<returns>
-        public List<CategoryEntity> GetAllCategories();
+   
 
 
         /**

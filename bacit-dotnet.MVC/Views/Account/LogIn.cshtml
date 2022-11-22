@@ -29,40 +29,40 @@
             <div class="row">
                 <div class="col-sm-4"></div>
                 <div class="col-4">
-                    @if (ViewBag.ErrorMessage != null)
-                    {
                         <span class="red">@ViewBag.ErrorMessage</span>
-                    }
                     <div class="col-sm-4"></div>
                 </div>
                 <div class="row">
                     <div class="col-sm-4"></div>
                     <div class="col-sm-4">
-                        <form asp-controller="account" asp-action="verify" method="post">
+                    <form asp-controller="Account" asp-action="VerifyUser" method="post">
+                            @Html.AntiForgeryToken()
                             <!--Navn-->
                             <div class="form-group">
-                                <label for="emp_id">Ansattnr</label>
-                                <input name="emp_id" type="text" class="form-control" id="emp_id" placeholder="Ansattnr" value="@Model.emp_id" />
-                          
-                            </div><br />
+                                @Html.LabelFor(m => m.emp_id)
+                                @Html.TextBoxFor(m => m.emp_id, "", new {@class="form-control", @placeholder="Ansattnummer"})
+                                @Html.ValidationMessageFor(m => m.emp_id,"", new {@class="text-danger"})
+                            </div>
+                            <br />
                             <!--Passord-->
                             <div class="form-group">
-                                <label for="password">Passord</label>
-                                <input name="password" type="password" class="form-control" id="password" placeholder="Passord" value="@Model.password">
-                            
-                            </div><br />
+                                @Html.LabelFor(m => m.password)
+                                @Html.TextBoxFor(m => m.password, "", new {@class="form-control", @placeholder="Passord", @type="password"})
+                                @Html.ValidationMessageFor(m => m.password, "", new {@class="text-danger"})
+                            </div>
+                            <br />
                             <!--Knapper-->
                             <div class="text-center">
                                 <button type="submit" class="btn btn-outline-success px-4">Logg inn</button>
                             </div>
                         </form>
                         <!--Cheat-knapper for a logge seg inn-->
-                        <form asp-controller="account" asp-action="verify" method="post">
+                        <form asp-controller="Account" asp-action="VerifyUser" method="post">
                             <input name="emp_id" value="1" hidden />
                             <input name="password" value="password" hidden />
-                            <button type="submit" hidden>BrukerLogin Cheat</button>
+                            <button type="submit">BrukerLogin Cheat</button>
                         </form>
-                        <form asp-controller="account" asp-action="verify" method="post">
+                    <form asp-controller="Account" asp-action="VerifyUser" method="post">
 
                             <input name="emp_id" value="2" hidden="true" />
                             <input name="password" value="password1" hidden />

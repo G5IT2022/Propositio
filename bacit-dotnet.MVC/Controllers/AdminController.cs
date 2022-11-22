@@ -26,7 +26,6 @@ namespace bacit_dotnet.MVC.Controllers
             this.employeeRepository = employeeRepository;
             this.suggestionRepository = suggestionRepository;
             this.adminRepository = adminRepository;
-            this.adminRepository = adminRepository; 
         }
         //Get: /Admin/Index
         [HttpGet]
@@ -65,7 +64,7 @@ namespace bacit_dotnet.MVC.Controllers
                 team.teamleader = employeeRepository.GetEmployee(team.team_lead_id);
 
             }
-            model.categories = suggestionRepository.GetAllCategories();
+            model.categories = adminRepository.GetAllCategories();
             model.roles = adminRepository.GetAllRoles();
 
             return View(model);
@@ -85,7 +84,7 @@ namespace bacit_dotnet.MVC.Controllers
             {
                 team.teamleader = employeeRepository.GetEmployee(team.team_lead_id);
             }
-            model.categories = suggestionRepository.GetAllCategories();
+            model.categories = adminRepository.GetAllCategories();
             model.roles = adminRepository.GetAllRoles();
 
             return model;

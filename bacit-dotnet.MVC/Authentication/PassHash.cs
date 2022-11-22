@@ -9,16 +9,8 @@ namespace bacit_dotnet.MVC.Authentication
         private const int SaltSize = 32;
         //generere salt
         public static byte[] GenerateSalt()
-        {
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                var randomNumber = new byte[SaltSize];
-
-                rng.GetBytes(randomNumber);
-
-                return randomNumber;
-
-            }
+        { 
+            return RandomNumberGenerator.GetBytes(32); ;
         }
 
         public static byte[] ComputeHMAC_SHA256(byte[] data, byte[] salt)
