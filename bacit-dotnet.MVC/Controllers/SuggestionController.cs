@@ -12,15 +12,19 @@ namespace bacit_dotnet.MVC.Controllers
     [Authorize]
     public class SuggestionController : Controller
     {
+        private readonly ILogger<SuggestionController> logger;
         private readonly IEmployeeRepository employeeRepository;
         private readonly ISuggestionRepository suggestionRepository;
+        private readonly IAdminRepository adminRepository;
         private readonly IFileRepository fileRepository;
 
         //Constructor
-        public SuggestionController(IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository, IFileRepository fileRepository)
+        public SuggestionController(ILogger<SuggestionController> logger,IAdminRepository adminRepository, IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository, IFileRepository fileRepository)
         {
+            this.logger = logger;
             this.suggestionRepository = suggestionRepository;
             this.employeeRepository = employeeRepository;
+            this.adminRepository = adminRepository;
             this.fileRepository = fileRepository;
         }
 
@@ -33,7 +37,7 @@ namespace bacit_dotnet.MVC.Controllers
             model.suggestions = suggestionRepository.GetAll();
 
             //Henter kategoriene for filtrering
-            model.categories = suggestionRepository.GetAllCategories();
+            model.categories = adminRepository.GetAllCategories();
             foreach (SuggestionEntity suggestion in model.suggestions)
             {
                 //Setter author og responsible employee entitetene i forslagene til fullverdige employee entiteter slik at man kan vise info om den ansatte
@@ -108,6 +112,7 @@ namespace bacit_dotnet.MVC.Controllers
             {
                 ViewBag.SortedMessage = "Fant ingen forslag med dine søkekriterier :(";
             }
+            logger.LogInformation(LoggingHelper.PageAccessedLog(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "SuggestionIndex"));
             return View(model);
         }
 
@@ -121,6 +126,7 @@ namespace bacit_dotnet.MVC.Controllers
                 model = prepareSuggestionRegisterModel();
                 ModelState.Clear();
             }
+            logger.LogInformation(LoggingHelper.PageAccessedLog(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "New Suggestion"));
             return View(model);
         }
 
@@ -129,6 +135,9 @@ namespace bacit_dotnet.MVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateSuggestion(SuggestionEntity model, IFormCollection collection, IFormFile file = null)
         {
+
+            //Logging variables
+            var loggingEntity = "suggestion";
 
             //Klargjør en ny modell til etter verifisering/registrering, man kan ikke bare returnere et view uten modell. 
             SuggestionRegisterModel newModel = prepareSuggestionRegisterModel();
@@ -143,6 +152,7 @@ namespace bacit_dotnet.MVC.Controllers
             //Hvis modellen ikke er gyldig returner feilmelding, denne sjekken er her på starten så vi slipper å gjøre en hel del andre sjekker først. 
             if (!ModelState.IsValid)
             {
+                logger.LogInformation(LoggingHelper.EntityCreatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity, "invalid modelstate"));
                 return View("Register", newModel);
             }
 
@@ -155,6 +165,7 @@ namespace bacit_dotnet.MVC.Controllers
 
             //Sjekker om det er satt en frist
             if (collection["dueByTimestamp"].Equals("")){
+                logger.LogInformation(LoggingHelper.EntityCreatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity, "no timestamp"));
                 ViewBag.TimestampError = "Legg til en frist";
                 return View("Register", newModel);
             }
@@ -163,6 +174,7 @@ namespace bacit_dotnet.MVC.Controllers
             DateTime newTime = Convert.ToDateTime(collection["dueByTimestamp"]);
             if (newTime.CompareTo(DateTime.Now) < 1)
             {
+                logger.LogInformation(LoggingHelper.EntityCreatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
                 ViewBag.TimestampError = "Fristen du har valgt har gått ut, vennligst velg en annen frist.";
                 return View("Register", newModel);
 
@@ -174,6 +186,7 @@ namespace bacit_dotnet.MVC.Controllers
             var categories = parseCategories(collection);
             if (categories.Count < 1)
             {
+                logger.LogInformation(LoggingHelper.EntityCreatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity, "no categories"));
                 ViewBag.CategoryError = "Velg minst en kategori";
                 return View("Register", newModel);
             }
@@ -195,12 +208,13 @@ namespace bacit_dotnet.MVC.Controllers
                             image_filepath = file.FileName
                         };
                         model.images.Add(imageEntity);
-                        ViewBag.Message = "File Upload Successful";
+                        logger.LogInformation("File: {name} uploaded successfully on {date}", imageEntity.image_filepath, DateTime.Now);
                     }
                 }
                 catch (Exception ex)
                 {
                     //Log ex
+                    logger.LogCritical("File upload failed", ex);
                     ViewBag.Error = "File Upload Failed";
                 }
             }
@@ -210,8 +224,8 @@ namespace bacit_dotnet.MVC.Controllers
             {
                 suggestionRepository.CreateSuggestion(model);
                 ViewBag.Message = "Forslaget ble postet!";
+                logger.LogInformation(LoggingHelper.EntityCreatedLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
             }
-
             return RedirectToAction("Index", "Suggestion", new {sortOrder="date_new"});
 
         }
@@ -228,6 +242,7 @@ namespace bacit_dotnet.MVC.Controllers
                     comment.poster = employeeRepository.GetEmployee(comment.emp_id);
                 }
             }
+            logger.LogInformation(LoggingHelper.PageAccessedLog(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "Details"));
             return View(model);
         }
 
@@ -235,6 +250,7 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpPost]
         public IActionResult CreateComment(SuggestionDetailsModel model, IFormCollection collections)
         {
+            var loggingEntity = "comment";
             CommentEntity comment = new CommentEntity
             {
                 description = model.description,
@@ -248,11 +264,12 @@ namespace bacit_dotnet.MVC.Controllers
             if (result != 1)
             {
                 ViewBag.Message = "Noe gikk galt, prøv igjen";
+                logger.LogInformation(LoggingHelper.EntityCreatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
                 return RedirectToAction("Details", "Suggestion", new { id = comment.suggestion_id });
             }
             else
             {
-                ViewBag.Message = "Kommentaren din ble postet!";
+                logger.LogInformation(LoggingHelper.EntityCreatedLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
                 return RedirectToAction("Details", "Suggestion", new { id = comment.suggestion_id });
             }
         }
@@ -261,6 +278,8 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpPost]
         public IActionResult EditComment(CommentEntity comment, int suggestion_id)
         {
+            var loggingEntity = "comment";
+            
             ModelState.Remove("poster");
             ModelState.Remove("suggestion");
             if (ModelState.IsValid)
@@ -271,10 +290,12 @@ namespace bacit_dotnet.MVC.Controllers
                     description = comment.description,
                     lastUpdatedTimestamp = DateTime.Now
                 });
+                logger.LogInformation(LoggingHelper.EntityUpdatedLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
                 return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
             }
             else
             {
+                logger.LogInformation(LoggingHelper.EntityUpdatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
                 return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
             }
 
@@ -283,7 +304,16 @@ namespace bacit_dotnet.MVC.Controllers
         //POST: /Suggestion/Deletecomment/id
         public IActionResult DeleteComment(int comment_id, int suggestion_id)
         {
+            var loggingEntity = "comment";
             var result = suggestionRepository.DeleteComment(comment_id);
+            if(result != 1)
+            {
+                logger.LogInformation(LoggingHelper.EntityDeleteLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
+            }
+            else
+            {
+                logger.LogInformation(LoggingHelper.EntityDeleteLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
+            }
             return RedirectToAction("Details", "Suggestion", new { id = suggestion_id });
 
         }
@@ -300,6 +330,7 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpGet]
         public IActionResult Edit(int id, SuggestionEditModel model = null)
         {
+            logger.LogInformation(LoggingHelper.PageAccessedLog(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "edit suggestion"));
             //Hvis vi kommer til denne metoden fra detaljersiden vil forslaget i modellen være null, ellers vil den ha en verdi. 
             if (model.suggestion == null)
             {
@@ -314,6 +345,8 @@ namespace bacit_dotnet.MVC.Controllers
         [HttpPost]
         public IActionResult EditSuggestion(SuggestionEditModel model)
         {
+            //Logging
+            var loggingEntity = "suggestion";
             //Model 
             //Fjerner overflødig data som ikke skal med i verifiseringen. 
             ModelState.Remove("possibleResponsibleEmployees");
@@ -332,6 +365,8 @@ namespace bacit_dotnet.MVC.Controllers
                 }
                 else
                 {
+
+                    logger.LogInformation(LoggingHelper.EntityUpdatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity, "expired date input"));
                     ViewBag.Message = "Fristen du har valgt har gått ut, vennligst velg en annen frist.";
                     return View("Edit", newModel);
                 }
@@ -358,10 +393,12 @@ namespace bacit_dotnet.MVC.Controllers
             if (result != 0)
             {
                 //Det funket, returner brukeren til detaljer siden
+                logger.LogInformation(LoggingHelper.EntityUpdatedLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
                 return RedirectToAction("Details", new { id = model.suggestion.suggestion_id });
             }
             //Hvis metoden kommer så langt har noe gått galt, send brukeren tilbake til redigersiden med feilmelding. 
             ViewBag.Message = "Forslaget kunne ikke bli oppdatert, prøv igjen.";
+            logger.LogInformation(LoggingHelper.EntityUpdatedLogFailed(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), loggingEntity));
             return View("Edit", new { id = model.suggestion.suggestion_id, model = newModel });
         }
 
@@ -391,6 +428,7 @@ namespace bacit_dotnet.MVC.Controllers
                     suggestionRepository.UpdateSuggestionStatus(suggestion_id, "FINISHED");
                     break;
             }
+            logger.LogInformation(LoggingHelper.EntityUpdatedLogSuccess(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "suggestionStatus"));
             return RedirectToAction("Details", new { id = suggestion_id });
         }
 
@@ -402,7 +440,7 @@ namespace bacit_dotnet.MVC.Controllers
         /// <returns>En liste med CategoryEntity</returns>
         private List<CategoryEntity> parseCategories(IFormCollection collection)
         {
-            List<CategoryEntity> availableCategories = suggestionRepository.GetAllCategories();
+            List<CategoryEntity> availableCategories = adminRepository.GetAllCategories();
             List<CategoryEntity> categories = new List<CategoryEntity>();
             foreach (var item in collection.Keys)
             {
@@ -425,7 +463,7 @@ namespace bacit_dotnet.MVC.Controllers
         private SuggestionRegisterModel prepareSuggestionRegisterModel()
         {
             SuggestionRegisterModel model = new SuggestionRegisterModel();
-            model.categories = suggestionRepository.GetAllCategories();
+            model.categories = adminRepository.GetAllCategories();
             model.possibleResponsibleEmployees = employeeRepository.GetEmployeeSelectList();
 
             return model;

@@ -13,11 +13,11 @@ namespace bacit_dotnet.MVC.DataAccess
         {
             this.config = config;
         }
+        
+        
         //kobler til databasen
         public IDbConnection GetDbConnection()
         {
-            var cnn = config.GetConnectionString("propositio");
-            var connect = new MySqlConnection(config.GetConnectionString("propositio"));
             return new MySqlConnection(config.GetConnectionString("propositio"));
         }
           

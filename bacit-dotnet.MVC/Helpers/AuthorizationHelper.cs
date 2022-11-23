@@ -48,6 +48,25 @@ namespace bacit_dotnet.MVC.Helpers
                 return false;
             }
         }
+
+        /// <summary>
+        /// Denne metoden sjekker om brukeren er teamlead
+        /// </summary>
+        /// <param name="context">HTTPContexten for nåværende sesjon</param>
+        /// <param name="id">en id for en entitet</param>
+        /// <returns>bool, true hvis brukeren er eier, false hvis ikke</returns>
+        public static bool UserIsTeamLead( HttpContext context)
+        {
+            if (context.User.IsInRole("TeamLead"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         /// <summary>
         /// Denne metoden sjekker om brukeren som er logget inn eier entiteten assossiert med iden i paramteret eller admin
         /// shorthand for å skrive if(Authorizatoinhelper.userisadmin || authorizationhelper.userisowner)
@@ -57,7 +76,7 @@ namespace bacit_dotnet.MVC.Helpers
         /// <returns>bool, true hvis brukeren er eier eller admin, false hvis ikke</returns>
         public static bool UserIsAny(int id, HttpContext context)
         {
-            if (UserIsAdmin(context) || UserIsOwner(id, context))
+            if (UserIsAdmin(context) || UserIsOwner(id, context) || UserIsTeamLead(context))
             {
                 return true;
             }

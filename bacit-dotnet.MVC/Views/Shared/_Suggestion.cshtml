@@ -1,5 +1,6 @@
 ﻿@using System.Security.Claims
 @using bacit_dotnet.MVC.Entities
+@using bacit_dotnet.MVC.Helpers
 @using bacit_dotnet.MVC.Models.Suggestion;
 @model SuggestionEntity;
 
@@ -30,7 +31,7 @@
                     <p class="sugg-status mx-2"><b>@Model.status</b></p>
                     <!--Favoritter-->
                     <p class="favourite mx-3">
-                        @if (@Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("Admin") || @Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("TeamLead"))
+                        @if (AuthorizationHelper.UserIsAny(Model.suggestion_id, Context)|| @Context.User.FindFirst(ClaimTypes.Role).ToString().Split(" ")[1].Equals("TeamLead"))
                         {
 
                             @if (!Model.favorite)
