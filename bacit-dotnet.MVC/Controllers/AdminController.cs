@@ -159,6 +159,7 @@ namespace bacit_dotnet.MVC.Controllers
          * @Return Admin/Index Den ansatte blir oppdatert.
          */
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult UpdateUser(EmployeeEntity emp)
         {
             //Logging
@@ -226,6 +227,7 @@ namespace bacit_dotnet.MVC.Controllers
          * @Return Admin/Index Viewet etter at du har trykket på Lagre knappen.
          */
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult CreateNewTeam(AddTeamMemberModel model)
         {
             //Sjekk dersom Teamnavn allerede har eksistert i databasen
@@ -299,6 +301,7 @@ namespace bacit_dotnet.MVC.Controllers
          * @Return Admin/Editteam teamet blir oppdatert. 
          */
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult EditTeam(AdminEditTeamModel model)
         {
             TeamEntity team = new TeamEntity()
@@ -465,6 +468,7 @@ namespace bacit_dotnet.MVC.Controllers
          * @Return Admin/Index - nye roller skal bli lagt til rollelisten.
          */
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult CreateRole(RoleEntity model)
         {
 
