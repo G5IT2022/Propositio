@@ -16,16 +16,18 @@ namespace bacit_dotnet.MVC.Repositories
 
             try
             {
+                //sjekker størrelse av fil
                 if (file.Length > 0)
                 {
+                    //wwwroot/uploadedImages
                     path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, hostingEnvironment.WebRootPath, "uploadedImages"));
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
-                    }
+                    }                    
                     using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
                     {
-                        file.CopyToAsync(fileStream);
+                        file.CopyTo(fileStream);
                     }
                     return true;
                 }

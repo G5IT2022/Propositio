@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace bacit_dotnet.MVC.Controllers
 {
+        [Authorize]
     public class AccountController : Controller
     {
         private readonly IEmployeeRepository employeeRepository;
@@ -21,7 +22,6 @@ namespace bacit_dotnet.MVC.Controllers
         private readonly IConfiguration configuration;
         private readonly ILogger<AccountController> logger;
         private string generatedToken = null;
-
         public AccountController(ILogger<AccountController> logger, IEmployeeRepository employeeRepository, ISuggestionRepository suggestionRepository, IAdminRepository adminRepository, ITokenService tokenservice, IConfiguration configuration)
         {
             this.employeeRepository = employeeRepository;
@@ -35,6 +35,7 @@ namespace bacit_dotnet.MVC.Controllers
 
         //GET: Account/LogIn
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult LogIn(LogInViewModel model)
         {
             logger.LogInformation("Login view accessed on {date}", DateTime.Now);
