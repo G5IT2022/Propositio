@@ -2,6 +2,8 @@
 @using bacit_dotnet.MVC.Models;
 @model MyTeamsViewModel;
 
+@Html.AntiForgeryToken()
+
 @foreach(TeamEntity team in Model.teams){
     <h1>@team.team_name</h1>
     <hr />

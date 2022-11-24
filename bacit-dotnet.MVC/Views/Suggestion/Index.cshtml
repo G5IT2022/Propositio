@@ -8,6 +8,7 @@
 <br />
 <h1>Alle Forslag</h1>
 <br />
+    @Html.AntiForgeryToken()
     @Html.Partial("_FilterSortControl", new SortOrderModel{actionName = "Index", 
     controllername = "Suggestion", categories = Model.categories})
 
