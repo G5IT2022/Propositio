@@ -9,6 +9,7 @@
 }
 
 @ViewBag.Message
+@Html.AntiForgeryToken()
 <div class="row d-flex justify-content-end">
     @if (AuthorizationHelper.UserIsAny(Model.suggestion.author.emp_id, Context) || AuthorizationHelper.UserIsAny(Model.suggestion.responsible_employee.emp_id, Context))
     {

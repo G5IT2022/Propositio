@@ -6,6 +6,7 @@
     ViewBag.Title = "Admin | Nytt Team";
 }
 <form asp-controller="Admin" asp-action="CreateNewTeam" method="post">
+    @Html.AntiForgeryToken()
     <div class="containter newteam-container mt-5">
         <div class="row">
             <div class="col"></div>
