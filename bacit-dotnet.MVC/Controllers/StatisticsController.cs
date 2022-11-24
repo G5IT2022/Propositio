@@ -10,9 +10,11 @@ using bacit_dotnet.MVC.Repositories;
 using bacit_dotnet.MVC.Entities;
 using bacit_dotnet.MVC.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace bacit_dotnet.MVC.Controllers
 {
+    [Authorize]
     public class StatisticsController : Controller
     {
         private readonly IStatisticsRepository statisticsRepository;

@@ -113,7 +113,7 @@ namespace bacit_dotnet.MVC.Controllers
                 ViewBag.SortedMessage = "Fant ingen forslag med dine søkekriterier :(";
             }
             logger.LogInformation(LoggingHelper.PageAccessedLog(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "SuggestionIndex"));
-            return View(model);
+            return View("Index", model);
         }
 
         //GET: /Suggestion/Register
@@ -127,7 +127,7 @@ namespace bacit_dotnet.MVC.Controllers
                 ModelState.Clear();
             }
             logger.LogInformation(LoggingHelper.PageAccessedLog(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "New Suggestion"));
-            return View(model);
+            return View("Register", model);
         }
 
         //POST: /Suggestion/Create
@@ -243,7 +243,7 @@ namespace bacit_dotnet.MVC.Controllers
                 }
             }
             logger.LogInformation(LoggingHelper.PageAccessedLog(Int32.Parse(User.FindFirstValue(ClaimTypes.UserData)), "Details"));
-            return View(model);
+            return View("Details", model);
         }
 
         //POST: /Suggestion/CreateComment
@@ -337,7 +337,7 @@ namespace bacit_dotnet.MVC.Controllers
                 model = prepareSuggestionEditModel(id);
             }
 
-            return View(model);
+            return View("Edit", model);
         }
 
         //POST: /Suggestion/EditSuggestion
