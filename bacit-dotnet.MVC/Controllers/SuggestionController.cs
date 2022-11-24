@@ -248,6 +248,7 @@ namespace bacit_dotnet.MVC.Controllers
 
         //POST: /Suggestion/CreateComment
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult CreateComment(SuggestionDetailsModel model, IFormCollection collections)
         {
             var loggingEntity = "comment";
@@ -276,6 +277,7 @@ namespace bacit_dotnet.MVC.Controllers
 
         //POST: /Suggestion/EditComment
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult EditComment(CommentEntity comment, int suggestion_id)
         {
             var loggingEntity = "comment";
@@ -302,6 +304,7 @@ namespace bacit_dotnet.MVC.Controllers
         }
 
         //POST: /Suggestion/Deletecomment/id
+        [ValidateAntiForgeryToken]
         public IActionResult DeleteComment(int comment_id, int suggestion_id)
         {
             var loggingEntity = "comment";
@@ -320,6 +323,7 @@ namespace bacit_dotnet.MVC.Controllers
 
         //POST: /Suggestion/Favorite/id
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public void Favorite(int id, bool isFavorite)
         {
             isFavorite = !isFavorite;
