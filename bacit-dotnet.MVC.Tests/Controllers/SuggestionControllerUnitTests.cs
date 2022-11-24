@@ -24,6 +24,7 @@ namespace bacit_dotnet.MVC.Tests.Controllers
     {
         private readonly IAdminRepository _mockAdminRepository;
         private readonly int _roleId = 3;
+        //dette blir satt opp for å unngå feil melding
         private readonly SuggestionEntity _createSuggestionModel = new SuggestionEntity
         {
             title = "Title",
@@ -41,7 +42,7 @@ namespace bacit_dotnet.MVC.Tests.Controllers
 
         private void InitData()
         {
-
+            //Dette er hva vi vil teste
             Dictionary<string, StringValues> fields = new Dictionary<string, StringValues>();
             fields.Add("isJustDoIt", "true");
             fields.Add("dueByTimestamp", "");
@@ -53,10 +54,10 @@ namespace bacit_dotnet.MVC.Tests.Controllers
         [Fact]
         public void TestCreateSuggestion_WithDueByTimestamp_Empty()
         {
-            //we have to use mockdata to create fake data so that it will not affect to our database            
+            //Vi må bruke mockdata for å lage fake data, slik at det påvirker ikke vår database.            
             InitData();
             var mockLogger = new Mock<ILogger<SuggestionController>>();
-            //create new object interface because we have dependency, so we need to create new object in order to pass interface into parameter
+            //Lage nytt objekt interface for å sende disse interface into parameter, fordi vi har dependecy i SuggestionController            
             var mockAdminRepository = new Mock<IAdminRepository>();
             mockAdminRepository.Setup(a => a.GetAllCategories()).Returns(_categories);
             var mockEmployeeRepository = new Mock<IEmployeeRepository>();
