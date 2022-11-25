@@ -51,7 +51,7 @@
                     <div class="col-sm-1"></div>
                     <!--Søkefelt-->
                     <div class="col-sm-4">
-                        @using (Html.BeginForm())
+                        @using (Html.BeginForm("Index", "Admin", HttpMethod.Get))
                         {
                             <div class="input-group mb-3">
                                 @Html.TextBox("searchString", null, new{@class="form-control", @placeholder="Søk..."} )
@@ -208,105 +208,3 @@
         }
     </div>
 </div>
-<!--Teamlist-DET KAN BLI FIKSET SENERE-->
-@* <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="team-tab">
-            @foreach (TeamEntity team in Model.teams)
-            {
-                <div class="card bg-light mt-3">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex flex-row align-items-center">
-                                <b>Team: @team.team_name</b> &nbsp;&nbsp;&nbsp; <b>- Teamleder:</b>
-                            </div>
-                            <div class="d-flex flex-row align-items-center">
-                                <a asp-controller="admin" asp-action="editteam" asp-route-id="@team.team_id" type="submit" class="link-muted"><i class="fas fa-pencil-alt"></i></a>
-                                &nbsp;&nbsp;&nbsp;
-                                <a asp-controller="admin" asp-action="deleteteam" asp-route-id="@team.team_id" type="submit" class="link-muted"><i class="fas fa-trash-alt"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Liste alle ansatte i teamet-->
-                    <div class="card-body">
-                        <div class="row justify-content-center">
-                            <div class="col-4"><b>Ansattnr</b></div>
-                            <div class="col-4"><b>Ansattnavn</b></div>
-                            <div class="col-4"><b>Rolle</b></div>
-                        </div>
-                        @foreach (EmployeeEntity emp in team.employees)
-                        {
-                            <div class="row align-items-start">
-                                <div class="btn-group">
-                                    <div class="col-sm-2">
-                                        <!--Sortering-->
-                                        <div class="sortDropdown">
-                                            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <img src="~/img/bootstrap-icons-1.9.1/sort-up.svg" class="dropdown-toggle" type="button" data-bs-toggle="sortDropdown" /> Sorter
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" asp-action="Index" asp-controller="Admin" asp-route-sortOrder="name_asc">Sorter etter navn (Stigende)</a></li>
-                                                <li><a class="dropdown-item" asp-action="Index" asp-controller="Admin" asp-route-sortOrder="name_desc">Sorter etter navn (Synkende)</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                   
-                                    <div class="col-sm-1"></div>
-                                    <!--Søkefelt-->
-                                    <div class="col-sm-4">
-                                        @using (Html.BeginForm())
-                                        {
-                                            <div class="input-group mb-3">
-                                                @Html.TextBox("searchString", null, new{@class="form-control", @placeholder="Søk..."} )
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-light" type="submit">Søk</button>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab">
-                                </div>
-                            </div>
-                            <div class="table-responsive">
-                                <!--Viser til ansatte-->
-                                <table class="table table-responsive-sm">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th scope="col">Ansattnr</th>
-                                            <th scope="col">Ansattnavn</th>
-                                            <th scope="col">Teams</th>
-                                            <th scope="col">Rolle</th>
-                                            <th scope="col"></th>
-                                            <th scope="col"></th>
-
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (EmployeeEntity emp in Model.employees)
-                                        {
-                                            <tr>
-                                                <td>@emp.emp_id</td>
-                                                <td>@emp.name</td>
-                                                <td>
-                                                    <a asp-controller="Admin" asp-action="DeleteCategory" asp-route-id="@category.category_id">
-                                                        <button type="button" class="btn btn-danger btn-sm mt-1"> Slett</button>
-                                                    </a>
-                                                    @foreach (TeamEntity team in emp.teams)
-                                                    {
-                                                        @team.team_name <br />
-                                                    }
-                                                </td>
-                                                <td>@emp.role.role_name</td>
-                                                <td><button type="button" class="btn btn-primary btn-sm mt-1">Endre</button></td>
-                                                <td><button type="button" class="btn btn-danger btn-sm mt-1">Slett</button></td>
-
-                                            </tr>
-                                        }
-                                    </tbody>
-
-                                </table>
-                            </div>*@
-
-
-
